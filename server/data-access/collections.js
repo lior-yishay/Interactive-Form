@@ -1,0 +1,1 @@
+export const GENDER_BALLS_COLLECTION = 'gender-balls'

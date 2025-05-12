@@ -1,0 +1,14 @@
+{
+  "name": "gender-ball-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./business/server.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongodb": "^6.16.0"
+  }
+}
