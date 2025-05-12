@@ -1,14 +1,8 @@
-let balls = [];
+import { getGenderCounts, postGenderPick } from "./logic.js";
 
 let genderCounts = []
-axios.get('http://localhost:8000/api/gender-balls')
-    .then(response => {
-      console.log('Server responded:', response.data);
-      genderCounts = response.data
-    })
-    .catch(error => {
-      console.error('POST error:', error);
-    });
+
+let balls = [];
 
 let labels = [
   "Agender", "Bigender", "Cisgender", "Genderfluid", "Intersex", "Non-binary", "Transgender",
@@ -22,8 +16,9 @@ let labels = [
   "Travesti", "Tumtum", "Vakasalewalewa", "Waria", "Winkte", "X-gender", "X-jendā"
 ];
 
-function setupScene1() {
+export async function setupGenderBallsScene() {
   balls = []
+  genderCounts = await getGenderCounts()
   createCanvas(windowWidth, windowHeight);
   textSize(14);
   for (let i = 0; i < labels.length; i++) {
@@ -38,7 +33,7 @@ function setupScene1() {
   }
 }
 
-function drawScene1() {
+export function drawGenderBallsScene() {
   background(20);
   fill(255);
   noStroke();
@@ -52,25 +47,14 @@ function drawScene1() {
     ball.update();
     ball.display();
   }
+  
 }
 
-function mousePressedScene1() {
+export async function mousePresseGenderBallsScene() {
   for (let ball of balls) {
     if (ball.contains(mouseX, mouseY)) {
       ball.grow();
-      
-      axios.post('http://localhost:8000/api/gender-balls', {
-        gender: ball.label
-      })
-      .then(response => {
-        console.log('Server responded:', response.data);
-      })
-      .catch(error => {
-        console.error('POST error:', error);
-      });
-
-      currentScene = "scene2";
-      setupScene2();
+      await postGenderPick(ball.label)
     }
   }
 }

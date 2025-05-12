@@ -5,13 +5,33 @@ let video;
 let canvas;
 let serial;
 
-function setupScene2() {
+function waitForSerial(callback) {
+  const check = () => {
+    if (window.serial) {
+      callback(window.serial);
+    } else {
+      setTimeout(check, 100);
+    }
+  };
+  check();
+}
+
+
+export function setupEmotionsScene() {
+
+  waitForSerial((serial) => {
+    serial.open("/dev/cu.usbmodem1301");
+    serial.on('connected', serverConnected);
+    serial.on('error', gotError);
+  });
+
   canvas = createCanvas(480, 360);
   canvas.id("canvas");
 
   video = createCapture(VIDEO);
   video.id("video");
   video.size(width, height);
+  video.hide()  // prevent duplicate display
 
   const faceOptions = {
     withLandmarks: true,
@@ -22,14 +42,9 @@ function setupScene2() {
 
   faceapi = ml5.faceApi(video, faceOptions, faceReady);
 
-
-  serial = new p5.SerialPort();
-  serial.open("/dev/cu.usbmodem1301");
-  serial.on('connected', serverConnected);
-  serial.on('error', gotError);
 }
 
-function drawScene2() {
+export function drawEmotionsScene() {
   image(video, 0, 0, width, height);
   drawBoxes(detections);
   drawLandmarks(detections);
@@ -68,7 +83,7 @@ function gotFaces(error, result) {
 
 function drawBoxes(detections){
   if (detections.length > 0) {
-    for (i=0; i < detections.length; i++){
+    for (let i=0; i < detections.length; i++){
       let {_x, _y, _width, _height} = detections[i].alignedRect._box;
       stroke(255);
       strokeWeight(1);
@@ -80,7 +95,7 @@ function drawBoxes(detections){
 
 function drawLandmarks(detections){
   if (detections.length > 0) {
-    for (i=0; i < detections.length; i++){
+    for (let i=0; i < detections.length; i++){
       let points = detections[i].landmarks.positions;
       for (let j = 0; j < points.length; j++) {
         stroke(44, 169, 225);
@@ -94,6 +109,7 @@ function drawLandmarks(detections){
 function drawExpressions(detections, x, y, textYSpace) {
   if (detections.length > 0) {
     let {happy, sad, surprised} = detections[0].expressions;
+    console.log('happy:', happy, 'sad:', sad, 'surprised:', surprised)
     textFont('Helvetica Neue');
     textSize(14);
     strokeWeight(2);
