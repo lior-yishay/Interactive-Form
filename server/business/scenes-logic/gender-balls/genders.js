@@ -1,4 +1,4 @@
-export const genders = [
+export const GENDERS = [
   "Agender", "Bigender", "Cisgender", "Genderfluid", "Intersex", "Non-binary", "Transgender",
   "Two-Spirit", "Xenogender", "Demiboy", "Demigirl", "Androgynous", "Maverique", "Pangender",
   "Trigender", "Polygender", "Hijra", "Butch", "Femme", "Neutrois", "Genderqueer", "Genderflux",

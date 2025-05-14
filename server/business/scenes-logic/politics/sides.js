@@ -1,0 +1,1 @@
+export const POLITICAL_SIDES = ['left', 'center', 'right']

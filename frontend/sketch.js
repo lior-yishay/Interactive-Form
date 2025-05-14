@@ -1,25 +1,27 @@
-import { EMOTIONS, GENDER_BALLS } from "./scenes-names.js";
-import { drawEmotionsScene, setupEmotionsScene } from "./scenes/emotions.js";
+import { GENDER_BALLS, SMILE } from "./scenes-names.js";
 import { drawGenderBallsScene, mousePresseGenderBallsScene, setupGenderBallsScene } from "./scenes/gender-balls/gender-balls.js";
+import { drawSmileScene, setupSmileScene } from "./scenes/smile/smile.js";
 
-let currentScene = GENDER_BALLS;
+let currentScene =  GENDER_BALLS;
 export const setCurrentScene = (sceneName) => {
   currentScene = sceneName
 }
 
+export const getCurrentScene = () => currentScene
+
 const setup = () => {
   if (currentScene === GENDER_BALLS) setupGenderBallsScene();
-  if (currentScene === EMOTIONS) setupEmotionsScene()
+  if (currentScene === SMILE) setupSmileScene()
 }
 
 const draw = () => {
   if (currentScene === GENDER_BALLS) drawGenderBallsScene();
-  if (currentScene === EMOTIONS) drawEmotionsScene();
+  if (currentScene === SMILE) drawSmileScene();
 }
 
 const mousePressed = () => {
   if (currentScene === GENDER_BALLS) mousePresseGenderBallsScene();
-  if (currentScene === EMOTIONS) undefined;
+  if (currentScene === SMILE) undefined;
 }
 
 window.setup = setup

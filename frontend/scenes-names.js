@@ -1,2 +1,5 @@
 export const GENDER_BALLS = 'gender-balls'
-export const EMOTIONS = 'emotions'
+export const SMILE = 'smile'
+export const POLITICS = 'politics'
+export const LIVING_HERE = 'living-here'
+export const ICE_CREAM_SANDWICH = 'ice-cream-sandwich'
