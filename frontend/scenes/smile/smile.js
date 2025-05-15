@@ -227,3 +227,5 @@ function drawPeaceBar() {
     text("🌍 World Peace: Loading...", width / 2, y - 5);
   }
 }
+
+

@@ -1,5 +1,8 @@
+export const NAME = 'name'
 export const GENDER_BALLS = 'gender-balls'
 export const SMILE = 'smile'
+export const SMILE_LEADERBOARD = 'smile/leaderboard'
+export const SMILE_TIME = 'smile/time' 
 export const POLITICS = 'politics'
 export const LIVING_HERE = 'living-here'
 export const ICE_CREAM_SANDWICH = 'ice-cream-sandwich'
