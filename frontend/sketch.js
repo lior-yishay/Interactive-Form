@@ -3,7 +3,7 @@ import { drawGenderBallsScene, mousePresseGenderBallsScene, setupGenderBallsScen
 import { drawNameScene, setupNameScene } from "./scenes/name/name.js";
 import { drawSmileScene, setupSmileScene } from "./scenes/smile/smile.js";
 
-let currentScene =  NAME;
+let currentScene = SMILE;
 export const setCurrentScene = (sceneName) => {
   currentScene = sceneName
 }

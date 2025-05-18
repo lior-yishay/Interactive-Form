@@ -1,6 +1,11 @@
-let colorPicker, sizeSlider;
+import { drawNameHistory, getNameHistory, postName } from "./logic.js";
 
-export function setupNameScene() {
+let colorPicker, sizeSlider;
+let postButton
+let strokes = [];
+
+export async function setupNameScene() {
+
   // create the drawing canvas
   createCanvas(800, 550);
   background(0);
@@ -45,15 +50,24 @@ export function setupNameScene() {
 
   textSize(32);
   text("my name is", tagX + tagW / 2, tagY + headerH * 0.70);
+
+  postButton = createButton('click me')
+  postButton.mousePressed(() => {console.log(strokes) 
+    postName(strokes)})
+
+  await drawNameHistory(3)
+
 }
 
-let strokes = [];
+
 
 export function drawNameScene() {
   if (mouseIsPressed && mouseY < height - 50) {
     let colorValue = colorPicker.color().toString('#rrggbb');
     let weight = sizeSlider.value();
 
+    const c = color(colorValue)
+    c.setAlpha(200)
     stroke(colorValue);
     strokeWeight(weight);
     line(pmouseX, pmouseY, mouseX, mouseY);
@@ -61,11 +75,9 @@ export function drawNameScene() {
     strokes.push({
       from: { x: pmouseX, y: pmouseY },
       to: { x: mouseX, y: mouseY },
-      color: colorValue,
-      weight: weight
+      colorValue, 
+      weight
     });
-
-    console.log(strokes)
   }
   
 }

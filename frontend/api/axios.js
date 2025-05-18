@@ -2,7 +2,7 @@ const URL_PREFIX = 'http://localhost:8000/api/'
 
 export const get = async (sceneName, sendingData) => {
     try {
-        const res = await axios.get(`${URL_PREFIX}${sceneName}`, sendingData)
+        const res = await axios.get(`${URL_PREFIX}${sceneName}`, {params: sendingData})
         console.log('Recived:', res.data)
         return res.data
     }

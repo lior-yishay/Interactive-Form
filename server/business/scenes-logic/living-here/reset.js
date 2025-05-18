@@ -1,5 +1,4 @@
 import { POLITICS_COLLECTION } from "../../../data-access/collections";
-import { politicalSides } from "./sides";
 
 export const resetLivingHere = async () => {
   const db = await connectToScenesDB();
@@ -10,4 +9,4 @@ export const resetLivingHere = async () => {
   closeConnection();
 };
 
-resetPolitics()
+resetLivingHere()

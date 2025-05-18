@@ -5,6 +5,7 @@ import { closeConnection, connectToScenesDB } from '../data-access/db.js';
 import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './scenes-logic/politics/api.js';
 import { getAllLivingHereRecords, postLivingHerePick } from './scenes-logic/living-here/api.js';
 import { getAllFlavorsCounts, incrementFlavorByOne } from './scenes-logic/ice-cream-sandwich/api.js';
+import { getNameHistory, postName as insertName } from './scenes-logic/name/api.js';
 
 const app = express();
 const port = 8000;
@@ -97,6 +98,29 @@ app.route('/api/living-here')
       res.status(500).json({ status: 'ERROR', message: err.message });
     }
   });
+
+  app.route('/api/name')
+    .post(async (req, res) => {
+      const {strokes} = req.body
+      try {
+        await insertName(strokes);
+        res.json({ status: 'OK', received: strokes });
+    } catch (err) {
+        res.status(500).json({ status: 'ERROR', message: err.message });
+    }
+    })
+    .get(async (req, res) => {
+      const {top} = req.query
+      console.log('Recived name top:', top)
+
+      try {
+        const nameHistory = await getNameHistory(Number(top));
+        res.json(nameHistory);
+      } catch (err) {
+        res.status(500).json({ status: 'ERROR', message: err.message });
+      }
+    })
+
 
 app.listen(port, () => {
   console.log(`✅ Server running at http://localhost:${port}`);
