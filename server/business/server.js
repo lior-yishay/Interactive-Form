@@ -1,11 +1,12 @@
 import cors from 'cors';
-import express from 'express';
+import express, { application } from 'express';
 import { getAllGenderCounts, incrementGenderByOne as incrementGenderCount } from './scenes-logic/gender-balls/api.js';
 import { closeConnection, connectToScenesDB } from '../data-access/db.js';
 import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './scenes-logic/politics/api.js';
 import { getAllLivingHereRecords, postLivingHerePick } from './scenes-logic/living-here/api.js';
 import { getAllFlavorsCounts, incrementFlavorByOne } from './scenes-logic/ice-cream-sandwich/api.js';
 import { getNameHistory, postName as insertName } from './scenes-logic/name/api.js';
+import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './scenes-logic/smile/api.js';
 
 const app = express();
 const port = 8000;
@@ -116,6 +117,38 @@ app.route('/api/living-here')
       try {
         const nameHistory = await getNameHistory(Number(top));
         res.json(nameHistory);
+      } catch (err) {
+        res.status(500).json({ status: 'ERROR', message: err.message });
+      }
+    })
+
+  app.route('/api/smile')
+    .post(async (req, res) => {
+      const {duration, image} = req.body
+      try {
+        await insertSmile(duration, image);
+        res.json({ status: 'OK', received: {duration, image} });
+    } catch (err) {
+        res.status(500).json({ status: 'ERROR', message: err.message });
+    }
+    })
+  app.route('/api/smile/leaderboard')
+    .get(async (req, res) => {
+      const {top} = req.query
+      console.log('Recived smile top:', top)
+
+      try {
+        const smileLeaderBoard = await getSmileLeaderboard(Number(top));
+        res.json(smileLeaderBoard);
+      } catch (err) {
+        res.status(500).json({ status: 'ERROR', message: err.message });
+      }
+    })
+  app.route('/api/smile/time')
+    .get(async (req, res) => {
+      try {
+        const totalDuration = await getTotalSmileTime();
+        res.json(totalDuration);
       } catch (err) {
         res.status(500).json({ status: 'ERROR', message: err.message });
       }

@@ -1,7 +1,9 @@
-import { SMILE, SMILE_LEADERBOARD, SMILE_TIME } from "../../scenes-names"
+import { get, post } from "../../api/axios.js"
+import { imageToBase64 } from "../../api/utils.js"
+import { SMILE, SMILE_LEADERBOARD, SMILE_TIME } from "../../scenes-names.js"
 
-export const getSmileLeaderboard = async () => {
-  return await get(SMILE_LEADERBOARD)
+export const getSmileLeaderboard = async (top) => {
+  return await get(SMILE_LEADERBOARD, {top})
 }
 
 export const getTotalSmileTime = async () => {
@@ -9,6 +11,11 @@ export const getTotalSmileTime = async () => {
 }
 
 export const postSmile = async (durationList, image) => {
-  await post(SMILE, {duration: durationList, image})
-  nextScene()
+  const { max, total } = durationList.reduce((acc, current) => ({ 
+    max: Math.max(acc.max, current), 
+    total: acc.total + current
+  }), { max: -Infinity, total: 0 });
+
+  await post(SMILE, {duration: {max, total}, image: imageToBase64(image)})
+  // nextScene()
 }

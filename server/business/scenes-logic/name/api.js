@@ -17,7 +17,6 @@ export const getNameHistory = async (top) => {
     let query = collection.find({}).sort({ createdOn: -1 });
 
     if (typeof top === 'number' && top > 0) {
-        console.log('noder')
         query = query.limit(top);
     }
 

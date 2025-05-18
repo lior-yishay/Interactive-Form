@@ -1,3 +1,5 @@
+import { getSmileLeaderboard, getTotalSmileTime, postSmile } from "./logic.js";
+
 let faceapi;
 let detections = [];
 
@@ -17,7 +19,12 @@ let peaceBarSpeed = 0.0005;
 
 let stopSmileFrame = null;
 
-export function setupSmileScene() {
+//my-code
+let postButton;
+let durationList = [];
+let smileImage = null;
+
+export async function setupSmileScene() {
   canvas = createCanvas(480, 360);
   canvas.id("canvas");
 
@@ -39,6 +46,12 @@ export function setupSmileScene() {
   serial.open("/dev/cu.usbmodem1301");
   serial.on('connected', serverConnected);
   serial.on('error', gotError);
+
+  //my-code
+  postButton = createButton('click me')
+  postButton.mousePressed(() => postSmile(durationList, smileImage))
+  leaderboard = await getSmileLeaderboard(3)
+  console.log('totalSmileTime:',await getTotalSmileTime())
 }
 
 function serverConnected() {
@@ -154,6 +167,10 @@ function updateSmileTracking() {
         image: frozen
       });
 
+      //my-code
+      smileImage = frozen;
+      durationList.push(yourSmileDuration)
+
       yourSmileDuration = 0;
       smileStopped = true;
 
@@ -164,6 +181,8 @@ function updateSmileTracking() {
         w: box._width,
         h: box._height
       };
+
+      
     }
 
     prevSmileActive = false;
@@ -196,7 +215,10 @@ function drawLeaderboard() {
     let x = width - thumbW - 20;
     let y = 80 + i * (thumbH + 30);
 
-    image(entry.image, x, y, thumbW, thumbH);
+    loadImage(entry.image, (img) => {
+      image(img, x, y, thumbW, thumbH)
+    })
+    //image(entry.image, x, y, thumbW, thumbH);
 
     // Draw time text under thumbnail
     fill(255);
