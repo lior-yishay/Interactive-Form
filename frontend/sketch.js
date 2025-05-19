@@ -1,9 +1,9 @@
 import { GENDER_BALLS, NAME, SMILE } from "./scenes-names.js";
 import { drawGenderBallsScene, mousePresseGenderBallsScene, setupGenderBallsScene } from "./scenes/gender-balls/gender-balls.js";
 import { drawNameScene, setupNameScene } from "./scenes/name/name.js";
-import { drawSmileScene, setupSmileScene } from "./scenes/smile/smile.js";
+import { drawSmileScene, setupSmileScene, smileWindowResized } from "./scenes/smile/smile.js";
 
-let currentScene = NAME;
+let currentScene = SMILE;
 export const setCurrentScene = (sceneName) => {
   currentScene = sceneName
 }
@@ -28,6 +28,11 @@ const mousePressed = () => {
   if (currentScene === SMILE) undefined;
 }
 
+const windowResized = () => {
+  if(currentScene === SMILE) smileWindowResized();
+}
+
 window.setup = setup
 window.draw = draw
 window.mousePressed = mousePressed
+// window.windowResized = windowResized
