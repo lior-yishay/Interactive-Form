@@ -1,6 +1,7 @@
 import { get, post } from "../../api/axios.js"
 import { nextScene } from "../../scene-chain.js"
 import { NAME } from "../../scenes-names.js"
+import { setSceneAnswer } from "../i-belive-in/logic.js"
 
 export const getNameHistory = async (top) => {
   return await get(NAME, {top})
@@ -8,6 +9,7 @@ export const getNameHistory = async (top) => {
 
 export const postName = async (strokes) => {
   await post(NAME, {strokes})
+  setSceneAnswer(NAME, {strokes})
   // nextScene()
 }
 

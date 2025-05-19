@@ -2,6 +2,7 @@ import { get, post } from "../../api/axios.js"
 import { imageToBase64 } from "../../api/utils.js"
 import { nextScene } from "../../scene-chain.js"
 import { SMILE, SMILE_LEADERBOARD, SMILE_TIME } from "../../scenes-names.js"
+import { setSceneAnswer } from "../i-belive-in/logic.js"
 
 export const getSmileLeaderboard = async (top) => {
   const leaderboardBase64 = await get(SMILE_LEADERBOARD, {top})
@@ -19,6 +20,7 @@ export const postSmile = async (durationList, image) => {
   }), { max: -Infinity, total: 0 });
 
   await post(SMILE, {duration: {max, total}, image: imageToBase64(image)})
+  setSceneAnswer(SMILE, {duration: {max, total}, image})
   //nextScene()
 }
 
