@@ -1,5 +1,5 @@
 import { SMILE, GENDER_BALLS } from "./scenes-names.js";
-import { setupSmileScene } from "./scenes/smile/smile.js";
+import { setupSmileScene } from "./scenes/smile/sketch.js";
 import { getCurrentScene, setCurrentScene } from "./sketch.js";
 
 export const nextScene = () => {

@@ -24,7 +24,7 @@ export const postSmile = async (durationList, image) => {
 
 const loadLeaderboardImages = async (base64List) => {
   const loadPromises = base64List.map(({ duration, image }) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       loadImage(image, 
         (img) => resolve({ duration, image: img }),
         (err) => reject(`failed to load image:${err}`));
