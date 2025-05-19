@@ -1,20 +1,20 @@
-import { ICE_CREAM_SANDWICH_COLLECTION } from "../../../data-access/collections.js"
+import { AI_COLLECTION } from "../../../data-access/collections.js"
 import { connectToScenesDB } from "../../../data-access/db.js"
 
-export const incrementFlavorByOne = async (flavor) => {
+export const incrementAiByOne = async (age) => {
     const db = await connectToScenesDB()
-    const collection = db.collection(ICE_CREAM_SANDWICH_COLLECTION)
+    const collection = db.collection(AI_COLLECTION)
 
     await collection.updateOne(
-        { name: flavor },
+        { name: age },
         { $inc: { count: 1 } },
         { upsert: true }
     )
 }
 
-export const getAllFlavorsCounts = async () => {
+export const getAllAiCounts = async () => {
   const db = await connectToScenesDB();
-  const collection = db.collection(ICE_CREAM_SANDWICH_COLLECTION);
+  const collection = db.collection(AI_COLLECTION);
 
   const allDocuments = await collection.find().toArray();
 

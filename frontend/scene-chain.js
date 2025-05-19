@@ -1,10 +1,10 @@
-import { SMILE, GENDER_BALLS } from "./scenes-names.js";
+import { SMILE, GENDERS } from "./scenes-names.js";
 import { setupSmileScene } from "./scenes/smile/sketch.js";
 import { getCurrentScene, setCurrentScene } from "./sketch.js";
 
 export const nextScene = () => {
     switch(getCurrentScene()){
-        case GENDER_BALLS: 
+        case GENDERS: 
             setCurrentScene(SMILE)
             setupSmileScene()
             break

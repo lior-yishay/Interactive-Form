@@ -1,12 +1,12 @@
 import { get, post } from "../../api/axios.js"
 import { nextScene } from "../../scene-chain.js"
-import { GENDER_BALLS } from "../../scenes-names.js"
+import { GENDERS } from "../../scenes-names.js"
 
 export const getGenderCounts = async () => {
-  return await get(GENDER_BALLS)
+  return await get(GENDERS)
 }
 
 export const postGenderPick = async (gender) => {
-  await post(GENDER_BALLS, {gender})
+  await post(GENDERS, {gender})
   nextScene()
 }

@@ -1,12 +1,13 @@
 import cors from 'cors';
 import express, { application } from 'express';
-import { getAllGenderCounts, incrementGenderByOne as incrementGenderCount } from './scenes-logic/gender-balls/api.js';
+import { getAllGenderCounts, incrementGenderByOne as incrementGenderCount } from './scenes-logic/gender/api.js';
 import { closeConnection, connectToScenesDB } from '../data-access/db.js';
 import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './scenes-logic/politics/api.js';
 import { getAllLivingHereRecords, postLivingHerePick } from './scenes-logic/living-here/api.js';
 import { getAllFlavorsCounts, incrementFlavorByOne } from './scenes-logic/ice-cream-sandwich/api.js';
 import { getNameHistory, postName as insertName } from './scenes-logic/name/api.js';
 import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './scenes-logic/smile/api.js';
+import { getAllAiCounts, incrementAiByOne } from './scenes-logic/ai/api.js';
 
 const app = express();
 const port = 8000;
@@ -14,7 +15,7 @@ const port = 8000;
 app.use(cors());
 app.use(express.json());
 
-app.route('/api/gender-balls')
+app.route('/api/genders')
   .post(async (req, res) => {
     const gender = req.body.gender;
     console.log('Received gender:', gender);
@@ -153,6 +154,48 @@ app.route('/api/living-here')
         res.status(500).json({ status: 'ERROR', message: err.message });
       }
     })
+
+  app.route('/api/age')
+  .post(async (req, res) => {
+    const {age} = req.body;
+    console.log('Received age:', age);
+
+    try {
+      await incrementFlavorByOne(flavor);
+      res.json({ status: 'OK', received: flavor });
+    } catch (err) {
+      res.status(500).json({ status: 'ERROR', message: err.message });
+    }
+  })
+  .get(async (req, res) => {
+    try {
+      const data = await getAllFlavorsCounts();
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ status: 'ERROR', message: err.message });
+    }
+  });
+
+  app.route('/api/ai')
+  .post(async (req, res) => {
+    const {ai} = req.body;
+    console.log('Received ai:', ai);
+
+    try {
+      await incrementAiByOne(ai);
+      res.json({ status: 'OK', received: ai });
+    } catch (err) {
+      res.status(500).json({ status: 'ERROR', message: err.message });
+    }
+  })
+  .get(async (req, res) => {
+    try {
+      const data = await getAllAiCounts();
+      res.json(data);
+    } catch (err) {
+      res.status(500).json({ status: 'ERROR', message: err.message });
+    }
+  });
 
 
 app.listen(port, () => {

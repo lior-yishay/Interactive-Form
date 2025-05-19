@@ -1,9 +1,9 @@
-import { SMILE } from "../../../data-access/collections.js";
+import { SMILE_COLLECTION } from "../../../data-access/collections.js";
 import { connectToScenesDB } from "../../../data-access/db.js";
 
 export const insertSmile = async (duration, image) => {
     const db = await connectToScenesDB()
-    const collection = db.collection(SMILE)
+    const collection = db.collection(SMILE_COLLECTION)
 
     await collection.insertOne(
         { duration, image }
@@ -12,7 +12,7 @@ export const insertSmile = async (duration, image) => {
 
 export const getSmileLeaderboard = async (top = 3) => {
     const db = await connectToScenesDB();
-    const collection = db.collection(SMILE);
+    const collection = db.collection(SMILE_COLLECTION);
   
     let query = collection.find({}).sort({ 'duration.max': -1 }).limit(top);;
 
@@ -26,7 +26,7 @@ export const getSmileLeaderboard = async (top = 3) => {
 
 export const getTotalSmileTime = async () => {
     const db = await connectToScenesDB();
-    const collection = db.collection(SMILE);
+    const collection = db.collection(SMILE_COLLECTION);
 
     const result = await collection.aggregate([{
       $group: {
