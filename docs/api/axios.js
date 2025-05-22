@@ -1,4 +1,4 @@
-const URL_PREFIX = 'http://localhost:8000/api/'
+const URL_PREFIX = 'https://interactive-form.onrender.com/api/'
 
 export const get = async (sceneName, sendingData) => {
     try {
