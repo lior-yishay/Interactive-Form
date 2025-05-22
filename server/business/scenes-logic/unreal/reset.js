@@ -1,12 +1,10 @@
-import { UNREAL } from "../../../../frontend/scenes-names.js";
-import { ICE_CREAM_SANDWICH_COLLECTION } from "../../../data-access/collections.js";
+import { UNREAL_COLLECTION } from "../../../data-access/collections.js";
 import { closeConnection, connectToScenesDB } from "../../../data-access/db.js";
-import { FLAVORS } from "./flavors.js";
 import { UNREAL_OPTIONS } from "./options.js";
 
 export const resetGenders = async () => {
   const db = await connectToScenesDB();
-  const collection = db.collection(UNREAL);
+  const collection = db.collection(UNREAL_COLLECTION);
 
   const unrealDocs = UNREAL_OPTIONS.map(optoin => ({ name: option, count: 0 }));
 
