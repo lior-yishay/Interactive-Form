@@ -1,13 +1,13 @@
 import cors from 'cors';
 import express, { application } from 'express';
-import { getAllGenderCounts, incrementGenderByOne as incrementGenderCount } from './scenes-logic/gender/api.js';
-import { closeConnection, connectToScenesDB } from '../data-access/db.js';
-import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './scenes-logic/politics/api.js';
-import { getAllLivingHereRecords, postLivingHerePick } from './scenes-logic/living-here/api.js';
-import { getAllFlavorsCounts, incrementFlavorByOne } from './scenes-logic/ice-cream-sandwich/api.js';
-import { getNameHistory, postName as insertName } from './scenes-logic/name/api.js';
-import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './scenes-logic/smile/api.js';
-import { getAllAiCounts, incrementAiByOne } from './scenes-logic/ai/api.js';
+import { getAllGenderCounts, incrementGenderByOne as incrementGenderCount } from './business/scenes-logic/gender/api.js';
+import { closeConnection, connectToScenesDB } from './data-access/db.js';
+import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './business/scenes-logic/politics/api.js';
+import { getAllLivingHereRecords, postLivingHerePick } from './business/scenes-logic/living-here/api.js';
+import { getAllFlavorsCounts, incrementFlavorByOne } from './business/scenes-logic/ice-cream-sandwich/api.js';
+import { getNameHistory, postName as insertName } from './business/scenes-logic/name/api.js';
+import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './business/scenes-logic/smile/api.js';
+import { getAllAiCounts, incrementAiByOne } from './business/scenes-logic/ai/api.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
