@@ -1,7 +1,8 @@
+import { setupScene } from "./scene-setup.js";
 import { GENDERS, NAME, SMILE } from "./scenes-names.js";
-import { drawGendersScene as drawGendersScene, mousePresseGendersScene as mousePresseGendersScene, setupGendersScene as setupGendersScene } from "./scenes/genders/sketch.js";
-import { drawNameScene, setupNameScene } from "./scenes/name/sketch.js";
-import { drawSmileScene, setupSmileScene, smileWindowResized } from "./scenes/smile/sketch.js";
+import { drawGendersScene, mousePresseGendersScene } from "./scenes/genders/sketch.js";
+import { drawNameScene } from "./scenes/name/sketch.js";
+import { drawSmileScene, smileWindowResized } from "./scenes/smile/sketch.js";
 
 let currentScene = NAME;
 export const setCurrentScene = (sceneName) => {

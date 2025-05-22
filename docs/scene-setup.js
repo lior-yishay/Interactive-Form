@@ -1,4 +1,7 @@
-import { AI, END, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, START, UNREAL } from "./scenes-names";
+import { AGE, AI, END, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, START, UNREAL } from "./scenes-names.js";
+import { setupGendersScene } from "./scenes/genders/sketch.js";
+import { setupNameScene } from "./scenes/name/sketch.js";
+import { setupSmileScene } from "./scenes/smile/sketch.js";
 
 export const setupScene = (sceneName) => {
     if (sceneName === START) undefined;

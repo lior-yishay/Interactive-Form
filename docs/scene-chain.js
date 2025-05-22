@@ -1,5 +1,5 @@
 import { setupScene } from "./scene-setup.js";
-import { AGE, AI, END, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, POLITICS, SMILE, START, UNREAL } from "./scenes-names.js";
+import { AGE, AI, END, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, START, UNREAL } from "./scenes-names.js";
 import { getCurrentScene, setCurrentScene } from "./sketch.js";
 
 export const nextScene = () => sceneChain[getCurrentScene()]()
