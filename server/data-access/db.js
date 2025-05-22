@@ -1,13 +1,10 @@
 
-import { MongoClient, ServerApiVersion } from 'mongodb'
-import { admin } from './users.js'
+import { MongoClient, ServerApiVersion } from 'mongodb';
 
-// const uri = `mongodb+srv://${admin.username}:${admin.password}@cluster.qkx7xp8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster`;
-const uri = "mongodb+srv://adnimDB:k3gK7lIDtvnQYUWW@cluster.qkx7xp8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster";
-
+const MONGO_URI = process.env.MONGO_URI
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
+const client = new MongoClient(MONGO_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,

@@ -16,7 +16,7 @@ let labels = [
   "Travesti", "Tumtum", "Vakasalewalewa", "Waria", "Winkte", "X-gender", "X-jendā"
 ];
 
-export async function setupGenderBallsScene() {
+export async function setupGendersScene() {
   balls = []
   genderCounts = await getGenderCounts()
   createCanvas(windowWidth, windowHeight);
@@ -33,7 +33,7 @@ export async function setupGenderBallsScene() {
   }
 }
 
-export function drawGenderBallsScene() {
+export function drawGendersScene() {
   background(20);
   fill(255);
   noStroke();
@@ -50,7 +50,7 @@ export function drawGenderBallsScene() {
   
 }
 
-export async function mousePresseGenderBallsScene() {
+export async function mousePresseGendersScene() {
   for (let ball of balls) {
     if (ball.contains(mouseX, mouseY)) {
       ball.grow();

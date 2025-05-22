@@ -1,9 +1,9 @@
 import { GENDERS, NAME, SMILE } from "./scenes-names.js";
-import { drawGenderBallsScene, mousePresseGenderBallsScene, setupGenderBallsScene } from "./scenes/genders/sketch.js";
+import { drawGendersScene as drawGendersScene, mousePresseGendersScene as mousePresseGendersScene, setupGendersScene as setupGendersScene } from "./scenes/genders/sketch.js";
 import { drawNameScene, setupNameScene } from "./scenes/name/sketch.js";
 import { drawSmileScene, setupSmileScene, smileWindowResized } from "./scenes/smile/sketch.js";
 
-let currentScene = SMILE;
+let currentScene = NAME;
 export const setCurrentScene = (sceneName) => {
   currentScene = sceneName
 }
@@ -11,20 +11,18 @@ export const setCurrentScene = (sceneName) => {
 export const getCurrentScene = () => currentScene
 
 const setup = () => {
-  if (currentScene === NAME) setupNameScene();
-  if (currentScene === GENDERS) setupGenderBallsScene();
-  if (currentScene === SMILE) setupSmileScene()
+  setupScene(currentScene)
 }
 
 const draw = () => {
   if (currentScene === NAME) drawNameScene()
-  if (currentScene === GENDERS) drawGenderBallsScene();
+  if (currentScene === GENDERS) drawGendersScene();
   if (currentScene === SMILE) drawSmileScene();
 }
 
 const mousePressed = () => {
   if (currentScene === NAME) undefined
-  if (currentScene === GENDERS) mousePresseGenderBallsScene();
+  if (currentScene === GENDERS) mousePresseGendersScene();
   if (currentScene === SMILE) undefined;
 }
 

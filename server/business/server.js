@@ -10,7 +10,7 @@ import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './scenes-lo
 import { getAllAiCounts, incrementAiByOne } from './scenes-logic/ai/api.js';
 
 const app = express();
-const port = 8000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
