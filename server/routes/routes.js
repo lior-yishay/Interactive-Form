@@ -1,7 +1,8 @@
 import { createUrl } from "../utils/createUrl.js"
 
-export const PREFIX = '/api'
+export const EVENTS = '/events'
 
+export const PREFIX = '/api'
 export const NAME = createUrl(PREFIX, 'name')
 export const GENDERS = createUrl(PREFIX, 'genders')
 export const SMILE = createUrl(PREFIX, 'smile')

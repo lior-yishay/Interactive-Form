@@ -3,6 +3,7 @@ import express from 'express';
 
 import { closeConnection, connectToScenesDB } from './data-access/db.js';
 
+import dotenv from 'dotenv';
 import { incrementAgeByOne } from './business/scenes-logic/age/api.js';
 import { getAllAiCounts, incrementAiByOne } from './business/scenes-logic/ai/api.js';
 import { getAllGenderCounts, incrementGenderByOne } from './business/scenes-logic/gender/api.js';
@@ -12,9 +13,9 @@ import { getNameHistory, postName } from './business/scenes-logic/name/api.js';
 import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './business/scenes-logic/politics/api.js';
 import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './business/scenes-logic/smile/api.js';
 import { logger } from './logger/logger.js';
-import { AGE, AI, GENDERS, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME } from './routes/routes.js';
+import { AGE, AI, GENDERS, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, EVENTS as EVENTS } from './routes/routes.js';
 import { createRoute } from './utils/AppRouteHandler.js';
-import dotenv from 'dotenv';
+import { addSubscriber } from './utils/broadcast.js';
 
 dotenv.config();
 
@@ -25,7 +26,10 @@ app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Routes
+app.get(EVENTS, (req, res) => {
+  addSubscriber(res);
+});
+
 app.route(GENDERS).all(createRoute({
   methodHandlers: {
     post: (req) => incrementGenderByOne(req.body.gender),
@@ -62,6 +66,7 @@ app.route(NAME).all(createRoute({
     post: (req) => postName(req.body.strokes),
     get: (req) => getNameHistory(Number(req.query.top)),
   },
+  broadcast: true
 }));
 
 app.route(SMILE).all(createRoute({

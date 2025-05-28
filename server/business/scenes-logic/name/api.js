@@ -8,6 +8,8 @@ export const postName = async (strokes) => {
     await collection.insertOne(
         { createdOn: new Date, strokes }
     )
+
+    return strokes
 }
 
 export const getNameHistory = async (top) => {

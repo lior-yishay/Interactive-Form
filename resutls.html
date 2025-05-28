@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>SSE Broadcast Client</title>
+</head>
+<body>
+  <h1>Broadcast Listener</h1>
+  <pre id="log"></pre>
+
+  <script>
+    const log = (msg) => {
+      const el = document.getElementById('log');
+      el.textContent += msg + '\n';
+    };
+
+    const source = new EventSource('http://localhost:3000/events');
+
+    // Example event listeners by endpoint type
+    source.addEventListener('/api/name', (event) => {
+      const data = JSON.parse(event.data);
+      console.log('name update', data)
+      log(`👫 Name Update: ${JSON.stringify(data)}`);
+    });
+
+    source.addEventListener('/api/gender', (event) => {
+      const data = JSON.parse(event.data);
+      log(`👫 Gender Update: ${JSON.stringify(data)}`);
+    });
+
+    source.addEventListener('/api/ai', (event) => {
+      const data = JSON.parse(event.data);
+      log(`🤖 AI Update: ${JSON.stringify(data)}`);
+    });
+
+    source.addEventListener('/api/age', (event) => {
+      const data = JSON.parse(event.data);
+      log(`🎂 Age Update: ${JSON.stringify(data)}`);
+    });
+
+    source.onerror = (err) => {
+      console.error('SSE error:', err);
+      log('❌ SSE Error');
+    };
+  </script>
+</body>
+</html>
