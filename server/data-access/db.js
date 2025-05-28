@@ -1,21 +1,24 @@
 
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
-const MONGO_URI = process.env.MONGO_URI
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(MONGO_URI, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
+let client
 const SCENES_DB_NAME = 'scenes'
 let scenesDB;
 
+export const createMongoClient = () => {
+  const MONGO_URI = process.env.MONGO_URI
+  client = new MongoClient(MONGO_URI, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+}
+
 export const connectToScenesDB = async () => {
+  if(!client) createMongoClient()
+
   if (!scenesDB) {
     await client.connect()
     console.log('✅ connected to MongoDB')

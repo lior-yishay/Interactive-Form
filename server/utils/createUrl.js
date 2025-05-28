@@ -1,0 +1,1 @@
+export const createUrl = (...parts) => parts.join('/')

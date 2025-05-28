@@ -10,11 +10,15 @@ export const insertSmile = async (duration, image) => {
     )
 }
 
-export const getSmileLeaderboard = async (top = 3) => {
+export const getSmileLeaderboard = async (top) => {
     const db = await connectToScenesDB();
     const collection = db.collection(SMILE_COLLECTION);
   
     let query = collection.find({}).sort({ 'duration.max': -1 }).limit(top);;
+
+    if (typeof top === 'number' && top > 0) {
+        query = query.limit(top);
+    }
 
     const results = await query.toArray();
 
