@@ -78,7 +78,7 @@ export async function setupGendersScene() {
     stars[i].shapeType = 'circle';
   }
 }
-export function gendersWindowResized() {
+export function windowResizedGendersScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 

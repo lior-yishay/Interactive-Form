@@ -64,7 +64,7 @@ export async function setupSmileScene() {
 
 }
 
-export function smileWindowResized() {
+export function windowResizedSmileScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 

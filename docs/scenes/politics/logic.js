@@ -3,7 +3,7 @@ import { nextScene } from "../../scene-chain.js"
 import { POLITICS } from "../../scenes-names.js"
 import { setSceneAnswer } from "../i-belive-in/logic.js"
 
-export const getGenderCounts = async () => {
+export const getPoliticsCounts = async () => {
   return await get(POLITICS)
 }
 

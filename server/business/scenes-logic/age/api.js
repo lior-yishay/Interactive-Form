@@ -12,7 +12,7 @@ export const incrementAgeByOne = async (age) => {
     )
 }
 
-export const getAllFlavorsCounts = async () => {
+export const getAllAgeCounts = async () => {
   const db = await connectToScenesDB();
   const collection = db.collection(AGE_COLLECTION);
 

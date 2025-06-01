@@ -1,43 +1,21 @@
-import { setupScene } from "./scene-setup.js";
-import { GENDERS, NAME, SMILE } from "./scenes-names.js";
-import { drawGendersScene, gendersWindowResized, mousePressedGendersScene, preloadGendersScene } from "./scenes/genders/sketch.js";
-import { drawNameScene } from "./scenes/name/sketch.js";
-import { drawSmileScene, smileWindowResized } from "./scenes/smile/sketch.js";
+import { p5Functions } from "./p5-scene-functions.js";
+import { GENDERS, I_BELIEVE_IN, SMILE } from "./scenes-names.js";
 
-let currentScene = GENDERS;
+let currentScene = I_BELIEVE_IN;
+export const getCurrentScene = () => currentScene
+
 export const setCurrentScene = (sceneName) => {
   currentScene = sceneName
 }
 
-export const getCurrentScene = () => currentScene
+const callIfExsist = (func) => func ? func() : undefined
 
-const setup = () => {
-  setupScene(currentScene)
-}
+window.setup = () => callIfExsist(p5Functions[currentScene]?.setup)
+window.draw = () => callIfExsist(p5Functions[currentScene]?.draw)
+window.mousePressed = () => callIfExsist(p5Functions[currentScene]?.mousePressed)
+window.windowResized = () => callIfExsist(p5Functions[currentScene]?.windowResized)
+window.preload = () => callIfExsist(p5Functions[currentScene]?.preload)
+window.mouseDragged = () => callIfExsist(p5Functions[currentScene]?.mouseDragged)
+window.mouseReleased = () => callIfExsist(p5Functions[currentScene]?.mouseReleased)
 
-const draw = () => {
-  if (currentScene === NAME) drawNameScene()
-  if (currentScene === GENDERS) drawGendersScene();
-  if (currentScene === SMILE) drawSmileScene();
-}
 
-const mousePressed = () => {
-  if (currentScene === NAME) undefined
-  if (currentScene === GENDERS) mousePressedGendersScene();
-  if (currentScene === SMILE) undefined;
-}
-
-const windowResized = () => {
-  if(currentScene === SMILE) smileWindowResized();
-  if(currentScene === GENDERS) gendersWindowResized()
-}
-
-const preload = () => {
-  if(currentScene === GENDERS) preloadGendersScene()
-}
-
-window.setup = setup
-window.draw = draw
-window.mousePressed = mousePressed
-window.windowResized = windowResized
-window.preload = preload

@@ -1,15 +1,5 @@
-export const answers = {
-    name: undefined,
-    genders: undefined,
-    age: undefined,
-    livingHere: undefined,
-    politics: undefined,
-    iceCreamSandwich: undefined,
-    smile: undefined,
-    unreal: undefined,
-    ai: undefined,
-    //continue 
-}
+
+export const answers = {}
 
 export const setSceneAnswer = (sceneName, value) => {
     answers[sceneName] = value

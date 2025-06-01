@@ -1,24 +1,26 @@
-import { setupScene } from "./scene-setup.js";
+import { p5Functions } from "./p5-scene-functions.js";
 import { AGE, AI, END, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, START, UNREAL } from "./scenes-names.js";
 import { getCurrentScene, setCurrentScene } from "./sketch.js";
 
 export const nextScene = () => sceneChain[getCurrentScene()]()
 
-const changeScene = (sceneName) => {
+const changeToScene = (sceneName) => {
     setCurrentScene(sceneName)
-    setupScene(sceneName)
+    p5Functions[sceneName].preload()
+    p5Functions[sceneName].setup()
 }
 
 const sceneChain = {
-    [START]: () => changeScene(NAME),
-    [NAME]: () => changeScene(GENDERS), 
-    [GENDERS]: () => changeScene(AGE),
-    [AGE]: () => changeScene(AGE),
-    [LIVING_HERE]: () => changeScene(AGE),
-    [POLITICS]: () => changeScene(AGE),
-    [ICE_CREAM_SANDWICH]: () => changeScene(AGE),
-    [SMILE]: () => changeScene(AGE),
-    [UNREAL]: () => changeScene(AGE),
-    [I_BELIEVE_IN]: () => changeScene(AGE),
-    [AI]: () => changeScene(END),
+    [START]: () => changeToScene(NAME),
+    [NAME]: () => changeToScene(GENDERS), 
+    [GENDERS]: () => changeToScene(AGE),
+    [AGE]: () => changeToScene(LIVING_HERE),
+    [LIVING_HERE]: () => changeToScene(POLITICS),
+    [POLITICS]: () => changeToScene(ICE_CREAM_SANDWICH),
+    [ICE_CREAM_SANDWICH]: () => changeToScene(SMILE),
+    // [SMILE]: () => changeToScene(UNREAL),
+    [SMILE]: () => changeToScene(I_BELIEVE_IN),
+    [UNREAL]: () => changeToScene(I_BELIEVE_IN),
+    [I_BELIEVE_IN]: () => changeToScene(AI),
+    [AI]: () => changeToScene(END),
 }

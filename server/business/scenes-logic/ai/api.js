@@ -1,12 +1,12 @@
 import { AI_COLLECTION } from "../../../data-access/collections.js"
 import { connectToScenesDB } from "../../../data-access/db.js"
 
-export const incrementAiByOne = async (age) => {
+export const incrementAiByOne = async (AiPick) => {
     const db = await connectToScenesDB()
     const collection = db.collection(AI_COLLECTION)
 
     await collection.updateOne(
-        { name: age },
+        { name: AiPick },
         { $inc: { count: 1 } },
         { upsert: true }
     )

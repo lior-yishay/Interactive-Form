@@ -21,7 +21,7 @@ export const postSmile = async (durationList, image) => {
 
   await post(SMILE, {duration: {max, total}, image: imageToBase64(image)})
   setSceneAnswer(SMILE, {duration: {max, total}, image})
-  //nextScene()
+  nextScene()
 }
 
 const loadLeaderboardImages = async (base64List) => {

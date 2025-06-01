@@ -4,7 +4,7 @@ import express from 'express';
 import { closeConnection, connectToScenesDB } from './data-access/db.js';
 
 import dotenv from 'dotenv';
-import { incrementAgeByOne } from './business/scenes-logic/age/api.js';
+import { getAllAgeCounts, incrementAgeByOne } from './business/scenes-logic/age/api.js';
 import { getAllAiCounts, incrementAiByOne } from './business/scenes-logic/ai/api.js';
 import { getAllGenderCounts, incrementGenderByOne } from './business/scenes-logic/gender/api.js';
 import { getAllFlavorsCounts, incrementFlavorByOne } from './business/scenes-logic/ice-cream-sandwich/api.js';
