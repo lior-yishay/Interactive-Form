@@ -1,5 +1,5 @@
 import { SMILE } from "../../scenes-names.js";
-import { getSceneAnswer } from "./logic.js";
+import { getSceneAnswer, postMagnetPositions } from "./logic.js";
 
 let magnets = [];
 let colors = ['#10A959', '#FFC700', '#F14E1D', '#EEEEEE'];

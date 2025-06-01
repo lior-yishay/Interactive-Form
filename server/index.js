@@ -13,9 +13,10 @@ import { getNameHistory, postName } from './business/scenes-logic/name/api.js';
 import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './business/scenes-logic/politics/api.js';
 import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './business/scenes-logic/smile/api.js';
 import { logger } from './logger/logger.js';
-import { AGE, AI, GENDERS, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, EVENTS as EVENTS } from './routes/routes.js';
+import { AGE, AI, GENDERS, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, EVENTS, I_BELIEVE_IN } from './routes/routes.js';
 import { createRoute } from './utils/AppRouteHandler.js';
 import { addSubscriber } from './utils/broadcast.js';
+import { getMagnetPositions, saveMagnetPositions } from './business/scenes-logic/i belive in/api.js';
 
 dotenv.config();
 
@@ -100,6 +101,13 @@ app.route(AGE).all(createRoute({
     get: () => getAllAgeCounts(),
   }
 }));
+
+app.route(I_BELIEVE_IN).all(createRoute({
+  methodHandlers: {
+    post: (req) => saveMagnetPositions(req.body.magnets),
+    get: () => getMagnetPositions(Number(req.query.top))
+  }
+}))
 
 // Start server
 app.listen(port, () => {
