@@ -1,5 +1,5 @@
 import { SMILE } from "../../scenes-names.js";
-import { getSceneAnswer, postMagnetPositions } from "./logic.js";
+import { getMagnets, getSceneAnswer, postMagnetPositions } from "./logic.js";
 
 let magnets = [];
 let colors = ['#10A959', '#FFC700', '#F14E1D', '#EEEEEE'];
@@ -24,9 +24,9 @@ export function preloadIBeliveInScene() {
   // mayaShiriImage = loadImage('twopeople.jpg'); // NEW
 }
 
-export function setupIBeliveInScene() {
+export async function setupIBeliveInScene() {
   createCanvas(windowWidth, windowHeight);
-  setupMagnets();
+  // setupMagnets(); 
   planetX = 0;
 
   let noteScale = 0.10;
@@ -38,6 +38,18 @@ export function setupIBeliveInScene() {
 
   //my code
   smileImage = getSceneAnswer(SMILE)?.image
+
+  textSizeVal = width * 0.045;
+  textSize(textSizeVal);
+
+  let topOffset = 200;
+  let fridgeWidth = width * 0.8;
+  let fridgeX = (width - fridgeWidth) / 2;
+  let topX = fridgeX - 20;
+  let topWidth = fridgeWidth - 20;
+  let topHeight = height - topOffset + 50;
+
+  magnets = await getMagnets(colors, () => radians(random(-15, 15)), topX, topOffset, topWidth, topHeight)
 }
 
 export function windowResizedIBeliveIn() {
@@ -296,7 +308,7 @@ export function mouseReleasedIBeliveInScene() {
   draggingNote = false;
 }
 
-class Magnet {
+export class Magnet {
   constructor(char, x, y, col, rot, boundX, boundY, boundW, boundH) {
     this.char = char;
     this.pos = createVector(x, y);

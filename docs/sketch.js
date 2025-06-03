@@ -1,5 +1,5 @@
 import { p5Functions } from "./p5-scene-functions.js";
-import { GENDERS, I_BELIEVE_IN, SMILE } from "./scenes-names.js";
+import { GENDERS, I_BELIEVE_IN, POLITICS, SMILE } from "./scenes-names.js";
 
 let currentScene = I_BELIEVE_IN;
 export const getCurrentScene = () => currentScene
@@ -17,5 +17,3 @@ window.windowResized = () => callIfExsist(p5Functions[currentScene]?.windowResiz
 window.preload = () => callIfExsist(p5Functions[currentScene]?.preload)
 window.mouseDragged = () => callIfExsist(p5Functions[currentScene]?.mouseDragged)
 window.mouseReleased = () => callIfExsist(p5Functions[currentScene]?.mouseReleased)
-
-

@@ -105,7 +105,7 @@ app.route(AGE).all(createRoute({
 app.route(I_BELIEVE_IN).all(createRoute({
   methodHandlers: {
     post: (req) => saveMagnetPositions(req.body.magnets),
-    get: () => getMagnetPositions(Number(req.query.top))
+    get: (req) => getMagnetPositions(Number(req.query.top))
   }
 }))
 
