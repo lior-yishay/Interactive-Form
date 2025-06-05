@@ -101,7 +101,7 @@ function postAiPick(aiPick) {
 }
 
 /* ---------- Politics ---------- */
-function getPoliticsCounts() {
+export function getPoliticsCounts() {
   return {
     left: 150,
     center: 150,

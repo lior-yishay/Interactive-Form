@@ -1,7 +1,7 @@
 import { p5Functions } from "./p5-scene-functions.js";
 import { GENDERS, I_BELIEVE_IN, POLITICS, SMILE } from "./scenes-names.js";
 
-let currentScene = I_BELIEVE_IN;
+let currentScene = POLITICS;
 export const getCurrentScene = () => currentScene
 
 export const setCurrentScene = (sceneName) => {

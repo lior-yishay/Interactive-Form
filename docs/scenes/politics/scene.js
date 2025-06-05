@@ -1,65 +1,81 @@
-import { generateBalls } from "./logic.js";
+import { getPoliticsCounts } from "../../../proxy server/proxyServer.js";
+
+let Engine = Matter.Engine,
+    World = Matter.World,
+    Bodies = Matter.Bodies;
+
+let engine, world;
 
 let font;
-let container = [];
-let scaledContainer = [];
+let walls = [];
 export let balls = [];
-let gravity = 0.9;
-let damping = -0.4;
-let friction = 0.95;
-
-let containerX, containerY, containerW, containerH;
 
 export function preloadPoliticsScene() {
   font = loadFont('./assets/GT-Maru-Bold-Trial.otf')
-  container = loadJSON("./assets/accurate_left_container.json");
 }
 
 export async function setupPoliticsScene() {
   createCanvas(windowWidth, windowHeight);
   textFont(font);
   textAlign(CENTER, CENTER);
-  container = Object.values(container);
 
-  containerX = width * 0.05;
-  containerY = height * 0.2;
-  containerW = width * 0.42;
-  containerH = height * 0.7;
+  engine = Engine.create();  // create engine
+  world = engine.world;      // reference the world inside engine
 
-  scaledContainer = container.map(pt => [
-    containerX + pt[0] * containerW,
-    containerY + pt[1] * containerH
-  ]);
+  const wallsThickness = (width + height) / 200
+  const wallheight = height * 2 / 3
+  const wallsXPos = [- wallsThickness/2,  width/2 - width/15, width/2 + width/15, width + wallsThickness/2]
 
-  await generateBalls(150, 850, 0, 0, 0, 0)
+  walls = wallsXPos.map(x => Bodies.rectangle(x, height - wallheight / 2, wallsThickness, wallheight, { isStatic: true } ))
+  walls.push( Bodies.rectangle(width / 2, height - wallsThickness / 2, width, wallsThickness, { isStatic: true } ) )
+  World.add(world, walls);
+
+  await generateBalls(width)
 }
 
 export function drawPoliticsScene() {
-  background(0);
+  background(240);
+  Engine.update(engine);
   drawHeadline();
-  drawContainerShape();
 
-  for (let i = 0; i < balls.length; i++) {
-    let ball = balls[i];
-    ball.applyPhysics();
-    for (let j = i + 1; j < balls.length; j++) {
-      ball.collideWith(balls[j]);
-    }
-    ball.updateContainment(scaledContainer);
-    ball.containWithinCanvasOrContainer();
-    ball.display();
+  drawBalls()
+  drawWalls()
+}
+
+export function mousePressedPoliticsScene() {
+   addBall(mouseX, mouseY)
+}
+
+export function windowResizedPoliticsScene() {
+  resizeCanvas(windowWidth, windowHeight);
+  setupPoliticsScene();
+}
+
+function drawBalls() {
+  fill(255, 0, 100);
+  noStroke();
+  for (let ball of balls) {
+    ellipse(ball.position.x, ball.position.y, ball.circleRadius * 2);
+  }
+}
+
+function drawWalls() {
+  fill(0);
+  for (let wall of walls) {
+    rectMode(CENTER);
+    rect(wall.position.x, wall.position.y, wall.bounds.max.x - wall.bounds.min.x, wall.bounds.max.y - wall.bounds.min.y);
   }
 }
 
 function drawHeadline() {
-  fill('#D9FF00');
+  fill(255, 0, 100);
   noStroke();
   let x = width * 0.07;
   let y = height * 0.05;
   textSize(height * 0.04);
   textAlign(LEFT, TOP);
   text("POLITICALLY", x, y);
-  text("SPEAKING I'M", x, y + height * 0.05);
+  text("SPEAKING IM", x, y + height * 0.05);
 
   stroke('#D9FF00');
   noFill();
@@ -72,141 +88,29 @@ function drawHeadline() {
   endShape();
 }
 
-function drawContainerShape() {
-  stroke(255);
-  strokeWeight(2);
-  noFill();
-  beginShape();
-  for (let pt of scaledContainer) {
-    vertex(pt[0], pt[1]);
-  }
-  endShape();
+function addBall(x, y) {
+  let r = (width + height) / 150
+  let ball = Bodies.circle(x, y, r, {
+    restitution: 0.8,
+    friction: 0.1
+  });
+  balls.push(ball);
+  World.add(world, ball);
 }
 
-export function mousePressedPoliticsScene() {
-    console.log(mouseX, mouseY)
-  balls.push(new Ball(mouseX, mouseY, randomLetter()));
-}
-
-function randomLetter() {
-  let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  return chars.charAt(floor(random(chars.length)));
-}
-
-export class Ball {
-  constructor(x, y, letter) {
-    this.x = x;
-    this.y = y;
-    this.r = min(width, height) * 0.02;
-    this.vx = random(-0.1, 0.1);
-    this.vy = 0;
-    this.letter = letter;
-    this.wasInsideContainer = false; // 🟢 key flag!
-  }
-
-  applyPhysics() {
-    this.vy += gravity;
-    this.x += this.vx;
-    this.y += this.vy;
-
-    this.vx *= 0.985;
-    this.vy *= 0.985;
-  }
-
-  collideWith(other) {
-    let dx = this.x - other.x;
-    let dy = this.y - other.y;
-    let dist = sqrt(dx * dx + dy * dy);
-    let minDist = this.r + other.r;
-
-    if (dist < minDist && dist > 0) {
-      let angle = atan2(dy, dx);
-      let overlap = (minDist - dist) * 0.5;
-
-      let ax = cos(angle) * overlap;
-      let ay = sin(angle) * overlap;
-
-      this.x += ax;
-      this.y += ay;
-      other.x -= ax;
-      other.y -= ay;
-
-      let tempVX = this.vx;
-      let tempVY = this.vy;
-      this.vx = other.vx * 0.5;
-      this.vy = other.vy * 0.5;
-      other.vx = tempVX * 0.5;
-      other.vy = tempVY * 0.5;
-    }
-  }
-
-  updateContainment(polygon) {
-    // check if still inside container
-    let bottom = [this.x, this.y + this.r];
-    if (pointInPolygon(bottom, polygon)) {
-      this.wasInsideContainer = true;
-    }
-  }
-
-  containWithinCanvasOrContainer() {
-    if (this.wasInsideContainer) {
-      // 🟢 use container logic
-      if (this.y > containerY + containerH - this.r * 0.95) {
-        this.y = containerY + containerH - this.r * 0.95;
-        this.vy = 0;
-      }
-
-      if (this.x - this.r < containerX + 1) {
-        this.x = containerX + this.r + 1;
-        this.vx *= -0.3;
-      }
-
-      if (this.x + this.r > containerX + containerW - 1) {
-        this.x = containerX + containerW - this.r - 1;
-        this.vx *= -0.3;
-      }
-    } else {
-      // 🔵 use screen boundaries
-      if (this.x - this.r < 0) {
-        this.x = this.r;
-        this.vx *= -0.4;
-      }
-      if (this.x + this.r > width) {
-        this.x = width - this.r;
-        this.vx *= -0.4;
-      }
-      if (this.y + this.r > height) {
-        this.y = height - this.r;
-        this.vy = 0;
-      }
-    }
-  }
-
-  display() {
-    fill(255);
-    stroke(255);
-    ellipse(this.x, this.y, this.r * 2);
-    fill(0);
-    noStroke();
-    textSize(this.r);
-    text(this.letter, this.x, this.y + 1);
+function addBalls(num, x, y) {
+  for(let i = 0; i < num; i++){
+    addBall(x, y)
   }
 }
 
-function pointInPolygon(point, poly) {
-  let x = point[0], y = point[1];
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    let xi = poly[i][0], yi = poly[i][1];
-    let xj = poly[j][0], yj = poly[j][1];
-    let intersect = ((yi > y) !== (yj > y)) &&
-      (x < (xj - xi) * (y - yi) / ((yj - yi) + 0.00001) + xi);
-    if (intersect) inside = !inside;
+async function generateBalls (width, y = 750) {
+  const politicsCounts = await getPoliticsCounts()
+  const xPos = {
+    left: width/4,
+    center: width/2,
+    right: width*3/4
   }
-  return inside;
-}
 
-export function windowResizedPoliticsScene() {
-  resizeCanvas(windowWidth, windowHeight);
-  setupPoliticsScene();
+  Object.entries(politicsCounts).map(([key, value]) => addBalls(value, xPos[key], y))
 }
