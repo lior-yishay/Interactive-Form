@@ -1,5 +1,5 @@
 import { SMILE } from "../../scenes-names.js";
-import { getMagnets, getSceneAnswer, postMagnetPositions } from "./logic.js";
+import { getMagnets, getSceneAnswer, postMagnetPositions, updateWindowSizeAndMagnetsPos } from "./logic.js";
 
 let magnets = [];
 let colors = ['#10A959', '#FFC700', '#F14E1D', '#EEEEEE'];
@@ -50,11 +50,13 @@ export async function setupIBeliveInScene() {
   let topHeight = height - topOffset + 50;
 
   magnets = await getMagnets(colors, () => radians(random(-15, 15)), topX, topOffset, topWidth, topHeight)
+  setupMagnets()
 }
 
 export function windowResizedIBeliveIn() {
   resizeCanvas(windowWidth, windowHeight);
-  setupMagnets();
+  updateWindowSizeAndMagnetsPos(magnets)
+  //setupMagnets();
 }
 
 function setupMagnets() {

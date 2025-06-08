@@ -103,20 +103,20 @@ function postAiPick(aiPick) {
 /* ---------- Politics ---------- */
 export function getPoliticsCounts() {
   return {
-    left: 150,
-    center: 150,
-    right: 200
+    left: 250,
+    center: 250,
+    right: 250
   }
 }
 
-function postPoliticsLeft() {
+export function postPoliticsLeft() {
     console.log('picked politics: left')
 }
 
-function postPoliticsCenter() {
+export function postPoliticsCenter() {
     console.log('picked politics: center')
 }
 
-function postPoliticsRight() {
+export function postPoliticsRight() {
     console.log('picked politics: right')
 }

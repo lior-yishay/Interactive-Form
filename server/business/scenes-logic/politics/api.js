@@ -14,7 +14,7 @@ export const incrementPoliticalSideByOne = async (side) => {
 
 export const getAllPoliticalSideCounts = async () => {
   const db = await connectToScenesDB();
-  const collection = db.collection(GENDER_BALLS_COLLECTION);
+  const collection = db.collection(POLITICS_COLLECTION);
 
   const allDocuments = await collection.find().toArray();
 

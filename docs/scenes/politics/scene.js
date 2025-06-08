@@ -1,4 +1,5 @@
-import { getPoliticsCounts } from "../../../proxy server/proxyServer.js";
+import { getPoliticsCounts, postPoliticsCenter, postPoliticsLeft, postPoliticsRight } from "../../../proxy server/proxyServer.js";
+// import { getPoliticsCounts, postPoliticsCenter, postPoliticsLeft, postPoliticsRight } from "./logic.js";
 
 let Engine = Matter.Engine,
     World = Matter.World,
@@ -8,9 +9,11 @@ let engine, world;
 
 let font;
 let walls = [];
-export let balls = [];
+let balls = [];
 
-export function preloadPoliticsScene() {
+let politicsCounts;
+
+export async function preloadPoliticsScene() {
   font = loadFont('./assets/GT-Maru-Bold-Trial.otf')
 }
 
@@ -24,13 +27,14 @@ export async function setupPoliticsScene() {
 
   const wallsThickness = (width + height) / 200
   const wallheight = height * 2 / 3
-  const wallsXPos = [- wallsThickness/2,  width/2 - width/15, width/2 + width/15, width + wallsThickness/2]
+
+  const wallsXPos = [- wallsThickness/2, getLeftBarrierX(), getRightBarrierX(), width + wallsThickness/2]
 
   walls = wallsXPos.map(x => Bodies.rectangle(x, height - wallheight / 2, wallsThickness, wallheight, { isStatic: true } ))
   walls.push( Bodies.rectangle(width / 2, height - wallsThickness / 2, width, wallsThickness, { isStatic: true } ) )
   World.add(world, walls);
 
-  await generateBalls(width)
+  await generateBalls(height - wallsThickness, wallheight)
 }
 
 export function drawPoliticsScene() {
@@ -43,12 +47,40 @@ export function drawPoliticsScene() {
 }
 
 export function mousePressedPoliticsScene() {
-   addBall(mouseX, mouseY)
+  const x = mouseX
+  const y = mouseY
+  addBall(x, y)
+
+  if (x < getLeftBarrierX()){
+    postPoliticsLeft()
+    politicsCounts.left++
+  }
+
+  else if (x > getRightBarrierX()){
+    postPoliticsRight()
+    politicsCounts.right++
+  }
+
+  else {
+    postPoliticsCenter()
+    politicsCounts.center++
+  }
 }
 
 export function windowResizedPoliticsScene() {
   resizeCanvas(windowWidth, windowHeight);
+  // Clear all bodies and constraints from the world
+  World.clear(world, false); // false = don't keep the world instance itself
+  Engine.clear(engine);      // clear engine's internal references
   setupPoliticsScene();
+}
+
+function getLeftBarrierX() {
+  return width/2 - width/15
+}
+
+function getRightBarrierX() {
+  return width/2 + width/15
 }
 
 function drawBalls() {
@@ -98,19 +130,29 @@ function addBall(x, y) {
   World.add(world, ball);
 }
 
-function addBalls(num, x, y) {
+function addBalls(num, generateX, generateY) {
   for(let i = 0; i < num; i++){
-    addBall(x, y)
+    addBall(generateX(), generateY())
   }
 }
 
-async function generateBalls (width, y = 750) {
-  const politicsCounts = await getPoliticsCounts()
-  const xPos = {
-    left: width/4,
-    center: width/2,
-    right: width*3/4
+async function generateBalls (floorY, wallheight) {
+  if(!politicsCounts)
+    politicsCounts = await getPoliticsCounts()
+
+  balls = []
+  const xPosFuncs = {
+    left: () => random(0, getLeftBarrierX()),
+    center: () => random(getLeftBarrierX(), getRightBarrierX()),
+    right: () => random(getRightBarrierX(), width) 
   }
 
-  Object.entries(politicsCounts).map(([key, value]) => addBalls(value, xPos[key], y))
+  const getYPosFunc = (ballCount) => {
+    const wallY = height - wallheight
+    const maxY = floorY
+    const minY = wallY + (maxY - wallY) / (ballCount*4/maxY + 1)
+    return () => random(minY, maxY)
+  }
+
+  Object.entries(politicsCounts).map(([key, value]) => addBalls(value, xPosFuncs[key], getYPosFunc(value)))
 }
