@@ -1,1 +1,8 @@
-export const UNREAL_OPTIONS = []
+export const UNREAL_OPTIONS = [
+    "vaccines", 
+    "illuminati",
+    "aliens",
+    "flat earth",
+    "nes ziona",
+    "moon landing",
+]

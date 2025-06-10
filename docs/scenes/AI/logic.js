@@ -6,7 +6,15 @@ export const getAiCounts = async () => {
   return await get(AI)
 }
 
-export const postAiPick = async (ai) => {
+export const postAiFriend = async () => {
+  postAiPick('friend')
+}
+
+export const postAiEnemy = async () => {
+  postAiPick('friend')
+}
+
+const postAiPick = async (ai) => {
   await post(AI, {ai})
   setSceneAnswer(AI, {ai})
   //nextScene()

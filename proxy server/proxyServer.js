@@ -96,12 +96,16 @@ function getAiCounts() {
     }
 }
 
-function postAiPick(aiPick) {
-    console.log('picked ai:', aiPick)
+function postAiFriend() {
+    console.log('picked ai: friend')
+}
+
+function postAiEnemy() {
+    console.log('picked ai: enemy')
 }
 
 /* ---------- Politics ---------- */
-export function getPoliticsCounts() {
+function getPoliticsCounts() {
   return {
     left: 250,
     center: 250,
@@ -109,14 +113,94 @@ export function getPoliticsCounts() {
   }
 }
 
-export function postPoliticsLeft() {
+function postPoliticsLeft() {
     console.log('picked politics: left')
 }
 
-export function postPoliticsCenter() {
+function postPoliticsCenter() {
     console.log('picked politics: center')
 }
 
-export function postPoliticsRight() {
+function postPoliticsRight() {
     console.log('picked politics: right')
 }
+
+/* ---------- Living Here ---------- */
+function getLivingHereCounts() {
+  return {
+    iWillNot: 100,
+    education: 200,
+    mentalHealth: 300,
+    betterFuture: 400,
+    job: 500
+  }
+}
+
+function postLivingHere_iWillNot() {
+  return console.log("picked living here: i will not")
+}
+
+function postLivingHere_education() {
+  return console.log("picked living here: education")
+}
+
+function postLivingHere_mentalHealth() {
+  return console.log("picked living here: mental health")
+}
+
+function postLivingHere_betterFuture() {
+  return console.log("picked living here: better future")
+}
+
+function postLivingHere_job() {
+  return console.log("picked living here: job")
+}
+
+/* ---------- Unreal (captcha) ---------- */
+function getUnrealCounts() {
+  return {
+    vaccines: 100, 
+    illuminati: 200,
+    aliens: 300,
+    flatEarth: 400,
+    nesZiona: 500,
+    moonLanding: 600
+  }
+}
+
+/* ******************
+      IMPORTANT!!!
+   ******************
+pass a list that consist of only those values:
+    vaccines, 
+    illuminati,
+    aliens,
+    flat earth,
+    nes ziona,
+    moon landing,
+example: postUnrealPicks(["vaccines", "aliens", "moon landing"]) */
+function postUnrealPicks(picks) {
+   const UNREAL_OPTIONS = [
+    "vaccines", 
+    "illuminati",
+    "aliens",
+    "flat earth",
+    "nes ziona",
+    "moon landing",
+  ]
+
+  if(!Array.isArray(picks)){
+    console.log('the argument that was passed to postUnrealPicks func was not a list')
+    return
+  }
+
+  const invalidPicks = picks.filter(pick => !UNREAL_OPTIONS.includes(pick))
+  if(invalidPicks.length > 0){
+    console.log("the following picks are not valid:", invalidPicks)
+    return
+  }
+
+  console.log('unreal picks:', picks)
+}
+
+
