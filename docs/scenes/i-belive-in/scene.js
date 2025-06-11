@@ -59,8 +59,8 @@ export function windowResizedIBeliveIn() {
   //setupMagnets();
 }
 
-function setupMagnets() {
-  magnets = [];
+export function setupMagnets() {
+  const newMagnets = [];
   textSizeVal = width * 0.045;
   textSize(textSizeVal);
 
@@ -82,9 +82,11 @@ function setupMagnets() {
       let y = random(topOffset + textSizeVal, topOffset + topHeight - textSizeVal);
 
       let rot = radians(random(-15, 15));
-      magnets.push(new Magnet(letter, x, y, col, rot, topX, topOffset, topWidth, topHeight));
+      newMagnets.push(new Magnet(letter, x, y, col, rot, topX, topOffset, topWidth, topHeight));
     }
   }
+
+  return newMagnets
 }
 
 export function drawIBeliveInScene() {
@@ -251,7 +253,7 @@ pop();
   line(lineX, lineY1, lineX, lineY2);
 }
 
-export function mousePressedIBeliveInScene() {
+export async function mousePressedIBeliveInScene() {
   let noteScale = 0.10;
   let noteWidth = width * noteScale;
   let noteHeight = noteImage.height * (noteWidth / noteImage.width);

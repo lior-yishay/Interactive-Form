@@ -1,4 +1,7 @@
-import { genderCounts, getGenderCounts, postGenderPick } from "./logic.js";
+// import { getGenderCounts, postGenderPick } from "./logic.js";
+import { getGenderCounts, postGenderPick } from "../../../proxy server/proxyServer.js"
+
+let genderCounts = []
 
 let balls = [];
 let palette = ['#F14E1D', '#FFC700', '#10A959', '#C9B8FF', '#FFCBCB'];
@@ -9,7 +12,7 @@ export function preloadGendersScene() {
 }
 
 export async function setupGendersScene() {
-  await getGenderCounts()
+  genderCounts = await getGenderCounts()
 
   createCanvas(windowWidth, windowHeight);
   textFont(grottaFont);

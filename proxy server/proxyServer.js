@@ -1,5 +1,5 @@
 /* ---------- Genders ---------- */
-function getGenderCounts() {
+export function getGenderCounts() {
   return [
         { name: "male", count: 140 },
         { name: "female", count: 140 },
@@ -68,7 +68,7 @@ function getGenderCounts() {
     ]
 }
 
-function postGenderPick(gender) {
+export function postGenderPick(gender) {
   console.log('picked gender:', gender)
 }
 
@@ -105,7 +105,7 @@ function postAiEnemy() {
 }
 
 /* ---------- Politics ---------- */
-function getPoliticsCounts() {
+export function getPoliticsCounts() {
   return {
     left: 250,
     center: 250,
@@ -113,15 +113,15 @@ function getPoliticsCounts() {
   }
 }
 
-function postPoliticsLeft() {
+export function postPoliticsLeft() {
     console.log('picked politics: left')
 }
 
-function postPoliticsCenter() {
+export function postPoliticsCenter() {
     console.log('picked politics: center')
 }
 
-function postPoliticsRight() {
+export function postPoliticsRight() {
     console.log('picked politics: right')
 }
 

@@ -1,7 +1,7 @@
 import { get, post } from "../../api/axios.js"
 import { nextScene } from "../../scene-chain.js"
 import { I_BELIEVE_IN } from "../../scenes-names.js"
-import { Magnet } from "./scene.js"
+import { Magnet, setupMagnets } from "./scene.js"
 
 export const answers = {}
 let canvasWidth
@@ -16,7 +16,7 @@ export const getSceneAnswer = (sceneName) => {
 }
 
 // server connection
-export const getMagnetPositions = async (top) => {
+export const getMagnetRecords = async (top) => {
     return await get(I_BELIEVE_IN, {top})   
 }
 
@@ -36,8 +36,10 @@ export const postMagnetPositions = async (magnets) => {
 export const getMagnets = async (colors, randomRotationFunc, boundX, boundY, boundW, boundH) => {
     canvasWidth = width
     canvasHeight = height
-    return (await getMagnetPositions(1))[0].magnets
-            .map((magnetPosition, index) => 
+    const magnetsRecords = (await getMagnetRecords(1))[0]
+    return !magnetsRecords 
+            ? setupMagnets() 
+            : magnetsRecords.magnets.map((magnetPosition, index) => 
                 new Magnet( magnetPosition.letter,
                             magnetPosition.x * width,
                             magnetPosition.y * height,
