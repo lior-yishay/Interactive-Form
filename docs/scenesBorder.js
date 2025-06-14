@@ -1,3 +1,6 @@
+import { get, post } from "./api/axios.js"
+import { USER_NUMBER } from "./scenes-names.js"
+
 const padding = 5
 let navbarHeight, 
     nextButton = {
@@ -5,9 +8,10 @@ let navbarHeight,
         y: undefined,
         h: undefined,
         w: undefined,
-    }
-
-export const setupBoarder = () => {
+    },
+    userNumber
+export const setupBoarder = async () => {
+    userNumber = (await post(USER_NUMBER)).value
     navbarHeight = height / 20
     nextButton.w = width/10
     nextButton.h = navbarHeight * 2/3
@@ -24,6 +28,7 @@ export const drawNavbar = () => {
   textSize(20);
   textAlign(LEFT, CENTER)
   text("My Navbar", padding, navbarHeight /2);
+  drawUserNumber()
 }
 
 // Shared footer
@@ -37,9 +42,36 @@ export const drawFooter = () => {
 }
 
 export const drawNextButton = () => {
-    fill(0, 13, 38)
-    rect(nextButton.x, nextButton.y, nextButton.w, nextButton.h)
-    fill(255)
-    textAlign(CENTER, CENTER)
-    text("Next", nextButton.x + nextButton.w/2, nextButton.y + nextButton.h/2)
+  const { x, y, w, h } = nextButton;
+
+
+  // Optional: change color on hover
+  if (mouseOnNextBtn()) {
+    fill(0, 30, 80); // hover color
+    cursor(HAND);    // change cursor to pointer
+  } else {
+    fill(0, 13, 38); // normal color
+    cursor(ARROW);
+  }
+
+  // Draw the button rectangle
+  rect(x, y, w, h, 10); // rounded corners
+
+  // Draw the text
+  fill(255);
+  textAlign(CENTER, CENTER);
+  text("Next", x + w / 2, y + h / 2);
+};
+
+export const mouseOnNextBtn = () => {
+  const { x, y, w, h } = nextButton;
+
+  return mouseX >= x && mouseX <= x + w &&
+            mouseY >= y && mouseY <= y + h;
+}
+
+const drawUserNumber = () => {
+  textSize(16)
+  textAlign(CENTER, CENTER)
+  text(`user #${userNumber}`, width/2, navbarHeight/2)
 }

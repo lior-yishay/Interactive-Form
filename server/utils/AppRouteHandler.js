@@ -11,7 +11,7 @@ export const createRoute = ({ methodHandlers, broadcast: shouldBroadcast = false
 
     try {
       const result = await handler(req);
-      res.json(typeof result === 'object' ? result : { status: 'OK', data: result });
+      res.json(typeof result === 'object' ? result : { value: result });
 
       if (shouldBroadcast && method === 'post') {
         broadcast(req.originalUrl, result);

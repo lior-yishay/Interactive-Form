@@ -7,16 +7,17 @@ import dotenv from 'dotenv';
 import { getAllAgeCounts, incrementAgeByOne } from './business/scenes-logic/age/api.js';
 import { getAllAiCounts, incrementAiByOne } from './business/scenes-logic/ai/api.js';
 import { getAllGenderCounts, incrementGenderByOne } from './business/scenes-logic/gender/api.js';
+import { getMagnetPositions, saveMagnetPositions } from './business/scenes-logic/i belive in/api.js';
 import { getAllFlavorsCounts, incrementFlavorByOne } from './business/scenes-logic/ice-cream-sandwich/api.js';
 import { getAllLivingHereRecords, postLivingHerePick } from './business/scenes-logic/living-here/api.js';
 import { getNameHistory, postName } from './business/scenes-logic/name/api.js';
 import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './business/scenes-logic/politics/api.js';
 import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './business/scenes-logic/smile/api.js';
+import { getAndIncrementUserNumber } from './business/scenes-logic/user-number/api.js';
 import { logger } from './logger/logger.js';
-import { AGE, AI, GENDERS, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, EVENTS, I_BELIEVE_IN } from './routes/routes.js';
+import { AGE, AI, EVENTS, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, USER_NUMBER } from './routes/routes.js';
 import { createRoute } from './utils/AppRouteHandler.js';
 import { addSubscriber } from './utils/broadcast.js';
-import { getMagnetPositions, saveMagnetPositions } from './business/scenes-logic/i belive in/api.js';
 
 dotenv.config();
 
@@ -30,6 +31,12 @@ app.use(logger);
 app.get(EVENTS, (req, res) => {
   addSubscriber(res);
 });
+
+app.route(USER_NUMBER).all(createRoute({
+  methodHandlers: {
+    post: () => getAndIncrementUserNumber()
+  }
+}))
 
 app.route(GENDERS).all(createRoute({
   methodHandlers: {
