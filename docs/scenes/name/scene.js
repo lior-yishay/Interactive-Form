@@ -1,4 +1,4 @@
-import { drawNameHistory, recordStroke } from "./logic.js";
+import { drawNameHistoryBuffer, recordStroke, setupNameHistoryBuffer } from "./logic.js";
 
 let brushSizeSlider;
 let selectedColor;
@@ -26,12 +26,13 @@ export function preloadNameScene() {
 
 }
 
-export function setupNameScene() {
+export async function setupNameScene() {
   createCanvas(windowWidth, windowHeight);
   imageMode(CORNER);
   noStroke();
+
   canvasBuffer = createGraphics(width, height);
-  canvasBuffer.clear();
+  await setupNameHistoryBuffer() //lior's code
 
   addCustomSliderStyles();
 
@@ -125,9 +126,6 @@ export function setupNameScene() {
   nameYTarget = helloYTarget + 60;
   helloYCurrent = helloYTarget + 60;
   nameYCurrent = nameYTarget + 60;
-
-  //lior's code
-  drawNameHistory(3)
 }
 
 export function drawNameScene() {
@@ -139,6 +137,7 @@ export function drawNameScene() {
   for (let y = 0; y < height; y += gridSize) line(0, y, width, y);
 
   drawCardLayout();
+  drawNameHistoryBuffer() //lior's code
   image(canvasBuffer, 0, 0);
   drawTextOverlay();
 
@@ -214,7 +213,7 @@ function drawBrush() {
   canvasBuffer.strokeWeight(brushSizeSlider.value());
   canvasBuffer.strokeCap(ROUND);
 
-  const steps = 1;
+  const steps = isErasing ? 1 : 3; //lior changed this from 10
   for (let i = 0; i < steps; i++) {
     const x1 = lerp(pmouseX, mouseX, i / steps);
     const y1 = lerp(pmouseY, mouseY, i / steps);
