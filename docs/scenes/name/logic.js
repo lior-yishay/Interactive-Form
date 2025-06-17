@@ -1,5 +1,4 @@
 import { get, post } from "../../api/axios.js"
-import { nextScene } from "../../scene-chain.js"
 import { NAME } from "../../scenes-names.js"
 import { setSceneAnswer } from "../i-belive-in/logic.js"
 
@@ -76,6 +75,10 @@ const drawStrokesToBuffer = (pg, strokes) => {
   pg.noErase();
 }
 
+export const recordStroke = (from, to, colorValue, weight) => {
+    strokes.push({from, to, colorValue, weight})
+}
+
 //teardown dom elements
 let uiElements = []
 
@@ -86,42 +89,3 @@ export const teardownNameScene = () => {
   uiElements = [];
 }
 
-
-
-
-
-
-
-
-// export const drawNameHistoryToBuffer = async (pg, top = 3) => {
-//   const nameHistory = await getNameHistory(top);
-
-//   const MAX_ALPHA = 50;
-//   const MIN_ALPHA = 5;
-
-//   const drawLine = ({ from, to, colorValue, alpha, weight }) => {
-//     if (colorValue) {
-//       pg.noErase();
-//       const c = color(colorValue);
-//       c.setAlpha(alpha);
-//       pg.stroke(c);
-//     } else {
-//       pg.erase();
-//     }
-
-//     pg.strokeWeight(weight);
-//     pg.strokeCap(ROUND);
-//     pg.line(from.x, from.y, to.x, to.y);
-//   };
-
-//   nameHistory.forEach(({ strokes }, index) => {
-//     const alpha = ((MAX_ALPHA - MIN_ALPHA) / nameHistory.length) * (nameHistory.length - index) + MIN_ALPHA;
-//     strokes.forEach((stroke) => drawLine({ ...stroke, alpha }));
-//   });
-
-//   pg.noErase();
-// };
-
-export const recordStroke = (from, to, colorValue, weight) => {
-    strokes.push({from, to, colorValue, weight})
-}
