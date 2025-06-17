@@ -10,7 +10,6 @@ let isErasing = false;
 
 let snellFont;
 let grottaFont;
-let eraserIcon;
 let eraserBtn;
 
 let helloYTarget, nameYTarget;
@@ -21,9 +20,6 @@ let nameAlpha = 0;
 export function preloadNameScene() {
   snellFont = loadFont('./assets/snellroundhand_bold.otf');
   grottaFont = loadFont('./assets/Grotta-Trial-Medium.ttf');
-  // eraserIcon = loadImage('erasericon.png');
-  eraserIcon = loadImage('./assets/note1.png');
-
 }
 
 export async function setupNameScene() {
@@ -72,7 +68,7 @@ export async function setupNameScene() {
     colors.push(btn);
   }
 
-  eraserBtn = createImg(eraserIcon, 'eraser'); //change this to the real icon
+  eraserBtn = createImg('./assets/erasericon.png', 'eraser'); //change this to the real icon
   eraserBtn.style('position', 'absolute');
   eraserBtn.style('width', '30px');
   eraserBtn.style('height', '30px');
