@@ -1,4 +1,4 @@
-import { onNextBtnClick } from "./onNextBtnClick.js";
+import { onNextBtnClick } from "./nextBtnLogic.js";
 import { p5Functions } from "./p5-scene-functions.js";
 import { GENDERS, I_BELIEVE_IN, NAME, POLITICS, SMILE } from "./scenes-names.js";
 import { drawFooter, drawNavbar, drawNextButton, mouseOnNextBtn, setupBoarder } from "./scenesBorder.js";

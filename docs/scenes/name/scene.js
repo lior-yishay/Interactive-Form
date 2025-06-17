@@ -1,4 +1,4 @@
-import { drawNameHistoryBuffer, recordStroke, setupNameHistoryBuffer } from "./logic.js";
+import { drawNameHistoryBuffer, recordStroke, recordUiElement, setupNameHistoryBuffer } from "./logic.js";
 
 let brushSizeSlider;
 let selectedColor;
@@ -66,9 +66,12 @@ export async function setupNameScene() {
     });
 
     colors.push(btn);
+    recordUiElement(btn) //lior's code
   }
 
-  eraserBtn = createImg('./assets/erasericon.png', 'eraser'); //change this to the real icon
+  eraserBtn = createImg('./assets/erasericon.png', 'eraser');
+  recordUiElement(eraserBtn) //lior's code
+
   eraserBtn.style('position', 'absolute');
   eraserBtn.style('width', '30px');
   eraserBtn.style('height', '30px');
@@ -95,6 +98,8 @@ export async function setupNameScene() {
   });
 
   brushSizeSlider = createSlider(10, 50, 15);
+  recordUiElement(brushSizeSlider) //lior's code
+
   brushSizeSlider.position(windowWidth - 250, windowHeight / 2 + 100);
   brushSizeSlider.style('transform', 'rotate(-90deg)');
   brushSizeSlider.style('width', '320px');

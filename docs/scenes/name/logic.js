@@ -13,6 +13,8 @@ export const getNameHistory = async (top = 3) => {
   return await get(NAME, {top})
 }
 
+export const isStrokesEmpty = () => strokes.length === 0
+
 export const postName = async () => {
   console.log(strokes)
   await post(NAME, {strokes})
@@ -72,6 +74,16 @@ const drawStrokesToBuffer = (pg, strokes) => {
   }
 
   pg.noErase();
+}
+
+//teardown dom elements
+let uiElements = []
+
+export const recordUiElement = (element) => uiElements.push(element)
+
+export const teardownNameScene = () => {
+  uiElements.forEach(el => el.remove());
+  uiElements = [];
 }
 
 
