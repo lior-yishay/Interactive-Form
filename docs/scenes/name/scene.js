@@ -1,4 +1,9 @@
-import { drawNameHistoryBuffer, recordStroke, recordUiElement, setupNameHistoryBuffer } from "./logic.js";
+import {
+  drawNameHistoryBuffer,
+  recordStroke,
+  recordUiElement,
+  setupNameHistoryBuffer,
+} from "./logic.js";
 
 let brushSizeSlider;
 let selectedColor;
@@ -18,8 +23,8 @@ let helloAlpha = 0;
 let nameAlpha = 0;
 
 export function preloadNameScene() {
-  snellFont = loadFont('./assets/snellroundhand_bold.otf');
-  grottaFont = loadFont('./assets/Grotta-Trial-Medium.ttf');
+  snellFont = loadFont("./assets/snellroundhand_bold.otf");
+  grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
 }
 
 export async function setupNameScene() {
@@ -28,36 +33,36 @@ export async function setupNameScene() {
   noStroke();
 
   canvasBuffer = createGraphics(width, height);
-  await setupNameHistoryBuffer() //lior's code
+  await setupNameHistoryBuffer(); //lior's code
 
   addCustomSliderStyles();
 
   const redCardTop = height * 0.18;
-  const colorValues = ['#000000', '#C3ADFF', '#F14E1D', '#1B9955'];
+  const colorValues = ["#000000", "#C3ADFF", "#F14E1D", "#1B9955"];
 
   for (let i = 0; i < colorValues.length; i++) {
-    const btn = createDiv('');
-    btn.style('background', colorValues[i]);
-    btn.style('width', '30px');
-    btn.style('height', '30px');
-    btn.style('border-radius', '50%');
-    btn.style('border', '1px solid black');
-    btn.style('position', 'absolute');
-    btn.style('left', `${windowWidth - 100}px`);
-    btn.style('top', `${redCardTop + i * 50}px`);
-    btn.style('cursor', 'pointer');
-    btn.style('transition', 'all 0.2s ease');
+    const btn = createDiv("");
+    btn.style("background", colorValues[i]);
+    btn.style("width", "30px");
+    btn.style("height", "30px");
+    btn.style("border-radius", "50%");
+    btn.style("border", "1px solid black");
+    btn.style("position", "absolute");
+    btn.style("left", `${windowWidth - 100}px`);
+    btn.style("top", `${redCardTop + i * 50}px`);
+    btn.style("cursor", "pointer");
+    btn.style("transition", "all 0.2s ease");
 
     btn.mouseOver(() => {
-      btn.style('width', '40px');
-      btn.style('height', '40px');
-      btn.style('transform', 'translate(-5px, -5px)');
+      btn.style("width", "40px");
+      btn.style("height", "40px");
+      btn.style("transform", "translate(-5px, -5px)");
     });
 
     btn.mouseOut(() => {
-      btn.style('width', '30px');
-      btn.style('height', '30px');
-      btn.style('transform', 'translate(0px, 0px)');
+      btn.style("width", "30px");
+      btn.style("height", "30px");
+      btn.style("transform", "translate(0px, 0px)");
     });
 
     btn.mousePressed(() => {
@@ -66,30 +71,30 @@ export async function setupNameScene() {
     });
 
     colors.push(btn);
-    recordUiElement(btn) //lior's code
+    recordUiElement(btn); //lior's code
   }
 
-  eraserBtn = createImg('./assets/erasericon.png', 'eraser');
-  recordUiElement(eraserBtn) //lior's code
+  eraserBtn = createImg("./assets/erasericon.png", "eraser");
+  recordUiElement(eraserBtn); //lior's code
 
-  eraserBtn.style('position', 'absolute');
-  eraserBtn.style('width', '30px');
-  eraserBtn.style('height', '30px');
-  eraserBtn.style('left', `${windowWidth - 100}px`);
-  eraserBtn.style('top', `${redCardTop + colorValues.length * 50}px`);
-  eraserBtn.style('cursor', 'pointer');
-  eraserBtn.style('transition', 'all 0.2s ease');
+  eraserBtn.style("position", "absolute");
+  eraserBtn.style("width", "30px");
+  eraserBtn.style("height", "30px");
+  eraserBtn.style("left", `${windowWidth - 100}px`);
+  eraserBtn.style("top", `${redCardTop + colorValues.length * 50}px`);
+  eraserBtn.style("cursor", "pointer");
+  eraserBtn.style("transition", "all 0.2s ease");
 
   eraserBtn.mouseOver(() => {
-    eraserBtn.style('width', '40px');
-    eraserBtn.style('height', '40px');
-    eraserBtn.style('transform', 'translate(-5px, -5px)');
+    eraserBtn.style("width", "40px");
+    eraserBtn.style("height", "40px");
+    eraserBtn.style("transform", "translate(-5px, -5px)");
   });
 
   eraserBtn.mouseOut(() => {
-    eraserBtn.style('width', '30px');
-    eraserBtn.style('height', '30px');
-    eraserBtn.style('transform', 'translate(0px, 0px)');
+    eraserBtn.style("width", "30px");
+    eraserBtn.style("height", "30px");
+    eraserBtn.style("transform", "translate(0px, 0px)");
   });
 
   eraserBtn.mousePressed(() => {
@@ -98,16 +103,16 @@ export async function setupNameScene() {
   });
 
   brushSizeSlider = createSlider(10, 50, 15);
-  recordUiElement(brushSizeSlider) //lior's code
+  recordUiElement(brushSizeSlider); //lior's code
 
   brushSizeSlider.position(windowWidth - 250, windowHeight / 2 + 100);
-  brushSizeSlider.style('transform', 'rotate(-90deg)');
-  brushSizeSlider.style('width', '320px');
-  brushSizeSlider.style('appearance', 'none');
-  brushSizeSlider.style('background', 'transparent');
-  brushSizeSlider.style('border', 'none');
-  brushSizeSlider.style('outline', 'none');
-  brushSizeSlider.elt.classList.add('custom-slider');
+  brushSizeSlider.style("transform", "rotate(-90deg)");
+  brushSizeSlider.style("width", "320px");
+  brushSizeSlider.style("appearance", "none");
+  brushSizeSlider.style("background", "transparent");
+  brushSizeSlider.style("border", "none");
+  brushSizeSlider.style("outline", "none");
+  brushSizeSlider.elt.classList.add("custom-slider");
 
   brushSizeSlider.mousePressed(() => {
     isSliding = true;
@@ -117,13 +122,13 @@ export async function setupNameScene() {
     isSliding = false;
   });
 
-  document.addEventListener('mouseup', () => {
+  document.addEventListener("mouseup", () => {
     isSliding = false;
   });
 
   selectedColor = color(colorValues[0]);
 
-  helloYTarget = height * 0.13 + (height * 0.74) * 0.15;
+  helloYTarget = height * 0.13 + height * 0.74 * 0.15;
   nameYTarget = helloYTarget + 60;
   helloYCurrent = helloYTarget + 60;
   nameYCurrent = nameYTarget + 60;
@@ -138,13 +143,18 @@ export function drawNameScene() {
   for (let y = 0; y < height; y += gridSize) line(0, y, width, y);
 
   drawCardLayout();
-  drawNameHistoryBuffer() //lior's code
+  drawNameHistoryBuffer(); //lior's code
   image(canvasBuffer, 0, 0);
   drawTextOverlay();
 
   if (isSliding) drawBrushPreview();
 
-  if (isMouseDown && !isSliding && !isMouseOverColor() && !isMouseOverSlider()) {
+  if (
+    isMouseDown &&
+    !isSliding &&
+    !isMouseOverColor() &&
+    !isMouseOverSlider()
+  ) {
     drawBrush();
   }
 }
@@ -159,7 +169,7 @@ function drawCardLayout() {
   const whiteAreaHeight = redCardHeight * 0.6;
 
   noStroke();
-  fill('#F14E1D');
+  fill("#F14E1D");
   rect(redCardX, redCardY, redCardWidth, redCardHeight, 20);
 
   fill(255);
@@ -179,19 +189,19 @@ function drawTextOverlay() {
   textFont(snellFont);
   textSize(96);
   textStyle(ITALIC);
-  text('Hello', width / 2, helloYCurrent + bounce);
+  text("Hello", width / 2, helloYCurrent + bounce);
 
   fill(255, nameAlpha);
   textFont(grottaFont);
   textSize(48);
   textStyle(NORMAL);
-  text('my name is', width / 2, nameYCurrent + bounce * 0.5);
+  text("my name is", width / 2, nameYCurrent + bounce * 0.5);
 }
 
 function drawBrushPreview() {
   const sliderLength = 320;
   const sliderX = windowWidth - 250;
-  const sliderY = windowHeight / 2+80;
+  const sliderY = windowHeight / 2 + 80;
 
   const previewX = sliderX + 160;
   const previewY = sliderY + sliderLength / 2 + 100;
@@ -214,7 +224,7 @@ function drawBrush() {
   canvasBuffer.strokeWeight(brushSizeSlider.value());
   canvasBuffer.strokeCap(ROUND);
 
-  const steps = isErasing ? 1 : 3; //lior changed this from 10
+  const steps = 1; //lior changed this from 10. request size was too large
   for (let i = 0; i < steps; i++) {
     const x1 = lerp(pmouseX, mouseX, i / steps);
     const y1 = lerp(pmouseY, mouseY, i / steps);
@@ -223,16 +233,16 @@ function drawBrush() {
     canvasBuffer.line(x1, y1, x2, y2);
 
     //lior's code
-    const from = {x: x1, y: y1}
-    const to = {x: x2, y: y2}
-    const colorValue = isErasing ? null : selectedColor.toString('#rrggbb')
-    const weight = brushSizeSlider.value()
-    recordStroke(from, to, colorValue, weight)
+    const from = { x: x1, y: y1 };
+    const to = { x: x2, y: y2 };
+    const colorValue = isErasing ? null : selectedColor.toString("#rrggbb");
+    const weight = brushSizeSlider.value();
+    recordStroke(from, to, colorValue, weight);
     //end of lior's code
   }
   canvasBuffer.noErase();
 
-  canvasBuffer
+  canvasBuffer;
 }
 
 export function mousePressedNameScene() {
@@ -255,14 +265,16 @@ function isMouseOverColor() {
   const canvasRect = canvas.getBoundingClientRect();
   const x = mouseX + canvasRect.left;
   const y = mouseY + canvasRect.top;
-  return colors.some(btn => {
+  return colors.some((btn) => {
     const rect = btn.elt.getBoundingClientRect();
-    return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+    return (
+      x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
+    );
   });
 }
 
 function addCustomSliderStyles() {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.innerHTML = `
     .custom-slider::-webkit-slider-runnable-track {
       width: 100%;

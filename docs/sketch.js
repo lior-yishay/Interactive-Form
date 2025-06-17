@@ -16,7 +16,7 @@ import {
   setupBoarder,
 } from "./scenesBorder.js";
 
-let currentScene = ICE_CREAM_SANDWICH;
+let currentScene = NAME;
 export const getCurrentScene = () => currentScene;
 
 export const setCurrentScene = (sceneName) => {
