@@ -1,6 +1,7 @@
 import {
   GENDERS,
   I_BELIEVE_IN,
+  ICE_CREAM_SANDWICH,
   NAME,
   POLITICS,
   SMILE,
@@ -20,6 +21,13 @@ import {
   setupIBeliveInScene,
   windowResizedIBeliveIn,
 } from "./scenes/i-belive-in/scene.js";
+import {
+  drawIceCreamSandwichScene,
+  mouseReleasedIceCreamSandwichScene,
+  preloadIceCreamSandwichScene,
+  setupIceCreamSandwichScene,
+  windowResizedIceCreamSandwichScene,
+} from "./scenes/ice-cream-sandwich/scene.js";
 import {
   drawNameScene,
   mousePressedNameScene,
@@ -78,5 +86,12 @@ export const p5Functions = {
     mousePressed: mousePressedPoliticsScene,
     windowResized: windowResizedPoliticsScene,
     mouseWheel: mouseWheelPoliticsScene,
+  },
+  [ICE_CREAM_SANDWICH]: {
+    preload: preloadIceCreamSandwichScene,
+    setup: setupIceCreamSandwichScene,
+    draw: drawIceCreamSandwichScene,
+    windowResized: windowResizedIceCreamSandwichScene,
+    mouseReleased: mouseReleasedIceCreamSandwichScene,
   },
 };

@@ -1,20 +1,14 @@
-import { get, post } from "../../api/axios.js"
-import { nextScene } from "../../scene-chain.js"
-import { ICE_CREAM_SANDWICH } from "../../scenes-names.js"
+import { get, post } from "../../api/axios.js";
+import { nextScene } from "../../scene-chain.js";
+import { ICE_CREAM_SANDWICH } from "../../scenes-names.js";
+import { getIceCreamSandwichUserPick } from "./scene.js";
 
 export const getIceCreamSandwichCounts = async () => {
-  return await get(ICE_CREAM_SANDWICH)
-}
+  return await get(ICE_CREAM_SANDWICH);
+};
 
-export const postIceCreamSandwichVanila = async () => {
-  await postIceCreamSandwichPick('vanila')
-}
-
-export const postIceCreamSandwichChocolate = async () => {
-  await postIceCreamSandwichPick('chocolate')
-}
-
-const postIceCreamSandwichPick = async (flavor) => {
-  await post(ICE_CREAM_SANDWICH, {flavor})
-  nextScene()
-}
+export const postIceCreamSandwichPick = async () => {
+  const flavor = getIceCreamSandwichUserPick();
+  await post(ICE_CREAM_SANDWICH, { flavor });
+  nextScene();
+};

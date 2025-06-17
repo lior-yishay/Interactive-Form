@@ -1,24 +1,64 @@
-import cors from 'cors';
-import express from 'express';
+import cors from "cors";
+import express from "express";
 
-import { closeConnection, connectToScenesDB } from './data-access/db.js';
+import { closeConnection, connectToScenesDB } from "./data-access/db.js";
 
-import dotenv from 'dotenv';
-import { getAllAgeCounts, incrementAgeByOne } from './business/scenes-logic/age/api.js';
-import { getAllAiCounts, incrementAiByOne } from './business/scenes-logic/ai/api.js';
-import { getAllGenderCounts, incrementGenderByOne } from './business/scenes-logic/gender/api.js';
-import { getMagnetPositions, saveMagnetPositions } from './business/scenes-logic/i belive in/api.js';
-import { getAllFlavorsCounts, incrementFlavorByOne } from './business/scenes-logic/ice-cream-sandwich/api.js';
-import { getAllLivingHereRecords, postLivingHerePick } from './business/scenes-logic/living-here/api.js';
-import { getNameHistory, postName } from './business/scenes-logic/name/api.js';
-import { getAllPoliticalSideCounts, incrementPoliticalSideByOne } from './business/scenes-logic/politics/api.js';
-import { getSmileLeaderboard, getTotalSmileTime, insertSmile } from './business/scenes-logic/smile/api.js';
-import { getAndIncrementUserNumber } from './business/scenes-logic/user-number/api.js';
-import { logger } from './logger/logger.js';
-import { AGE, AI, EVENTS, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, USER_NUMBER } from './routes/routes.js';
-import { createRoute } from './utils/AppRouteHandler.js';
-import { addSubscriber } from './utils/broadcast.js';
-import { resetGenders } from './business/scenes-logic/gender/reset.js';
+import dotenv from "dotenv";
+import {
+  getAllAgeCounts,
+  incrementAgeByOne,
+} from "./business/scenes-logic/age/api.js";
+import {
+  getAllAiCounts,
+  incrementAiByOne,
+} from "./business/scenes-logic/ai/api.js";
+import {
+  getAllGenderCounts,
+  incrementGenderByOne,
+} from "./business/scenes-logic/gender/api.js";
+import {
+  getMagnetPositions,
+  saveMagnetPositions,
+} from "./business/scenes-logic/i belive in/api.js";
+import {
+  getAllFlavorsCounts,
+  incrementFlavorByOne,
+} from "./business/scenes-logic/ice-cream-sandwich/api.js";
+import {
+  getAllLivingHereRecords,
+  postLivingHerePick,
+} from "./business/scenes-logic/living-here/api.js";
+import { getNameHistory, postName } from "./business/scenes-logic/name/api.js";
+import {
+  getAllPoliticalSideCounts,
+  incrementPoliticalSideByOne,
+} from "./business/scenes-logic/politics/api.js";
+import {
+  getSmileLeaderboard,
+  getTotalSmileTime,
+  insertSmile,
+} from "./business/scenes-logic/smile/api.js";
+import { getAndIncrementUserNumber } from "./business/scenes-logic/user-number/api.js";
+import { logger } from "./logger/logger.js";
+import {
+  AGE,
+  AI,
+  EVENTS,
+  GENDERS,
+  I_BELIEVE_IN,
+  ICE_CREAM_SANDWICH,
+  LIVING_HERE,
+  NAME,
+  POLITICS,
+  SMILE,
+  SMILE_LEADERBOARD,
+  SMILE_TIME,
+  USER_NUMBER,
+} from "./routes/routes.js";
+import { createRoute } from "./utils/AppRouteHandler.js";
+import { addSubscriber } from "./utils/broadcast.js";
+import { resetGenders } from "./business/scenes-logic/gender/reset.js";
+import { resetIceCreamSandwich } from "./business/scenes-logic/ice-cream-sandwich/reset.js";
 
 dotenv.config();
 
@@ -33,89 +73,113 @@ app.get(EVENTS, (req, res) => {
   addSubscriber(res);
 });
 
-app.route(USER_NUMBER).all(createRoute({
-  methodHandlers: {
-    post: () => getAndIncrementUserNumber()
-  }
-}))
-
-app.route(GENDERS).all(createRoute({
-  methodHandlers: {
-    post: (req) => incrementGenderByOne(req.body.gender),
-    get: () => getAllGenderCounts(),
-  },
-}));
-
-app.route(POLITICS).all(createRoute({
-  methodHandlers: {
-    post: (req) => incrementPoliticalSideByOne(req.body.side),
-    get: () => getAllPoliticalSideCounts(),
-  },
-}));
-
-app.route(LIVING_HERE).all(createRoute({
-  methodHandlers: {
-    post: (req) => {
-      const { x, y, pick } = req.body;
-      return postLivingHerePick(x, y, pick);
+app.route(USER_NUMBER).all(
+  createRoute({
+    methodHandlers: {
+      post: () => getAndIncrementUserNumber(),
     },
-    get: () => getAllLivingHereRecords(),
-  },
-}));
+  })
+);
 
-app.route(ICE_CREAM_SANDWICH).all(createRoute({
-  methodHandlers: {
-    post: (req) => incrementFlavorByOne(req.body.flavor),
-    get: () => getAllFlavorsCounts(),
-  },
-}));
+app.route(GENDERS).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementGenderByOne(req.body.gender),
+      get: () => getAllGenderCounts(),
+    },
+  })
+);
 
-app.route(NAME).all(createRoute({
-  methodHandlers: {
-    post: (req) => postName(req.body.strokes),
-    get: (req) => getNameHistory(Number(req.query.top)),
-  },
-  broadcast: true
-}));
+app.route(POLITICS).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementPoliticalSideByOne(req.body.side),
+      get: () => getAllPoliticalSideCounts(),
+    },
+  })
+);
 
-app.route(SMILE).all(createRoute({
-  methodHandlers: {
-    post: (req) => insertSmile(req.body.duration, req.body.image),
-  },
-}));
+app.route(LIVING_HERE).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => {
+        const { x, y, pick } = req.body;
+        return postLivingHerePick(x, y, pick);
+      },
+      get: () => getAllLivingHereRecords(),
+    },
+  })
+);
 
-app.route(SMILE_LEADERBOARD).all(createRoute({
-  methodHandlers: {
-    get: (req) => getSmileLeaderboard(Number(req.query.top)),
-  },
-}));
+app.route(ICE_CREAM_SANDWICH).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementFlavorByOne(req.body.flavor),
+      get: () => getAllFlavorsCounts(),
+    },
+  })
+);
 
-app.route(SMILE_TIME).all(createRoute({
-  methodHandlers: {
-    get: () => getTotalSmileTime(),
-  },
-}));
+app.route(NAME).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => postName(req.body.strokes),
+      get: (req) => getNameHistory(Number(req.query.top)),
+    },
+    broadcast: true,
+  })
+);
 
-app.route(AI).all(createRoute({
-  methodHandlers: {
-    post: (req) => incrementAiByOne(req.body.ai),
-    get: () => getAllAiCounts(),
-  },
-}));
+app.route(SMILE).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => insertSmile(req.body.duration, req.body.image),
+    },
+  })
+);
 
-app.route(AGE).all(createRoute({
-  methodHandlers: {
-    post: (req) => incrementAgeByOne(req.body.age),
-    get: () => getAllAgeCounts(),
-  }
-}));
+app.route(SMILE_LEADERBOARD).all(
+  createRoute({
+    methodHandlers: {
+      get: (req) => getSmileLeaderboard(Number(req.query.top)),
+    },
+  })
+);
 
-app.route(I_BELIEVE_IN).all(createRoute({
-  methodHandlers: {
-    post: (req) => saveMagnetPositions(req.body.magnets),
-    get: (req) => getMagnetPositions(Number(req.query.top))
-  }
-}))
+app.route(SMILE_TIME).all(
+  createRoute({
+    methodHandlers: {
+      get: () => getTotalSmileTime(),
+    },
+  })
+);
+
+app.route(AI).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementAiByOne(req.body.ai),
+      get: () => getAllAiCounts(),
+    },
+  })
+);
+
+app.route(AGE).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementAgeByOne(req.body.age),
+      get: () => getAllAgeCounts(),
+    },
+  })
+);
+
+app.route(I_BELIEVE_IN).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => saveMagnetPositions(req.body.magnets),
+      get: (req) => getMagnetPositions(Number(req.query.top)),
+    },
+  })
+);
 
 // Start server
 app.listen(port, () => {

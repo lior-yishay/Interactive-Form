@@ -1,21 +1,47 @@
-let brownPart, whitePart, meltImage;
+import { getIceCreamSandwichCounts } from "./logic.js";
 
-let compositionScale = 0.8;
+let userPick = null;
+const VANILA = "vanila",
+  CHOCOLATE = "chocolate";
 
-let ellipseGrow = 0;
-let brownEllipseGrow = 0;
-let whiteImageOffsetX = 67;
-let whiteImageOffsetY = 69;
-let brownImageOffsetX = -1.5;
-let brownImageOffsetY = 18.59;
+let skyBg;
+let whitePart, brownPart;
 
-let whiteFillWidth = 230;
-let brownFillWidth = 230;
-let targetWhiteWidth = 265.5;
-let targetBrownWidth = 265.5;
+let hasClicked = false;
+let isHoveringWhite = false;
+let isHoveringBrown = false;
 
-let whiteWindowWidth = 380;
-let brownWindowWidth = 380;
+let tvShutDownSound;
+let clickButtonSound;
+let radioStaticSound;
+let happyTuneSound;
+
+let bafiring = false;
+let bafiringStartTime = 0;
+let bafiringDuration = 90; // milliseconds
+
+let tvIsOn = false;
+let tvTurningOn = false;
+let tvTurnOnStart = 0;
+let contentAlpha = 0; // instead of 255
+
+let overshootAmount = 10;
+let overshooting = false;
+let recoveringFromOvershoot = false;
+
+let overshootEasing = 0.25; // Fast growth
+let normalEasing = 0.08; // Smooth return
+
+let whiteFillWidth = 292;
+let brownFillWidth = 238;
+let targetWhiteWidth = 292;
+let targetBrownWidth = 238;
+
+let whiteFillingClicks = 0;
+let brownFillingClicks = 0;
+
+let minVisualWidth = 20;
+let easing = 0.1;
 
 let whiteFillingHeightRatio = 0.55;
 let whiteFillingYOffsetRatio = 0.346;
@@ -25,558 +51,1226 @@ let brownFillingHeightRatio = 0.55;
 let brownFillingYOffsetRatio = 0.346;
 let brownFillingXOffset = 266;
 
-const whiteX = 250, whiteY = 160;
-const brownX = 630, brownY = 210;
-const windowX = 60, windowY = 60;
+let whiteImageOffsetX = 67;
+let whiteImageOffsetY = 69;
+let brownImageOffsetX = -1.5;
+let brownImageOffsetY = 18.59;
 
-const whiteW = 500 / 1.6, whiteH = 350 / 1.6;
-const brownW = 500 / 1.6, brownH = 350 / 1.6;
+const whiteW = 500 / 1.6,
+  whiteH = 350 / 1.6;
+const brownW = 500 / 1.6,
+  brownH = 350 / 1.6;
 
-const windowBodyWidth = 380;
-const windowBodyHeight = 300;
-const titleBarHeight = 50;
+let whiteDrag = { x: 0, y: 0 };
+let brownDrag = { x: 0, y: 0 };
 
-const purpleWindowExtraWidth = 90;
-const blackWindowExtraWidth = 90;
-const whiteWindowExtraBottom = 20;
-const brownWindowExtraTop = 20;
+let skyDrawX = 0,
+  skyDrawY = 0,
+  skyDrawW = 0,
+  skyDrawH = 0;
 
-const brownWindowTrimLeft = 20;
+let casataRotation = -0.2;
+let casataScaleFactor = 1.25;
 
-let easing = 0.1;
-let minVisualWidth = 10;
-let scaleFactor, offsetX, offsetY;
+let fontGrotta;
+let fontSnell;
+let fontHelvetica;
 
-let purpleDrag = { x: 0, y: 0 };
-let blackDrag = { x: 0, y: 0 };
-let whiteDrag = { x: 0, y: 0, targetX: 0, targetY: 0 };
-let brownDrag = { x: 0, y: 0, targetX: 0, targetY: 0 };
-let zigzagDrag = { x: 0, y: 0 };
-let zigzagPrice = 99;
+let skyStroke;
 
-const zigzagX = 200, zigzagY = 500;
-const zigzagWindowWidth = 300;
-const zigzagWindowHeight = 200;
+export function preloadIceCreamSandwichScene() {
+  skyBg = loadImage("./assets/sky.png");
+  whitePart = loadImage("./assets/White2.png");
+  brownPart = loadImage("./assets/Brown2.png");
+  skyStroke = loadImage("./assets/stroke.png");
 
-let activeDrag = null;
-let didDrag = false;
+  fontGrotta = loadFont("./assets/Grotta-Trial-Bold.ttf");
+  fontSnell = loadFont("./assets/SnellRoundhand-BlackScript.otf");
 
-let whiteVisible = true;
-let whiteScale = 1;
-let whiteTargetScale = 1;
-let brownVisible = true;
-let brownScale = 1;
-let brownTargetScale = 1;
-
-let brownFillingClicked = false;
-let whiteFillingClicked = false;
-
-let zigzagPieces = []; // NEW
-
-function preload() {
-  whitePart = loadImage('White2.png');
-  brownPart = loadImage('Brown2.png');
-  meltImage = loadImage('melt3.png');
-  mouthGif = loadImage('mouth-2.gif');
+  tvShutDownSound = loadSound("./assets/tv-shut-down-185446.mp3");
+  clickButtonSound = loadSound("./assets/click-button-166324.mp3");
+  radioStaticSound = loadSound("./assets/radio-static-6382.mp3");
+  happyTuneSound = loadSound("./assets/happy-tune-29317.mp3");
 }
 
-function setup() {
+export async function setupIceCreamSandwichScene() {
   createCanvas(windowWidth, windowHeight);
+  let flavorsCount = await getIceCreamSandwichCounts();
+  whiteFillingClicks = flavorsCount.vanila;
+  brownFillingClicks = flavorsCount.chocolate;
 }
 
-function windowResized() {
+export function windowResizedIceCreamSandwichScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function draw() {
-  background('#EEEEEE');
+function drawWithRGBBleed(drawFn) {
+  push();
+  tint(255, 0, 0, 120); // Red bleed
+  translate(1.5, 0); // Shift right
+  drawFn();
+  pop();
 
-  // === Update and draw flying zigzags ===
-  for (let piece of zigzagPieces) {
-    piece.update();
-    piece.display();
+  push();
+  tint(0, 0, 255, 120); // Blue bleed
+  translate(-1.5, 0); // Shift left
+  drawFn();
+  pop();
+
+  drawFn(); // Normal drawing
+}
+
+export function drawIceCreamSandwichScene() {
+  background(0);
+
+  let paddingTop = 60;
+  let paddingBottom = 20;
+  let paddingLeft = 100;
+  let paddingRight = 300;
+
+  let maxSkyW = width - paddingLeft - paddingRight;
+  let maxSkyH = height - paddingTop - paddingBottom;
+  let aspect = skyBg.width / skyBg.height;
+
+  skyDrawW = maxSkyW;
+  skyDrawH = skyDrawW / aspect;
+
+  if (skyDrawH > maxSkyH) {
+    skyDrawH = maxSkyH;
+    skyDrawW = skyDrawH * aspect;
   }
 
-  const minX = windowX;
-  const maxX = brownX + windowBodyWidth;
-  const minY = Math.min(windowY, whiteY, brownY - brownWindowExtraTop);
-  const maxY = Math.max(
-    windowY + titleBarHeight + windowBodyHeight,
-    whiteY + titleBarHeight + windowBodyHeight + whiteWindowExtraBottom,
-    brownY + titleBarHeight + windowBodyHeight
+  skyDrawX = paddingLeft + (maxSkyW - skyDrawW) / 2;
+  skyDrawY = paddingTop + (maxSkyH - skyDrawH) / 2;
+
+  // TV TURN-ON ANIMATION
+  let showContent = tvIsOn;
+  let contentAlpha = 255;
+
+  if (tvTurningOn) {
+    let turnOnTime = millis() - tvTurnOnStart;
+    let turnOnDuration = 400; // 1.2 second animation
+
+    if (turnOnTime < turnOnDuration) {
+      // Still animating
+      showContent = true;
+
+      // Phase 1: Thin horizontal line (0-300ms)
+      if (turnOnTime < 300) {
+        let progress = turnOnTime / 300;
+        // Smooth easing for line expansion
+        let easedProgress = 1 - Math.pow(1 - progress, 3);
+        let lineHeight = lerp(2, skyDrawH, easedProgress);
+        let lineY = skyDrawY + (skyDrawH - lineHeight) / 2;
+
+        // Black background covering the entire sky area
+        fill(0, 10, 0, 600); // More noticeable but still semi-transparent
+        rect(skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+
+        // Bright white line expanding vertically with slight flicker and rounded corners
+        let brightness = 255 + sin(turnOnTime * 0.1) * 30;
+        fill(brightness / 2);
+        // Use rect() with rounded corners (p5.js syntax: rect(x, y, w, h, radius))
+        rect(skyDrawX, lineY, skyDrawW, lineHeight, 120);
+
+        showContent = false;
+      }
+      // Phase 2: Content fades in gradually (300-900ms)
+      else if (turnOnTime < 900) {
+        let progress = (turnOnTime - 300) / 600;
+        let easedProgress = progress * progress * (3 - 2 * progress); // Smooth S-curve
+
+        contentAlpha = lerp(60, 200, easedProgress);
+
+        // Show content with gradual fade-in and glitching
+        push();
+        tint(contentAlpha * 0.8, contentAlpha * 0.9, contentAlpha); // Slight blue tint initially
+
+        // Add glitching effects during fade-in
+        if (progress < 0.8) {
+          // Random horizontal displacement glitches
+          if (random() < 0.3) {
+            let glitchOffset = random(-8, 8) * (1 - progress);
+            translate(glitchOffset, 0);
+          }
+
+          // Occasional vertical stretching glitch
+          if (random() < 0.15) {
+            let stretchFactor = 1 + random(-0.1, 0.1) * (1 - progress);
+            scale(1, stretchFactor);
+          }
+
+          // Color channel separation glitch
+          if (random() < 0.2) {
+            // Draw red channel slightly offset
+            tint(contentAlpha, 0, 0, contentAlpha * 0.5);
+            image(
+              skyBg,
+              skyDrawX + random(-3, 3),
+              skyDrawY,
+              skyDrawW,
+              skyDrawH
+            );
+
+            // Draw green channel slightly offset
+            tint(0, contentAlpha, 0, contentAlpha * 0.5);
+            image(
+              skyBg,
+              skyDrawX + random(-3, 3),
+              skyDrawY,
+              skyDrawW,
+              skyDrawH
+            );
+
+            // Draw blue channel
+            tint(0, 0, contentAlpha, contentAlpha * 0.5);
+            image(skyBg, skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+          } else {
+            image(skyBg, skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+          }
+        } else {
+          image(skyBg, skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+        }
+
+        pop();
+        noTint();
+
+        // Add horizontal static lines during glitch
+        if (progress < 0.6 && random() < 0.4) {
+          stroke(255, random(50, 150));
+          strokeWeight(1);
+          for (let i = 0; i < random(3, 8); i++) {
+            let lineY = skyDrawY + random(skyDrawH);
+            line(skyDrawX, lineY, skyDrawX + skyDrawW, lineY);
+          }
+          noStroke();
+        }
+
+        // Subtle scanning line effect
+        if (progress < 0.7) {
+          let scanProgress = progress / 0.7;
+          let scanY = lerp(skyDrawY, skyDrawY + skyDrawH, scanProgress);
+          let scanAlpha = lerp(100, 30, progress);
+          fill(255, scanAlpha);
+          rect(skyDrawX, scanY - 2, skyDrawW, 4);
+        }
+
+        showContent = false; // We're handling content manually
+      }
+      // Phase 3: Final stabilization (900-1200ms)
+      else {
+        let progress = (turnOnTime - 900) / 300;
+        let easedProgress = progress * progress * (3 - 2 * progress);
+        contentAlpha = lerp(200, 255, easedProgress);
+        showContent = true;
+
+        // Add slight warmup flicker
+        if (progress < 0.8) {
+          contentAlpha += sin(turnOnTime * 0.05) * (10 * (1 - progress));
+        }
+      }
+    } else {
+      // Animation complete
+      tvTurningOn = false;
+      showContent = true;
+      contentAlpha = 255;
+    }
+  }
+
+  // DRAW THE TV CONTENT
+  if (showContent) {
+    if (tvIsOn) {
+      if (contentAlpha < 255) {
+        tint(contentAlpha, contentAlpha, contentAlpha);
+      }
+      noStroke();
+      image(skyBg, skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+      if (contentAlpha < 255) {
+        noTint();
+      }
+    } else {
+      // TV IS OFF - Show scene with smooth fade
+      // Apply a subtle fade effect to the entire scene
+      tint(120, 120, 120, 180); // Darker, more muted appearance
+      noStroke();
+      image(skyBg, skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+
+      // Draw casata elements normally but with the same muted tint
+      push();
+      translate(casataCenterX, casataCenterY - 10);
+      rotate(-casataRotation);
+      scale(casataScale);
+
+      // SUN - normal rendering
+      push();
+      translate(150, 70);
+
+      let sunRadiusX = whiteH * 0.7 * casataScaleFactor;
+      let sunRadiusY = whiteH * 0.9 * casataScaleFactor;
+
+      fill(0);
+      noStroke();
+      ellipse(20, 20, sunRadiusX * 2.8, sunRadiusY * 2.8);
+
+      fill("#FFFF00");
+      stroke("#FFFF00");
+      strokeWeight(3);
+      ellipse(0, 0, sunRadiusX * 2.8, sunRadiusY * 2.8);
+
+      // rotating star rays - normal rendering
+      push();
+      let starAngle = (millis() / 24000) * TWO_PI;
+      rotate(starAngle);
+      fill("#FFFFFF");
+      stroke("#000000");
+      strokeWeight(0.5);
+      beginShape();
+      for (let i = 0; i < 24; i++) {
+        let angle = (TWO_PI / 24) * i;
+        let outerRadius = i % 2 === 0 ? sunRadiusX * 1.25 : sunRadiusX * 0.6;
+        let x = cos(angle) * outerRadius;
+        let y = sin(angle) * outerRadius * (sunRadiusY / sunRadiusX);
+        vertex(x, y);
+      }
+      endShape(CLOSE);
+      pop();
+      pop();
+
+      const scaledWhiteW = whiteW;
+      const scaledWhiteH = whiteH;
+      const scaledBrownW = brownW;
+      const scaledBrownH = brownH;
+
+      let localWhiteX = -180 + whiteDrag.x / casataScale;
+      let localWhiteY = -100 + whiteDrag.y / casataScale;
+      let localBrownX = 180 + brownDrag.x / casataScale;
+      let localBrownY = -50 + brownDrag.y / casataScale;
+
+      const whiteFillingHeight = scaledWhiteH * whiteFillingHeightRatio;
+      const whiteFillingYOffset = scaledWhiteH * whiteFillingYOffsetRatio;
+      const whiteFillingX =
+        localWhiteX + whiteImageOffsetX + whiteFillingXOffset;
+      const whiteFillingY =
+        localWhiteY + whiteImageOffsetY + whiteFillingYOffset;
+
+      // Normal vanilla filling
+      fill("#f3e9d9");
+      noStroke();
+      let maxWhiteWidth = whiteImageOffsetX + whiteFillingXOffset + whiteW;
+      let whiteFillRight = whiteFillingX + whiteFillWidth - 26.5;
+      let safeWhiteWidth = min(whiteFillRight, maxWhiteWidth) - whiteFillingX;
+      rect(whiteFillingX, whiteFillingY, safeWhiteWidth, whiteFillingHeight);
+
+      // Normal white ice cream image
+      image(
+        whitePart,
+        localWhiteX + whiteImageOffsetX,
+        localWhiteY + whiteImageOffsetY,
+        scaledWhiteW,
+        scaledWhiteH
+      );
+
+      const brownFillingHeight = scaledBrownH * brownFillingHeightRatio;
+      const brownFillingYOffset = scaledBrownH * brownFillingYOffsetRatio;
+      const brownFillingRight =
+        localBrownX + brownImageOffsetX + brownFillingXOffset;
+      const brownFillingY =
+        localBrownY + brownImageOffsetY + brownFillingYOffset;
+      const brownFillingX = brownFillingRight - brownFillWidth;
+      const brownVisualWidth = brownFillWidth + 27.5;
+
+      // Normal chocolate filling
+      fill("#bc7567");
+      rect(
+        brownFillingX,
+        brownFillingY,
+        brownFillWidth + 27.5,
+        brownFillingHeight
+      );
+
+      // Normal brown ice cream image
+      image(
+        brownPart,
+        localBrownX + brownImageOffsetX,
+        localBrownY + brownImageOffsetY,
+        scaledBrownW,
+        scaledBrownH
+      );
+
+      pop();
+
+      // Reset tint
+      noTint();
+
+      // Add a much lighter black screen overlay so elements are visible underneath
+      fill(0, 0, 0, 60); // Much lighter - was 140, now 60
+      noStroke();
+      rect(skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+
+      // Subtle reflection on black screen
+      fill(40, 40, 50, 30); // Also lighter - was 56, now 30
+      ellipse(
+        skyDrawX + skyDrawW * 0.3,
+        skyDrawY + skyDrawH * 0.3,
+        skyDrawW * 0.4,
+        skyDrawH * 0.3
+      );
+    }
+  }
+
+  // Always draw stroke around the sky area
+  let strokeMargin = skyDrawW * 0.01;
+  if (tvIsOn && contentAlpha < 255) {
+    tint(contentAlpha, contentAlpha, contentAlpha);
+  }
+  image(
+    skyStroke,
+    skyDrawX - strokeMargin,
+    skyDrawY - strokeMargin,
+    skyDrawW + strokeMargin * 2,
+    skyDrawH + strokeMargin * 2
   );
-
-  const compWidth = maxX - minX;
-  const compHeight = maxY - minY;
-
-  const marginX = width * 0.05;
-  const marginY = height * 0.05;
-  const availableWidth = width - marginX * 2;
-  const availableHeight = height - marginY * 2;
-
-  const fitScale = Math.min(availableWidth / compWidth, availableHeight / compHeight);
-  scaleFactor = fitScale * compositionScale;
-
-  offsetX = (width - compWidth * scaleFactor) / 2 - minX * scaleFactor;
-  offsetY = (height - compHeight * scaleFactor) / 2 - minY * scaleFactor;
+  if (tvIsOn && contentAlpha < 255) {
+    noTint();
+  }
 
   whiteFillWidth = lerp(whiteFillWidth, targetWhiteWidth, easing);
   brownFillWidth = lerp(brownFillWidth, targetBrownWidth, easing);
 
-  whiteWindowWidth = lerp(
-    whiteWindowWidth,
-    targetWhiteWidth > 265.5 ? windowBodyWidth + (targetWhiteWidth - 265.5) : windowBodyWidth,
-    easing
-  );
-  brownWindowWidth = lerp(
-    brownWindowWidth,
-    targetBrownWidth > 245
-      ? windowBodyWidth + (targetBrownWidth - 245) - brownWindowTrimLeft
-      : windowBodyWidth - brownWindowTrimLeft,
-    easing
-  );
+  let casataScale = skyDrawH * 0.0008 * casataScaleFactor;
+  let casataRightEdge = skyDrawX + skyDrawW * 0.75;
+  let casataBaseY = skyDrawY + skyDrawH / 2.4;
 
-  whiteDrag.x = lerp(whiteDrag.x, whiteDrag.targetX, 0.2);
-  whiteDrag.y = lerp(whiteDrag.y, whiteDrag.targetY, 0.2);
-  brownDrag.x = lerp(brownDrag.x, brownDrag.targetX, 0.2);
-  brownDrag.y = lerp(brownDrag.y, brownDrag.targetY, 0.2);
+  let casataCenterX = casataRightEdge - 200 * casataScale;
+  let casataCenterY = casataBaseY;
 
-  whiteScale = lerp(whiteScale, whiteTargetScale, 0.2);
-  brownScale = lerp(brownScale, brownTargetScale, 0.2);
+  // Define baseFontSize outside the conditional blocks so it's available everywhere
+  let baseFontSize = skyDrawH * 0.16;
 
-  const brownRightEdge = brownX + windowBodyWidth;
-  const dynamicBrownX = brownRightEdge - brownWindowWidth;
+  // Only show text when TV is on and not during turn-on animation
+  if (tvIsOn && !tvTurningOn) {
+    // BAFIRING GLITCH LOGIC - Fixed version
+    // Randomly trigger bafiring glitch when not already glitching
+    if (!bafiring && random() < 0.0008) {
+      // Even less frequent - about once every 15-20 seconds
+      bafiring = true;
+      bafiringStartTime = millis();
+    }
 
-  push();
-  scale(scaleFactor);
-  translate(offsetX / scaleFactor, offsetY / scaleFactor);
+    // Check if bafiring should end
+    if (bafiring) {
+      let elapsed = millis() - bafiringStartTime;
+      if (elapsed < bafiringDuration) {
+        drawBafiringGlitch(contentAlpha); // Pass contentAlpha for proper fading
+      } else {
+        bafiring = false;
+      }
+    }
 
-  // === ZIGZAG WINDOW ===
-  push();
-translate(zigzagX + zigzagDrag.x + zigzagWindowWidth / 2, zigzagY + zigzagDrag.y + zigzagWindowHeight / 2);
-scale(0.8);
-translate(-(zigzagX + zigzagDrag.x + zigzagWindowWidth / 2), -(zigzagY + zigzagDrag.y + zigzagWindowHeight / 2));
+    // Apply smooth fade effect to text using the same timing as sky background
+    let textAlpha = contentAlpha;
 
-drawWindow(zigzagX + zigzagDrag.x, zigzagY + zigzagDrag.y, color(240, 78, 35), zigzagWindowWidth, zigzagWindowHeight);
-drawTrafficLights(zigzagX + zigzagDrag.x, zigzagY + zigzagDrag.y, false);
-
-push();
-translate(zigzagX + zigzagDrag.x + zigzagWindowWidth / 2, zigzagY + zigzagDrag.y + titleBarHeight + (zigzagWindowHeight / 2));
-scale(0.4);
-rotate(-3);
-
-let shapeWidth = 300;
-let shapeHeight = 100;
-let zigZagStep = 10;
-
-fill('#F04E23');
-stroke(0);
-strokeWeight(2);
-beginShape();
-vertex(-shapeWidth / 2, -shapeHeight / 2);
-vertex(shapeWidth / 2, -shapeHeight / 2);
-for (let y = -shapeHeight / 2; y + zigZagStep * 2 <= shapeHeight / 2; y += zigZagStep * 2) {
-  vertex(shapeWidth / 2 + zigZagStep, y + zigZagStep);
-  vertex(shapeWidth / 2, y + zigZagStep * 2);
-}
-vertex(shapeWidth / 2, shapeHeight / 2);
-vertex(-shapeWidth / 2, shapeHeight / 2);
-for (let y = shapeHeight / 2; y - zigZagStep * 2 >= -shapeHeight / 2; y -= zigZagStep * 2) {
-  vertex(-shapeWidth / 2 - zigZagStep, y - zigZagStep);
-  vertex(-shapeWidth / 2, y - zigZagStep * 2);
-}
-endShape(CLOSE);
-
-fill(255);
-noStroke();
-textAlign(CENTER, CENTER);
-textSize(48);
-text("99$", 0, 0);
-pop();
-pop();
-  
-  // === YELLOW WINDOWS FIRST ===
-  if (targetBrownWidth > targetWhiteWidth) {
-    if (whiteVisible) {
+    // Add glitching effects to text during fade-in (but not bafiring)
+    if (textAlpha < 255 && !bafiring) {
       push();
-      translate(whiteX + whiteDrag.x + whiteWindowWidth / 2, whiteY + whiteDrag.y + (windowBodyHeight + whiteWindowExtraBottom) / 2);
-      scale(whiteScale);
-      translate(-(whiteX + whiteDrag.x + whiteWindowWidth / 2), -(whiteY + whiteDrag.y + (windowBodyHeight + whiteWindowExtraBottom) / 2));
-      drawWindow(whiteX + whiteDrag.x, whiteY + whiteDrag.y, color(255, 193, 7), whiteWindowWidth, windowBodyHeight + whiteWindowExtraBottom);
-      drawTrafficLights(whiteX + whiteDrag.x, whiteY + whiteDrag.y, true);
+
+      // Random horizontal displacement glitches for text
+      if (random() < 0.2) {
+        let glitchOffset = random(-4, 4) * ((255 - textAlpha) / 255);
+        translate(glitchOffset, 0);
+      }
+
+      // Occasional color channel separation for text
+      if (random() < 0.15) {
+        // Slightly offset red channel
+        fill(255, 0, 0, textAlpha * 0.7);
+        stroke(0, 0, 0, textAlpha * 0.7);
+        strokeWeight(2);
+        textAlign(LEFT, TOP);
+        let textLeftX = skyDrawX + skyDrawW * 0.06 + random(-2, 2);
+        let textTopY = skyDrawY + skyDrawH * 0.06 + random(-1, 1);
+
+        // Draw offset text elements briefly
+        textFont(fontGrotta);
+        textSize(baseFontSize * 0.6);
+        text("WHICH", textLeftX, textTopY);
+
+        pop();
+        push();
+
+        // Blue channel
+        fill(0, 0, 255, textAlpha * 0.7);
+        stroke(0, 0, 0, textAlpha * 0.7);
+        strokeWeight(2);
+        textAlign(LEFT, TOP);
+        textLeftX = skyDrawX + skyDrawW * 0.06 + random(-2, 2);
+        textTopY = skyDrawY + skyDrawH * 0.06 + random(-1, 1);
+
+        textFont(fontGrotta);
+        textSize(baseFontSize * 0.6);
+        text("WHICH", textLeftX, textTopY);
+      }
+
       pop();
     }
 
-    if (brownVisible) {
+    // Only draw normal text if not in bafiring mode
+    if (!bafiring && textAlpha > 0) {
+      fill(255, 255, 255, textAlpha);
+      stroke(0, 0, 0, textAlpha);
+      strokeWeight(2);
+      textAlign(LEFT, TOP);
+      let textLeftX = skyDrawX + skyDrawW * 0.06;
+      let textTopY = skyDrawY + skyDrawH * 0.06;
+
+      let whichY = textTopY;
+      let firstY = textTopY + baseFontSize * 1.1;
+
+      // ANIMATED "WHICH SIDE FIRST?" SEQUENTIALLY
+      let bounceSpeed = 300;
+      let bounceHeight = 6;
+      let letterSpacing = 50;
+      let wordPause = 500;
+
+      // lior's commented this
+      // if (typeof animStart === "undefined") {
+      //   animStart = millis();
+      // }
+      // let now = millis() - animStart;
+
+      let now = millis();
+
+      // WHICH
+      textStyle(BOLD);
+      textFont(fontGrotta);
+      textSize(baseFontSize * 0.6);
+
+      let whichStr = "WHICH";
+      let whichX = textLeftX;
+      let whichStart = 0;
+      let whichEnd =
+        whichStart + (whichStr.length - 1) * letterSpacing + bounceSpeed;
+
+      // Drop shadow for WHICH
+      fill(0, 0, 0, textAlpha * 0.24); // Apply alpha to shadow
+      noStroke();
+      if (now >= whichStart && now < whichEnd + wordPause) {
+        let shadowX = textLeftX;
+        for (let i = 0; i < whichStr.length; i++) {
+          let ch = whichStr[i];
+          let t = (now - whichStart - i * letterSpacing) / bounceSpeed;
+          let bounce = sin(t) * bounceHeight * (t > 0 ? 1 : 0);
+          text(ch, shadowX + 6, whichY + bounce + 6);
+          shadowX += textWidth(ch);
+        }
+      } else {
+        text(whichStr, textLeftX + 6, whichY + 6);
+      }
+
+      // Main WHICH text
+      fill(255, 255, 255, textAlpha);
+      stroke(0, 0, 0, textAlpha);
+      strokeWeight(2);
+      if (now >= whichStart && now < whichEnd + wordPause) {
+        let mainX = textLeftX;
+        for (let i = 0; i < whichStr.length; i++) {
+          let ch = whichStr[i];
+          let t = (now - whichStart - i * letterSpacing) / bounceSpeed;
+          let bounce = sin(t) * bounceHeight * (t > 0 ? 1 : 0);
+          text(ch, mainX, whichY + bounce);
+          mainX += textWidth(ch);
+        }
+      } else {
+        text(whichStr, textLeftX, whichY);
+      }
+      let whichBaseline = whichY + textAscent();
+
+      // FIRST?
+      textFont(fontGrotta);
+      textStyle(BOLD);
+      textSize(baseFontSize * 0.6);
+
+      let firstStr = "FIRST?";
+      let firstX = textLeftX + 80;
+      let firstStart = whichEnd + wordPause;
+      let firstEnd =
+        firstStart + (firstStr.length - 1) * letterSpacing + bounceSpeed;
+
+      // Drop shadow for FIRST?
+      fill(0, 0, 0, textAlpha * 0.24);
+      noStroke();
+      if (now >= firstStart && now < firstEnd + wordPause) {
+        let shadowX = textLeftX + 80;
+        for (let i = 0; i < firstStr.length; i++) {
+          let ch = firstStr[i];
+          let t = (now - firstStart - i * letterSpacing) / bounceSpeed;
+          let bounce = sin(t) * bounceHeight * (t > 0 ? 1 : 0);
+          text(ch, shadowX + 6, firstY + bounce + 6);
+          shadowX += textWidth(ch);
+        }
+      } else {
+        text(firstStr, textLeftX + 80 + 6, firstY + 6);
+      }
+
+      // Main FIRST? text
+      fill(255, 255, 255, textAlpha);
+      stroke(0, 0, 0, textAlpha);
+      strokeWeight(2);
+      if (now >= firstStart && now < firstEnd + wordPause) {
+        let mainX = textLeftX + 80;
+        for (let i = 0; i < firstStr.length; i++) {
+          let ch = firstStr[i];
+          let t = (now - firstStart - i * letterSpacing) / bounceSpeed;
+          let bounce = sin(t) * bounceHeight * (t > 0 ? 1 : 0);
+          text(ch, mainX, firstY + bounce);
+          mainX += textWidth(ch);
+        }
+      } else {
+        text(firstStr, textLeftX + 80, firstY);
+      }
+      let firstBaseline = firstY + textAscent();
+
+      // SIDE (centered)
+      textFont(fontSnell);
+      textStyle(NORMAL);
+      textSize(baseFontSize * 0.8);
+      fill(238, 238, 238, textAlpha); // Apply alpha to "Side" text
+      stroke(0, 0, 0, textAlpha);
+      strokeWeight(2);
+
+      let sideStr = "Side";
+      let sideAscent = textAscent();
+      let sideBaseline = (whichBaseline + firstBaseline) / 2;
+      let sideY = sideBaseline - sideAscent;
+
+      let sideX = textLeftX + 80;
+      let sideStart = firstEnd + wordPause;
+
+      for (let i = 0; i < sideStr.length; i++) {
+        let ch = sideStr[i];
+        let t = (now - sideStart - i * letterSpacing) / bounceSpeed;
+        let bounce = sin(t) * bounceHeight * (t > 0 ? 1 : 0);
+        text(ch, sideX, sideY + bounce);
+        sideX += textWidth(ch);
+      }
+
+      // PRICE DISPLAY
+      let priceX = skyDrawX + skyDrawW * 0.06;
+      let priceY = skyDrawY + skyDrawH - baseFontSize * 0.9;
+
+      fill(255, 215, 0, textAlpha); // Apply alpha to price text
+      stroke(0, 0, 0, textAlpha);
+      strokeWeight(2);
+      textSize(baseFontSize * 0.5);
+
+      let totalVotes = whiteFillingClicks + brownFillingClicks;
+
+      let smallTextSize = baseFontSize * 0.3;
+      let bigTextSize = baseFontSize * 0.5;
+
+      // Draw small -$
+      textFont("Helvetica");
+      textSize(smallTextSize);
+      let dashDollarStr = "-$";
+      let dashDollarWidth = textWidth(dashDollarStr);
+
+      let baselineOffset = bigTextSize - smallTextSize;
+      text(dashDollarStr, priceX, priceY + baselineOffset);
+
+      // Draw big total votes number
+      textFont(fontGrotta);
+      textSize(bigTextSize);
+      let votesStr = totalVotes.toString();
+      let votesWidth = textWidth(votesStr);
+      text(votesStr, priceX + dashDollarWidth, priceY);
+
+      // Draw small dash after number
+      textFont("Helvetica");
+      textSize(smallTextSize);
+      let dashStr = "-";
+      let dashWidth = textWidth(dashStr);
+      text(
+        dashStr,
+        priceX + dashDollarWidth + votesWidth,
+        priceY + baselineOffset
+      );
+
+      // Center "votes" label
+      let totalWidth = dashDollarWidth + votesWidth + dashWidth;
+      let centerX = priceX + totalWidth / 2;
+
+      textFont(fontGrotta);
+      textStyle(NORMAL);
+      textSize(baseFontSize * 0.2);
+      textAlign(CENTER);
+      text("votes", centerX, priceY + 6 + baseFontSize * 0.4);
+      textAlign(LEFT);
+    }
+  } // End of tvIsOn check for text
+
+  // Only show ice cream content when TV is on and not during turn-on animation
+  if (tvIsOn && !tvTurningOn) {
+    // Apply smooth fade effect to casata elements using the same timing as sky background
+    let casataAlpha = contentAlpha;
+
+    if (casataAlpha > 0) {
+      // Only draw if there's some opacity
       push();
-      translate(dynamicBrownX + brownDrag.x + brownWindowWidth / 2, brownY - brownWindowExtraTop + brownDrag.y + (windowBodyHeight + brownWindowExtraTop) / 2);
-      scale(brownScale);
-      translate(-(dynamicBrownX + brownDrag.x + brownWindowWidth / 2), -(brownY - brownWindowExtraTop + brownDrag.y + (windowBodyHeight + brownWindowExtraTop) / 2));
-      drawWindow(dynamicBrownX + brownDrag.x, brownY - brownWindowExtraTop + brownDrag.y, color(255, 193, 7), brownWindowWidth, windowBodyHeight + brownWindowExtraTop);
-      drawTrafficLights(dynamicBrownX + brownDrag.x, brownY - brownWindowExtraTop + brownDrag.y, false);
-      pop();
-    }
-  } else {
-    if (brownVisible) {
+
+      // Add glitching effects to casata elements during fade-in
+      if (casataAlpha < 255) {
+        // Random displacement glitches for ice cream elements
+        if (random() < 0.25) {
+          let glitchX = random(-6, 6) * ((255 - casataAlpha) / 255);
+          let glitchY = random(-3, 3) * ((255 - casataAlpha) / 255);
+          translate(glitchX, glitchY);
+        }
+
+        // Occasional color separation for ice cream
+        if (random() < 0.1) {
+          tint(255, casataAlpha * 0.8, casataAlpha * 0.8, casataAlpha);
+        } else {
+          tint(casataAlpha, casataAlpha, casataAlpha);
+        }
+      } else {
+        tint(casataAlpha, casataAlpha, casataAlpha);
+      }
+
+      translate(casataCenterX, casataCenterY - 10);
+      rotate(-casataRotation);
+      scale(casataScale);
+
+      // SUN
       push();
-      translate(dynamicBrownX + brownDrag.x + brownWindowWidth / 2, brownY - brownWindowExtraTop + brownDrag.y + (windowBodyHeight + brownWindowExtraTop) / 2);
-      scale(brownScale);
-      translate(-(dynamicBrownX + brownDrag.x + brownWindowWidth / 2), -(brownY - brownWindowExtraTop + brownDrag.y + (windowBodyHeight + brownWindowExtraTop) / 2));
-      drawWindow(dynamicBrownX + brownDrag.x, brownY - brownWindowExtraTop + brownDrag.y, color(255, 193, 7), brownWindowWidth, windowBodyHeight + brownWindowExtraTop);
-      drawTrafficLights(dynamicBrownX + brownDrag.x, brownY - brownWindowExtraTop + brownDrag.y, false);
-      pop();
-    }
+      translate(150, 70);
 
-    if (whiteVisible) {
+      let sunRadiusX = whiteH * 0.7 * casataScaleFactor;
+      let sunRadiusY = whiteH * 0.9 * casataScaleFactor;
+
+      fill(0);
+      noStroke();
+      ellipse(20, 20, sunRadiusX * 2.8, sunRadiusY * 2.8);
+
+      fill("#FFFF00");
+      stroke("#FFFF00");
+      strokeWeight(3);
+      ellipse(0, 0, sunRadiusX * 2.8, sunRadiusY * 2.8);
+
+      // rotating star rays
       push();
-      translate(whiteX + whiteDrag.x + whiteWindowWidth / 2, whiteY + whiteDrag.y + (windowBodyHeight + whiteWindowExtraBottom) / 2);
-      scale(whiteScale);
-      translate(-(whiteX + whiteDrag.x + whiteWindowWidth / 2), -(whiteY + whiteDrag.y + (windowBodyHeight + whiteWindowExtraBottom) / 2));
-      drawWindow(whiteX + whiteDrag.x, whiteY + whiteDrag.y, color(255, 193, 7), whiteWindowWidth, windowBodyHeight + whiteWindowExtraBottom);
-      drawTrafficLights(whiteX + whiteDrag.x, whiteY + whiteDrag.y, true);
+      let starAngle = (millis() / 24000) * TWO_PI;
+      rotate(starAngle);
+      fill("#FFFFFF");
+      stroke("#000000");
+      strokeWeight(0.5);
+      beginShape();
+      for (let i = 0; i < 24; i++) {
+        let angle = (TWO_PI / 24) * i;
+        let outerRadius = i % 2 === 0 ? sunRadiusX * 1.25 : sunRadiusX * 0.6;
+        let x = cos(angle) * outerRadius;
+        let y = sin(angle) * outerRadius * (sunRadiusY / sunRadiusX);
+        vertex(x, y);
+      }
+      endShape(CLOSE);
       pop();
+      pop();
+
+      const scaledWhiteW = whiteW;
+      const scaledWhiteH = whiteH;
+      const scaledBrownW = brownW;
+      const scaledBrownH = brownH;
+
+      let localWhiteX = -180 + whiteDrag.x / casataScale;
+      let localWhiteY = -100 + whiteDrag.y / casataScale;
+      let localBrownX = 180 + brownDrag.x / casataScale;
+      let localBrownY = -50 + brownDrag.y / casataScale;
+
+      const whiteFillingHeight = scaledWhiteH * whiteFillingHeightRatio;
+      const whiteFillingYOffset = scaledWhiteH * whiteFillingYOffsetRatio;
+      const whiteFillingX =
+        localWhiteX + whiteImageOffsetX + whiteFillingXOffset;
+      const whiteFillingY =
+        localWhiteY + whiteImageOffsetY + whiteFillingYOffset;
+
+      if (isHoveringWhite) {
+        fill("#FFFDF9");
+      } else {
+        fill("#f3e9d9");
+      }
+      noStroke();
+      let maxWhiteWidth = whiteImageOffsetX + whiteFillingXOffset + whiteW;
+      let whiteFillRight = whiteFillingX + whiteFillWidth - 26.5;
+      let safeWhiteWidth = min(whiteFillRight, maxWhiteWidth) - whiteFillingX;
+      rect(whiteFillingX, whiteFillingY, safeWhiteWidth, whiteFillingHeight);
+      image(
+        whitePart,
+        localWhiteX + whiteImageOffsetX,
+        localWhiteY + whiteImageOffsetY,
+        scaledWhiteW,
+        scaledWhiteH
+      );
+
+      const brownFillingHeight = scaledBrownH * brownFillingHeightRatio;
+      const brownFillingYOffset = scaledBrownH * brownFillingYOffsetRatio;
+      const brownFillingRight =
+        localBrownX + brownImageOffsetX + brownFillingXOffset;
+      const brownFillingY =
+        localBrownY + brownImageOffsetY + brownFillingYOffset;
+      const brownFillingX = brownFillingRight - brownFillWidth;
+      const brownVisualWidth = brownFillWidth + 27.5;
+
+      if (isHoveringBrown) {
+        fill("#9E6659");
+      } else {
+        fill("#bc7567");
+      }
+      rect(
+        brownFillingX,
+        brownFillingY,
+        brownFillWidth + 27.5,
+        brownFillingHeight
+      );
+      image(
+        brownPart,
+        localBrownX + brownImageOffsetX,
+        localBrownY + brownImageOffsetY,
+        scaledBrownW,
+        scaledBrownH
+      );
+
+      // SHOW LABELS OR NUMBERS
+      fill(0);
+      textAlign(CENTER, CENTER);
+
+      if (hasClicked && (whiteFillingClicks > 0 || brownFillingClicks > 0)) {
+        textSize(baseFontSize * 0.08);
+
+        let whiteVisibleWidth = safeWhiteWidth;
+        let whiteCenterX = whiteFillingX + whiteVisibleWidth / 2;
+        let whiteCenterY = whiteFillingY + whiteFillingHeight / 2;
+        text(whiteFillingClicks, whiteCenterX, whiteCenterY);
+
+        let brownVisibleWidth = brownFillWidth + 27.5;
+        let brownCenterX = brownFillingX + brownVisibleWidth / 2;
+        let brownCenterY = brownFillingY + brownFillingHeight / 2;
+        text(brownFillingClicks, brownCenterX, brownCenterY);
+      }
+
+      // UPDATE HOVER FLAGS
+      if (!hasClicked) {
+        let mx = mouseX - casataCenterX;
+        let my = mouseY - casataCenterY;
+        let rotMx = mx * cos(-casataRotation) - my * sin(-casataRotation);
+        let rotMy = mx * sin(-casataRotation) + my * cos(-casataRotation);
+        let localMx = rotMx / casataScale;
+        let localMy = rotMy / casataScale;
+
+        isHoveringWhite =
+          localMx > whiteFillingX &&
+          localMx < whiteFillingX + (whiteFillWidth - 26.5) &&
+          localMy > whiteFillingY &&
+          localMy < whiteFillingY + whiteFillingHeight;
+
+        let hoverPaddingX = 80;
+        let hoverPaddingY = 120;
+
+        isHoveringBrown =
+          localMx > brownFillingX - hoverPaddingX &&
+          localMx < brownFillingX + brownVisualWidth + hoverPaddingX &&
+          localMy > brownFillingY - hoverPaddingY &&
+          localMy < brownFillingY + brownFillingHeight + hoverPaddingY;
+      }
+
+      pop();
+
+      // Reset tint after casata elements
+      noTint();
     }
-  }
-  
-  // === Fills and images ===
-  const whiteFillingHeight = whiteH * whiteFillingHeightRatio;
-  const whiteFillingYOffset = whiteH * whiteFillingYOffsetRatio;
-  const whiteFillingX = whiteX + whiteImageOffsetX + whiteFillingXOffset + whiteDrag.x;
-  const whiteFillingY = whiteY + titleBarHeight + whiteImageOffsetY + whiteFillingYOffset + whiteDrag.y;
+  } // End of ice cream content
 
-  if (whiteVisible) {
-    fill('#f3e9d9');
-    noStroke();
-    rect(whiteFillingX, whiteFillingY, whiteFillWidth - 26.5, whiteFillingHeight);
-    image(whitePart, whiteX + whiteImageOffsetX + whiteDrag.x, whiteY + titleBarHeight + whiteImageOffsetY + whiteDrag.y, whiteW, whiteH);
-  }
+  // Only show TV effects when TV is on and not during turn-on animation
+  if (tvIsOn && !tvTurningOn) {
+    // SCAN LINES AND TV EFFECTS (only when TV is on)
+    if (frameCount % 8 === 0) {
+      let scanLineCount = 2;
+      for (let i = 0; i < scanLineCount; i++) {
+        let lineY = skyDrawY + random(skyDrawH);
+        let lineAlpha = random(20, 50);
+        let lineWidth = random(0.3, 0.8);
 
-  const brownFillingHeight = brownH * brownFillingHeightRatio;
-  const brownFillingYOffset = brownH * brownFillingYOffsetRatio;
-  const brownFillingRight = brownX + brownImageOffsetX + brownFillingXOffset + brownDrag.x;
-  const brownFillingY = brownY + titleBarHeight + brownImageOffsetY + brownFillingYOffset + brownDrag.y;
-  const brownFillingX = brownFillingRight - brownFillWidth;
-
-  if (brownVisible) {
-    fill('#bc7567');
-    rect(brownFillingX, brownFillingY, brownFillWidth + 27.5, brownFillingHeight);
-    image(brownPart, brownX + brownImageOffsetX + brownDrag.x, brownY + titleBarHeight + brownImageOffsetY + brownDrag.y, brownW, brownH);
-  }
-
-  // === Arcs (ellipses) ===
-  const mx = (mouseX - offsetX) / scaleFactor;
-  const my = (mouseY - offsetY) / scaleFactor;
-
-  const hoveringOverBrownWindow = mx >= brownX + brownDrag.x && mx <= brownX + brownDrag.x + brownWindowWidth &&
-    my >= brownY - brownWindowExtraTop + brownDrag.y && my <= brownY - brownWindowExtraTop + brownDrag.y + windowBodyHeight + titleBarHeight;
-
-  const hoveringOverWhiteWindow = mx >= whiteX + whiteDrag.x && mx <= whiteX + whiteDrag.x + whiteWindowWidth &&
-    my >= whiteY + whiteDrag.y && my <= whiteY + whiteDrag.y + windowBodyHeight + titleBarHeight;
-
-  const hoveringOverBrownFilling = mx > brownFillingX && mx < brownFillingRight &&
-    my > brownFillingY && my < brownFillingY + brownFillingHeight;
-
-  const hoveringOverWhiteFilling = mx > whiteFillingX && mx < whiteFillingX + whiteFillWidth &&
-    my > whiteFillingY && my < whiteFillingY + whiteFillingHeight;
-
-  if ((hoveringOverBrownWindow && !brownFillingClicked && !whiteFillingClicked) || (hoveringOverBrownFilling && !brownFillingClicked && !whiteFillingClicked)) {
-    brownEllipseGrow = lerp(brownEllipseGrow, 1, 0.1);
-  } else {
-    brownEllipseGrow = lerp(brownEllipseGrow, 0, 0.5);
-  }
-
-  if (brownEllipseGrow > 0.01) {
-    let ellipseX = brownX + brownImageOffsetX + brownDrag.x + brownW / 2 - 40;
-    let ellipseY = brownY + titleBarHeight + brownImageOffsetY + brownDrag.y + brownH;
-    let maxWidth = (brownW * 0.4) + 110;
-    let maxHeight = (brownH * 0.1) + 40;
-    fill('#BC7567');
-    noStroke();
-    arc(ellipseX, ellipseY, maxWidth * brownEllipseGrow, maxHeight * brownEllipseGrow, 0, PI, CHORD);
-  }
-
-  if ((hoveringOverWhiteWindow && !whiteFillingClicked && !brownFillingClicked) || (hoveringOverWhiteFilling && !whiteFillingClicked && !brownFillingClicked)) {
-    ellipseGrow = lerp(ellipseGrow, 1, 0.1);
-  } else {
-    ellipseGrow = lerp(ellipseGrow, 0, 0.5);
-  }
-
-  if (ellipseGrow > 0.01) {
-    let ellipseX = whiteX + whiteImageOffsetX + whiteDrag.x + whiteW / 2 + 31;
-    let ellipseY = whiteY + titleBarHeight + whiteImageOffsetY + whiteDrag.y + whiteH;
-    let maxWidth = (whiteW * 0.4) + 110;
-    let maxHeight = (whiteH * 0.1) + 40;
-    fill('#F3E9D9');
-    noStroke();
-    arc(ellipseX, ellipseY, maxWidth * ellipseGrow, maxHeight * ellipseGrow, 0, PI, CHORD);
-  }
-
-
-  // === BLACK WINDOW (transparent) ===
-push();
-translate(windowX + blackDrag.x + (windowBodyWidth + blackWindowExtraWidth) / 2, windowY + blackDrag.y + 12 + (windowBodyHeight + titleBarHeight) / 2);
-scale(0.8);
-translate(-(windowX + blackDrag.x + (windowBodyWidth + blackWindowExtraWidth) / 2), -(windowY + blackDrag.y + 12 + (windowBodyHeight + titleBarHeight) / 2));
-
-stroke(0);
-fill(255);
-rect(windowX + blackDrag.x - 12, windowY + blackDrag.y + 12, windowBodyWidth + blackWindowExtraWidth, titleBarHeight);
-noFill();
-stroke(0);
-rect(windowX + blackDrag.x - 12, windowY + blackDrag.y + 12, windowBodyWidth + blackWindowExtraWidth, windowBodyHeight + titleBarHeight);
-drawTrafficLights(windowX + blackDrag.x - 12, windowY + blackDrag.y + 12, false);
-
-let blackWindowWidth = windowBodyWidth + blackWindowExtraWidth;
-let blackWindowHeight = windowBodyHeight;
-let gifWidth = 300 * 2;
-let gifHeight = 150 * 2;
-let gifX = windowX + blackDrag.x - 12 + (blackWindowWidth - gifWidth) / 2;
-let gifY = windowY + blackDrag.y + 12 + titleBarHeight + (blackWindowHeight - gifHeight) / 2;
-image(mouthGif, gifX, gifY, gifWidth, gifHeight);
-pop();
-
-  // === PURPLE WINDOW ===
-push();
-translate(windowX + purpleDrag.x + (windowBodyWidth + purpleWindowExtraWidth) / 2, windowY + purpleDrag.y + (windowBodyHeight + titleBarHeight) / 2);
-scale(0.8);
-translate(-(windowX + purpleDrag.x + (windowBodyWidth + purpleWindowExtraWidth) / 2), -(windowY + purpleDrag.y + (windowBodyHeight + titleBarHeight) / 2));
-
-drawWindow(windowX + purpleDrag.x, windowY + purpleDrag.y, color(195, 171, 249), windowBodyWidth + purpleWindowExtraWidth, windowBodyHeight);
-drawTrafficLights(windowX + purpleDrag.x, windowY + purpleDrag.y, false);
-
-fill(0);
-noStroke();
-textAlign(CENTER, CENTER);
-textSize(24);
-text("which side first?", windowX + purpleDrag.x + (windowBodyWidth + purpleWindowExtraWidth) / 2, windowY + purpleDrag.y + titleBarHeight + (windowBodyHeight / 2));
-pop();
-}
-
-class ZigZagPiece {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.vx = random(-5, 5);
-    this.vy = random(-5, 5);
-    this.angle = random(TWO_PI);
-    this.rotationSpeed = random(-0.05, 0.05);
-  }
-
-  update() {
-    this.x += this.vx;
-    this.y += this.vy;
-
-    if (this.x < 0 || this.x > width) this.vx *= -1;
-    if (this.y < 0 || this.y > height) this.vy *= -1;
-
-    this.angle += this.rotationSpeed;
-  }
-
-  display() {
-    push();
-    translate(this.x, this.y);
-    rotate(this.angle);
-    scale(0.2);
-
-    let shapeWidth = 300;
-    let shapeHeight = 100;
-    let zigZagStep = 10;
-
-    fill('#F04E23');
-    stroke(0);
-    strokeWeight(2);
-    beginShape();
-    vertex(-shapeWidth / 2, -shapeHeight / 2);
-    vertex(shapeWidth / 2, -shapeHeight / 2);
-    for (let y = -shapeHeight / 2; y + zigZagStep * 2 <= shapeHeight / 2; y += zigZagStep * 2) {
-      vertex(shapeWidth / 2 + zigZagStep, y + zigZagStep);
-      vertex(shapeWidth / 2, y + zigZagStep * 2);
+        stroke(255, lineAlpha);
+        strokeWeight(lineWidth);
+        line(skyDrawX, lineY, skyDrawX + skyDrawW, lineY);
+      }
     }
-    vertex(shapeWidth / 2, shapeHeight / 2);
-    vertex(-shapeWidth / 2, shapeHeight / 2);
-    for (let y = shapeHeight / 2; y - zigZagStep * 2 >= -shapeHeight / 2; y -= zigZagStep * 2) {
-      vertex(-shapeWidth / 2 - zigZagStep, y - zigZagStep);
-      vertex(-shapeWidth / 2, y - zigZagStep * 2);
+
+    if (random() < 0.05) {
+      let interferenceX = skyDrawX + random(skyDrawW);
+      let interferenceAlpha = random(30, 70);
+
+      stroke(255, interferenceAlpha);
+      strokeWeight(random(0.5, 1));
+      line(interferenceX, skyDrawY, interferenceX, skyDrawY + skyDrawH);
     }
-    endShape(CLOSE);
 
-    fill(255);
+    // TV GLASS EFFECTS
+    for (let i = 0; i < 6; i++) {
+      let alpha = map(i, 0, 14, 0, 25);
+      fill(0, alpha);
+      noStroke();
+      rect(skyDrawX - i, skyDrawY - i, skyDrawW + i * 2, skyDrawH + i * 2);
+    }
+
+    stroke(255, 20);
+    strokeWeight(1.5);
+    for (let i = 0; i < 3; i++) {
+      let reflectionX = skyDrawX + skyDrawW * (0.25 + i * 0.3);
+      line(reflectionX, skyDrawY, reflectionX + 25, skyDrawY + skyDrawH);
+    }
+
+    fill(255, 3);
     noStroke();
-    textAlign(CENTER, CENTER);
-    textSize(48);
-    text("99$", 0, 0);
-    pop();
+    ellipse(
+      skyDrawX + skyDrawW * 0.3,
+      skyDrawY + skyDrawH * 0.2,
+      skyDrawW * 0.4,
+      skyDrawH * 0.5
+    );
+    ellipse(
+      skyDrawX + skyDrawW * 0.7,
+      skyDrawY + skyDrawH * 0.7,
+      skyDrawW * 0.3,
+      skyDrawH * 0.4
+    );
+
+    fill(0, 20);
+    noStroke();
+    rect(skyDrawX, skyDrawY, skyDrawW, 12);
+    rect(skyDrawX, skyDrawY + skyDrawH - 12, skyDrawW, 12);
+    rect(skyDrawX, skyDrawY, 12, skyDrawH);
+    rect(skyDrawX + skyDrawW - 12, skyDrawY, 12, skyDrawH);
+
+    fill(255, 25);
+    noStroke();
+    ellipse(skyDrawX + skyDrawW * 0.1, skyDrawY + skyDrawH * 0.1, 40, 60);
+    ellipse(skyDrawX + skyDrawW * 0.9, skyDrawY + skyDrawH * 0.1, 30, 45);
   }
-}
 
-// Helper functions (unchanged)
-function drawWindow(x, y, bgColor, w, h) {
-  stroke(0);
-  fill(255);
-  rect(x, y, w, titleBarHeight);
-  stroke(0);
-  fill(bgColor);
-  rect(x, y + titleBarHeight, w, h);
-}
+  // SPEAKER DOTS (always visible)
+  let dotCols = 14;
+  let dotSpacingX = 12;
+  let dotSpacingY = 12;
+  let dotRadius = 2;
+  let speakerLeftX = width - 190;
+  let speakerTopY = skyDrawY;
+  let dotRows = Math.floor(skyDrawH / dotSpacingY);
 
-function drawTrafficLights(x, y, isWhite) {
+  fill(255, 180);
   noStroke();
-  fill(255, 60, 60); circle(x + 20, y + 25, 12);
-  fill(255, 180, 0); circle(x + 45, y + 25, 12);
-  fill(0, 200, 0);   circle(x + 70, y + 25, 12);
+  for (let i = 0; i < dotCols; i++) {
+    for (let j = 0; j < dotRows; j++) {
+      ellipse(
+        speakerLeftX + i * dotSpacingX,
+        speakerTopY + j * dotSpacingY,
+        dotRadius * 2
+      );
+    }
+  }
 
-  const mx = (mouseX - offsetX) / scaleFactor;
-  const my = (mouseY - offsetY) / scaleFactor;
+  // TV BUTTONS (always visible)
+  let buttonCount = 4;
+  let buttonSpacing = 50;
+  let buttonRadius = 14;
+  let buttonX = speakerLeftX - 40;
+  let firstButtonY = skyDrawY + skyDrawH - buttonCount * buttonSpacing;
+  fill(50);
+  stroke(200);
+  strokeWeight(0.6);
+  for (let i = 0; i < buttonCount; i++) {
+    ellipse(buttonX, firstButtonY + i * buttonSpacing, buttonRadius * 2);
+  }
 
-  if (mouseIsPressed) {
-    const hitRadius = 20;
-    if (isWhite && whiteVisible && dist(mx, my, whiteX + whiteDrag.x + 20, whiteY + whiteDrag.y + 25) < hitRadius) {
-      whiteTargetScale = 0;
-      const step = 10;
-      const maxWidth = 450;
-      for (let i = 0; i < 10; i++) {
-        if (targetBrownWidth - step >= minVisualWidth && targetWhiteWidth + step <= maxWidth) {
-          targetWhiteWidth += step;
-          targetBrownWidth -= step;
-        }
+  fill(tvIsOn ? "lime" : "red");
+  textAlign(CENTER, CENTER);
+  textSize(10);
+  text(tvIsOn ? "ON" : "OFF", buttonX, firstButtonY - 24);
+
+  noStroke(); // Reset stroke
+  noTint(); // Reset tint
+}
+
+function drawBafiringGlitch(alphaOverride = 255) {
+  push();
+
+  // Very subtle RGB channel offset (much smaller)
+  let offset = random(1, 3);
+
+  // Only do channel separation occasionally and subtly
+  if (random() < 0.7) {
+    // Red channel slight offset
+    tint(255, 0, 0, alphaOverride * 0.3);
+    image(skyBg, skyDrawX + offset, skyDrawY, skyDrawW, skyDrawH);
+
+    // Green channel slight offset
+    tint(0, 255, 0, alphaOverride * 0.3);
+    image(skyBg, skyDrawX - offset, skyDrawY, skyDrawW, skyDrawH);
+
+    // Blue channel
+    tint(0, 0, 255, alphaOverride * 0.3);
+    image(skyBg, skyDrawX, skyDrawY + random(-1, 1), skyDrawW, skyDrawH);
+
+    noTint();
+  }
+
+  // Add just a few thin scan lines occasionally
+  if (random() < 0.5) {
+    for (let i = 0; i < random(2, 5); i++) {
+      let y = skyDrawY + random(skyDrawH);
+      stroke(255, random(30, 80));
+      strokeWeight(random(0.5, 1));
+      line(skyDrawX, y, skyDrawX + skyDrawW, y);
+    }
+    noStroke();
+  }
+
+  // Very brief brightness flicker
+  if (random() < 0.3) {
+    tint(255, random(200, 255));
+    image(skyBg, skyDrawX, skyDrawY, skyDrawW, skyDrawH);
+    noTint();
+  }
+
+  pop();
+}
+
+export function mouseReleasedIceCreamSandwichScene() {
+  // Toggle TV ON/OFF
+  let buttonY = skyDrawY + skyDrawH - 4 * 50; // 4th button (on-off)
+  let d = dist(mouseX, mouseY, width - 190 - 40, buttonY);
+  if (d < 14) {
+    // Play click sound
+    if (clickButtonSound.isLoaded()) {
+      clickButtonSound.setVolume(0.3);
+      clickButtonSound.play();
+    }
+
+    if (!tvIsOn && !tvTurningOn) {
+      // Start turn-on animation
+      tvTurningOn = true;
+      tvTurnOnStart = millis();
+      tvIsOn = true;
+
+      // Start playing background sounds when TV turns on
+      // Start playing background sounds when TV turns on
+      if (radioStaticSound.isLoaded()) {
+        radioStaticSound.loop();
+        radioStaticSound.setVolume(0.1); // was 0.3, now 0.1
       }
-      whiteFillingClicked = true;
-      setTimeout(() => {
-        whiteTargetScale = 1;
-      }, 200);
-    }
-    if (!isWhite && brownVisible && dist(mx, my, brownX + brownDrag.x + 20, brownY + brownDrag.y + 25) < hitRadius) {
-      brownTargetScale = 0;
-      const step = 10;
-      const maxWidth = 450;
-      for (let i = 0; i < 10; i++) {
-        if (targetWhiteWidth - step >= minVisualWidth && targetBrownWidth + step <= maxWidth) {
-          targetBrownWidth += step;
-          targetWhiteWidth -= step;
-        }
+      if (happyTuneSound.isLoaded()) {
+        happyTuneSound.loop();
+        happyTuneSound.setVolume(0.2); // was 0.5, now 0.2
       }
-      brownFillingClicked = true;
-      setTimeout(() => {
-        brownTargetScale = 1;
-      }, 200);
+    } else if (tvIsOn && !tvTurningOn) {
+      // Turn off immediately
+      tvIsOn = false;
+
+      // Play shutdown sound
+      // Play shutdown sound
+      if (tvShutDownSound.isLoaded()) {
+        tvShutDownSound.setVolume(0.3); // Add this line
+        tvShutDownSound.play();
+      }
+
+      // Stop background sounds when TV turns off
+      if (radioStaticSound.isPlaying()) {
+        radioStaticSound.stop();
+      }
+      if (happyTuneSound.isPlaying()) {
+        happyTuneSound.stop();
+      }
     }
+    return; // Exit early on toggle to prevent accidental interactions
   }
-}
 
-function insideWindow(mx, my, x, y, w) {
-  return mx >= x && mx <= x + w && my >= y && my <= y + windowBodyHeight + titleBarHeight;
-}
+  // If TV is off or turning on, don't allow ice cream interactions
+  if (!tvIsOn || tvTurningOn) return;
 
-function mousePressed() {
-  didDrag = false;
-  const mx = (mouseX - offsetX) / scaleFactor;
-  const my = (mouseY - offsetY) / scaleFactor;
+  let casataScale = skyDrawH * 0.0008 * casataScaleFactor;
+  let casataRightEdge = skyDrawX + skyDrawW * 0.75;
+  let casataBaseY = skyDrawY + skyDrawH / 2.4;
 
-  // Check black window first
-  if (insideWindow(mx, my, windowX + blackDrag.x - 4, windowY + blackDrag.y + 4, windowBodyWidth + blackWindowExtraWidth)) {
-    activeDrag = blackDrag;
-  }
-  // Then purple window
-  else if (insideWindow(mx, my, windowX + purpleDrag.x, windowY + purpleDrag.y, windowBodyWidth + purpleWindowExtraWidth)) {
-    activeDrag = purpleDrag;
-  }
- // Check zigzag window
-  if (insideWindow(mx, my, zigzagX + zigzagDrag.x, zigzagY + zigzagDrag.y, zigzagWindowWidth)) {
-    activeDrag = zigzagDrag;
+  let casataCenterX = casataRightEdge - 200 * casataScale;
+  let casataCenterY = casataBaseY;
 
-    // Add new flying zigzag piece
-    zigzagPieces.push(new ZigZagPiece(
-      zigzagX + zigzagDrag.x + zigzagWindowWidth / 2,
-      zigzagY + zigzagDrag.y + zigzagWindowHeight / 2
-    ));
-  }
-  // Then yellow windows (both move together)
-  else if (
-    insideWindow(mx, my, whiteX + whiteDrag.x, whiteY + whiteDrag.y, whiteWindowWidth) ||
-    insideWindow(mx, my, brownX + brownDrag.x, brownY - brownWindowExtraTop + brownDrag.y, brownWindowWidth)
-  ) {
-    activeDrag = whiteDrag;
-  }
-}
+  let mx = mouseX - casataCenterX;
+  let my = mouseY - casataCenterY;
+  let rotMx = mx * cos(-casataRotation) - my * sin(-casataRotation);
+  let rotMy = mx * sin(-casataRotation) + my * cos(-casataRotation);
+  let localMx = rotMx / casataScale;
+  let localMy = rotMy / casataScale;
 
-function mouseDragged() {
-  if (activeDrag) {
-    if (activeDrag === purpleDrag || activeDrag === blackDrag || activeDrag === zigzagDrag) {
-      activeDrag.x += movedX / scaleFactor;
-      activeDrag.y += movedY / scaleFactor;
-    } else if (activeDrag === whiteDrag) {
-      let proposedX = whiteDrag.targetX + movedX / scaleFactor;
-      let proposedY = whiteDrag.targetY + movedY / scaleFactor;
+  let localWhiteX = -180 + whiteDrag.x / casataScale;
+  let localWhiteY = -100 + whiteDrag.y / casataScale;
+  let localBrownX = 180 + brownDrag.x / casataScale;
+  let localBrownY = -50 + brownDrag.y / casataScale;
 
-      whiteDrag.targetX = proposedX;
-      whiteDrag.targetY = proposedY;
-      brownDrag.targetX = proposedX;
-      brownDrag.targetY = proposedY;
+  const whiteFillingHeight = whiteH * whiteFillingHeightRatio;
+  const whiteFillingX = localWhiteX + whiteImageOffsetX + whiteFillingXOffset;
+  const whiteFillingY =
+    localWhiteY + whiteImageOffsetY + whiteFillingYOffsetRatio * whiteH;
 
-      didDrag = true;
-    }
-  }
-}
-
-function mouseReleased() {
-  const mx = (mouseX - offsetX) / scaleFactor;
-  const my = (mouseY - offsetY) / scaleFactor;
-  const step = 10;
-
-  const whiteFillingYOffset = whiteH * whiteFillingYOffsetRatio;
-  const whiteFillingX = whiteX + whiteImageOffsetX + whiteFillingXOffset + whiteDrag.x;
-  const whiteFillingY = whiteY + titleBarHeight + whiteImageOffsetY + whiteDrag.y;
-  const whiteFillingH = whiteH * whiteFillingHeightRatio;
-
-  const brownFillingRight = brownX + brownImageOffsetX + brownFillingXOffset + brownDrag.x;
-  const brownFillingYOffset = brownH * brownFillingYOffsetRatio;
-  const brownFillingY = brownY + titleBarHeight + brownImageOffsetY + brownFillingYOffset + brownDrag.y;
-  const brownFillingH = brownH * brownFillingHeightRatio;
+  const brownFillingHeight = whiteH * brownFillingHeightRatio;
+  const brownFillingRight =
+    localBrownX + brownImageOffsetX + brownFillingXOffset;
+  const brownFillingY =
+    localBrownY + brownImageOffsetY + whiteFillingYOffsetRatio * whiteH;
   const brownFillingX = brownFillingRight - brownFillWidth;
+  const brownVisualWidth = brownFillWidth + 27.5;
 
-if (!didDrag) {
-  if (
-    mx > brownFillingX &&
-    mx < brownFillingRight &&
-    my > brownFillingY &&
-    my < brownFillingY + brownFillingH
-  ) {
-    if (targetWhiteWidth - step >= minVisualWidth && targetBrownWidth + step <= 450) {
-      targetBrownWidth += step;
-      targetWhiteWidth -= step;
-      brownFillingClicked = true;
+  const clickedWhite =
+    localMx > whiteFillingX &&
+    localMx < whiteFillingX + (whiteFillWidth - 26.5) &&
+    localMy > whiteFillingY &&
+    localMy < whiteFillingY + whiteFillingHeight;
 
-      setTimeout(() => {
-        brownFillingClicked = false;
-      }, 200);
+  let hoverPaddingX = 80;
+  let hoverPaddingY = 120;
+
+  const clickedBrown =
+    localMx > brownFillingX - hoverPaddingX &&
+    localMx < brownFillingX + brownVisualWidth + hoverPaddingX &&
+    localMy > brownFillingY - hoverPaddingY &&
+    localMy < brownFillingY + brownFillingHeight + hoverPaddingY;
+
+  if (clickedWhite) {
+    if (!hasClicked) {
+      hasClicked = true;
+      // let counts = await getIceCreamSandwichCounts();
+      // whiteFillingClicks = counts.vanila;
+      // brownFillingClicks = counts.chocolate;
     }
-  } else if (
-    mx > whiteFillingX &&
-    mx < whiteFillingX + whiteFillWidth &&
-    my > whiteFillingY &&
-    my < whiteFillingY + whiteFillingH
-  ) {
-    if (targetBrownWidth - step >= minVisualWidth && targetWhiteWidth + step <= 450) {
-      targetWhiteWidth += step;
-      targetBrownWidth -= step;
-      whiteFillingClicked = true;
 
-      setTimeout(() => {
-        whiteFillingClicked = false;
-      }, 200);
+    whiteFillingClicks++;
+    overshooting = true;
+    recoveringFromOvershoot = false;
+    targetWhiteWidth += overshootAmount;
+    setTimeout(() => {
+      updateWidthsProportionally();
+      recoveringFromOvershoot = true;
+    }, 150);
+    userPick = VANILA;
+  } else if (clickedBrown) {
+    if (!hasClicked) {
+      hasClicked = true;
+      // let counts = getIceCreamSandwichCounts();
+      // whiteFillingClicks = counts.vanila;
+      // brownFillingClicks = counts.chocolate;
     }
+
+    brownFillingClicks++;
+    overshooting = true;
+    recoveringFromOvershoot = false;
+    targetBrownWidth += overshootAmount;
+    setTimeout(() => {
+      updateWidthsProportionally();
+      recoveringFromOvershoot = true;
+    }, 150);
+    userPick = CHOCOLATE;
   }
 }
 
-  // Snap back both yellow windows when released
-  if (activeDrag === whiteDrag) {
-    whiteDrag.targetX = 0;
-    whiteDrag.targetY = 0;
-    brownDrag.targetX = 0;
-    brownDrag.targetY = 0;
-  } else if (activeDrag && activeDrag !== purpleDrag) {
-    activeDrag.targetX = 0;
-    activeDrag.targetY = 0;
+function updateWidthsProportionally() {
+  const totalClicks = whiteFillingClicks + brownFillingClicks;
+
+  // Before any clicks, show perfect 50/50 split
+  if (totalClicks === 0) {
+    targetWhiteWidth = 292;
+    targetBrownWidth = 238;
+    return;
   }
-  activeDrag = null;
+
+  const whiteRatio = whiteFillingClicks / totalClicks;
+  const brownRatio = brownFillingClicks / totalClicks;
+
+  // Total visual area should remain constant
+  const totalVisualArea = 292 - 26.5 + (238 + 27.5); // 530 total visual width
+
+  const targetWhiteVisual = totalVisualArea * whiteRatio;
+  const targetBrownVisual = totalVisualArea * brownRatio;
+
+  // Convert back to fill widths
+  targetWhiteWidth = targetWhiteVisual + 26.5;
+  targetBrownWidth = targetBrownVisual - 27.5;
+
+  // Ensure minimums
+  targetWhiteWidth = max(targetWhiteWidth, minVisualWidth + 26.5);
+  targetBrownWidth = max(targetBrownWidth, minVisualWidth - 27.5);
+
+  // If brown would be too small, adjust
+  if (targetBrownWidth < minVisualWidth) {
+    targetBrownWidth = minVisualWidth;
+    targetWhiteWidth = totalVisualArea - minVisualWidth + 26.5;
+  }
+
+  // If white would be too small, adjust
+  if (targetWhiteWidth < minVisualWidth + 26.5) {
+    targetWhiteWidth = minVisualWidth + 26.5;
+    targetBrownWidth = totalVisualArea - minVisualWidth - 27.5;
+  }
+}
+
+function applyFillingClicks() {
+  const totalClicks = whiteFillingClicks + brownFillingClicks;
+
+  // If no clicks yet, keep both sides equal to original values
+  if (totalClicks === 0) {
+    targetWhiteWidth = 292;
+    targetBrownWidth = 238;
+    return;
+  }
+
+  // Calculate proportional widths based on click percentages
+  const whitePercentage = whiteFillingClicks / totalClicks;
+  const brownPercentage = brownFillingClicks / totalClicks;
+
+  // Total visual area should remain constant
+  const totalVisualArea = 292 - 26.5 + (238 + 27.5); // 530 total visual width
+
+  const targetWhiteVisual = totalVisualArea * whitePercentage;
+  const targetBrownVisual = totalVisualArea * brownPercentage;
+
+  // Convert back to fill widths
+  targetWhiteWidth = targetWhiteVisual + 26.5;
+  targetBrownWidth = targetBrownVisual - 27.5;
+
+  // Ensure minimums
+  targetWhiteWidth = max(targetWhiteWidth, minVisualWidth + 26.5);
+  targetBrownWidth = max(targetBrownWidth, minVisualWidth - 27.5);
+
+  // If brown would be too small, adjust
+  if (targetBrownWidth < minVisualWidth) {
+    targetBrownWidth = minVisualWidth;
+    targetWhiteWidth = totalVisualArea - minVisualWidth + 26.5;
+  }
+
+  // If white would be too small, adjust
+  if (targetWhiteWidth < minVisualWidth + 26.5) {
+    targetWhiteWidth = minVisualWidth + 26.5;
+    targetBrownWidth = totalVisualArea - minVisualWidth - 27.5;
+  }
+}
+
+function setWhiteFillingClicks(count) {
+  whiteFillingClicks = count;
+  applyFillingClicks();
+}
+
+function setBrownFillingClicks(count) {
+  brownFillingClicks = count;
+  applyFillingClicks();
+}
+
+//lior's code
+export function getIceCreamSandwichUserPick() {
+  return userPick;
 }

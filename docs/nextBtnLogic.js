@@ -12,6 +12,8 @@ import {
 } from "./scenes-names.js";
 import { postGenderPick } from "./scenes/genders/logic.js";
 import { getGendersUserPick } from "./scenes/genders/sketch.js";
+import { postIceCreamSandwichPick } from "./scenes/ice-cream-sandwich/logic.js";
+import { getIceCreamSandwichUserPick } from "./scenes/ice-cream-sandwich/scene.js";
 import {
   isStrokesEmpty,
   postName,
@@ -37,9 +39,9 @@ const postSceneUserPicks = {
     postName();
     teardownNameScene();
   },
-  [GENDERS]: () => postGenderPick(),
-  [POLITICS]: () => postPoliticsPick(),
-  [ICE_CREAM_SANDWICH]: () => undefined,
+  [GENDERS]: postGenderPick,
+  [POLITICS]: postPoliticsPick,
+  [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
   [SMILE]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,
@@ -51,7 +53,7 @@ const hasNoAnswer = {
   [NAME]: isStrokesEmpty,
   [GENDERS]: () => !getGendersUserPick(),
   [POLITICS]: () => !getPoliticsUserPick(),
-  [ICE_CREAM_SANDWICH]: () => undefined,
+  [ICE_CREAM_SANDWICH]: () => !getIceCreamSandwichUserPick(),
   [SMILE]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,
