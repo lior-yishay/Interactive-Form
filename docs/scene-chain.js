@@ -13,9 +13,7 @@ const changeToScene = (sceneName) => {
 const sceneChain = {
     [START]: () => changeToScene(NAME),
     [NAME]: () => changeToScene(GENDERS), 
-    [GENDERS]: () => changeToScene(AGE),
-    [AGE]: () => changeToScene(LIVING_HERE),
-    [LIVING_HERE]: () => changeToScene(POLITICS),
+    [GENDERS]: () => changeToScene(POLITICS),
     [POLITICS]: () => changeToScene(ICE_CREAM_SANDWICH),
     [ICE_CREAM_SANDWICH]: () => changeToScene(SMILE),
     [SMILE]: () => changeToScene(UNREAL),

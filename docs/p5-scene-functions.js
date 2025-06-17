@@ -14,30 +14,32 @@ export const p5Functions = {
         mouseReleased: mouseReleasedNameScene,
     },
     [GENDERS]: {
+        preload: preloadGendersScene,
         setup: setupGendersScene,
         draw: drawGendersScene,
         mousePressed: mousePressedGendersScene,
         windowResized: windowResizedGendersScene,
-        preload: preloadGendersScene
     },
     [SMILE]: {
+        preload: () => undefined,
         setup: setupSmileScene,
         draw: drawSmileScene,
         windowResized: windowResizedSmileScene,
     },
     [I_BELIEVE_IN]: {
+        preload: preloadIBeliveInScene,
         setup: setupIBeliveInScene,
         draw: drawIBeliveInScene,
         preload: preloadIBeliveInScene,
         mousePressed: mousePressedIBeliveInScene,
         mouseDragged: mouseDraggedIBeliveInScene,
         windowResized: windowResizedIBeliveIn,
-        mouseReleased: mouseDraggedIBeliveInScene
+        mouseReleased: mouseDraggedIBeliveInScene,
     },
     [POLITICS]: {
+        preload: () => undefined,
         setup: setupPoliticsScene,
         draw: drawPoliticsScene,
-        // preload: preloadPoliticsScene,
         mousePressed: mousePressedPoliticsScene,
         windowResized: windowResizedPoliticsScene,
     }

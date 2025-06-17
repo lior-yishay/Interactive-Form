@@ -18,6 +18,7 @@ import { logger } from './logger/logger.js';
 import { AGE, AI, EVENTS, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, SMILE_LEADERBOARD, SMILE_TIME, USER_NUMBER } from './routes/routes.js';
 import { createRoute } from './utils/AppRouteHandler.js';
 import { addSubscriber } from './utils/broadcast.js';
+import { resetGenders } from './business/scenes-logic/gender/reset.js';
 
 dotenv.config();
 

@@ -1,5 +1,7 @@
 import { nextScene } from "./scene-chain.js"
 import { AGE, AI, GENDERS, I_BELIEVE_IN, ICE_CREAM_SANDWICH, LIVING_HERE, NAME, POLITICS, SMILE, START, UNREAL } from "./scenes-names.js"
+import { postGenderPick } from "./scenes/genders/logic.js"
+import { getGendersUserPick } from "./scenes/genders/sketch.js"
 import { isStrokesEmpty, postName, teardownNameScene } from "./scenes/name/logic.js"
 import { getCurrentScene } from "./sketch.js"
 
@@ -19,7 +21,7 @@ const postSceneUserPicks = {
         postName()
         teardownNameScene()
     }, 
-    [GENDERS]: () => undefined,
+    [GENDERS]: () => postGenderPick(),
     [AGE]: () => undefined,
     [LIVING_HERE]: () => undefined,
     [POLITICS]: () => undefined,
@@ -33,7 +35,7 @@ const postSceneUserPicks = {
 const hasNoAnswer = {
     [START]: () => undefined,
     [NAME]: isStrokesEmpty, 
-    [GENDERS]: () => undefined,
+    [GENDERS]: () => !getGendersUserPick() ,
     [AGE]: () => undefined,
     [LIVING_HERE]: () => undefined,
     [POLITICS]: () => undefined,

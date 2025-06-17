@@ -1,127 +1,213 @@
-// import { getGenderCounts, postGenderPick } from "./logic.js";
-import { getGenderCounts, postGenderPick } from "../../../proxy server/proxyServer.js"
+import { getGenderCounts, postGenderPick } from "./logic.js";
+// import { getGenderCounts, postGenderPick } from "../../../proxy server/proxyServer.js"
 
-let genderCounts = []
-
+let genderCounts = [];
 let balls = [];
+
+let userPicked = null;
 let palette = ['#F14E1D', '#FFC700', '#10A959', '#C9B8FF', '#FFCBCB'];
 let grottaFont;
+let snellFont;
+let heartParticles = [];
+let selectedBall = null;
+let isInverted = false;
+let hasInvertedOnce = false;
+
+let lastClickedBall = null;
+
+const maxCount = 200;
 
 export function preloadGendersScene() {
-  grottaFont = loadFont('./assets/Grotta-Trial-Medium.ttf'); // Upload this file to the sketch
+  grottaFont = loadFont('./assets/Grotta-Trial-Medium.ttf');
+  snellFont = loadFont('./assets/SnellBT-Bold.otf');
+}
+
+function easeOutBack(t) {
+  const c1 = 1.70158;
+  const c3 = c1 + 1;
+  return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+}
+
+function getCleanLabel(label) {
+  return label.toUpperCase().replace(/[^A-Z0-9\s\-]/gi, "");
+}
+
+async function getNormalizedGenderCounts(maxCount = 20) {
+  const originalCounts = await getGenderCounts();
+  const currentMax = Math.max(...originalCounts.map((g) => g.count));
+  if (currentMax < maxCount) return originalCounts;
+  return originalCounts.map((gender) => ({
+    ...gender,
+    count: Math.round((gender.count / currentMax) * maxCount),
+  }));
 }
 
 export async function setupGendersScene() {
-  genderCounts = await getGenderCounts()
-
+  genderCounts = await getNormalizedGenderCounts(maxCount);
   createCanvas(windowWidth, windowHeight);
   textFont(grottaFont);
-  textSize(16);
+  textSize(14);
   angleMode(DEGREES);
 
-  let maxAttempts = 10000;
-  let attempts = 0;
   let baseR = 5;
+  let origin = createVector(width / 2, height / 2);
+  let tempBalls = [];
 
-  for (let i = 0; i < genderCounts.length && attempts < maxAttempts;) {
-    let rawLabel = genderCounts[i].name.toUpperCase();
-    let cleanLabel = rawLabel.replace(/[^A-Z0-9\s\-]/gi, '');
-
-    let shapeType = random(['circle', 'starburst', 'scallop', 'rect']);
+  for (let i = 0; i < genderCounts.length; i++) {
+    let { name, count } = genderCounts[i];
+    let cleanLabel = getCleanLabel(name);
+    let shapeType = cleanLabel.length > 9 ? 'circle' : random(['circle', 'starburst', 'scallop', 'rect']);
     let col = color(random(palette));
-    let vx = random(-1, 1);
-    let vy = random(-1, 1);
 
-    let tempBall = new Ball(
-      random(baseR, width - baseR),
-      random(baseR + 100, height - baseR),
-      baseR,
-      cleanLabel,
-      vx,
-      vy,
-      col,
-      shapeType
-    );
+    let angle = random(TWO_PI);
+    let speed = random(0.3, 1.2);
+    let vx = cos(angle) * speed / 10;
+    let vy = sin(angle) * speed / 10;
+
+    let tempBall = new GenderBall(origin.x, origin.y, baseR, cleanLabel, vx, vy, col, shapeType);
+
+    if (shapeType === 'starburst') {
+      tempBall.baseR *= 0.7;
+    }
+
+    tempBall.baseScale = map(count, 1, 140, 0.3, 1.2);
     tempBall.ensureTextFits();
-
-    let noOverlap = balls.every(b => !tempBall.overlaps(b));
-    let inCanvas = tempBall.isInCanvas();
-
-    if (noOverlap && inCanvas) {
-      balls.push(tempBall);
-      i++;
-    }
-    attempts++;
+    tempBalls.push(tempBall);
   }
 
-  // === Find the largest bounding box (width or height) ===
-  let maxBox = 0;
-  for (let b of balls) {
-    maxBox = max(maxBox, b.shapeWidth, b.shapeHeight);
-  }
-
-  // === Scale all shapes to match the largest bounding box ===
-  for (let b of balls) {
-    let currentBox = max(b.shapeWidth, b.shapeHeight);
-    if (currentBox > 0) {
-      let scaleFactor = maxBox / currentBox;
-      b.scale *= scaleFactor;
+  let maxStarburstHeight = 0;
+  for (let b of tempBalls) {
+    if (b.shapeType === 'starburst') {
+      maxStarburstHeight = max(maxStarburstHeight, b.shapeHeight);
     }
   }
 
-  // === Apply a global downscale factor ===
-  let globalScaleDown = 0.5; // <-- adjust this factor (0.5 = half size)
-  for (let b of balls) {
-    b.scale *= globalScaleDown;
+  if (maxStarburstHeight === 0) {
+    maxStarburstHeight = max(tempBalls.map(b => b.shapeHeight));
   }
 
-  let stars = balls.filter(b => b.shapeType === 'starburst');
-  shuffle(stars, true);
-  for (let i = 0; i < min(4, stars.length); i++) {
-    stars[i].shapeType = 'circle';
+  for (let b of tempBalls) {
+    let currentH = b.shapeHeight;
+    let visualAdjust = (b.shapeType === 'starburst') ? 1 : 1.2;
+    let targetH = maxStarburstHeight;
+    let scaleFactor = (targetH * visualAdjust) / currentH;
+    b.baseR *= scaleFactor;
+    b.ensureTextFits();
+    balls.push(b);
+  }
+
+  let globalScaleDown = 0.5;
+  for (let b of balls) b.baseR *= globalScaleDown;
+
+  for (let ball of balls) {
+    const genderCount = genderCounts.find(({ name }) => getCleanLabel(name) === ball.label)?.count ?? 0;
+    ball.overshootTarget = genderCount;
+    ball.overshootProgress = 0;
+    ball.initialOvershoot = genderCount;
   }
 }
+
 export function windowResizedGendersScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
 export function drawGendersScene() {
-  background('EEEEEE');
-
-  fill(0);
+  background(isInverted ? 0 : 'EEEEEE');
+  fill(isInverted ? 255 : 0);
   textAlign(CENTER, CENTER);
+
   textFont(grottaFont);
   textSize(240);
-  text("CHOOSE", width / 2, height / 2 - 260);
+  text("CHOOSE", width / 2, height / 2 - 200);
+  text("Gender", width / 2, height / 2 + 200);
+  textFont(snellFont);
+  textSize(180);
   text("YOUR", width / 2, height / 2);
-  text("GENDER", width / 2, height / 2 + 260);
 
   for (let ball of balls) {
+    let timeSinceClick = millis() - ball.lastClickTime;
+    if (timeSinceClick < 1000) {
+      ball.overshootProgress = lerp(ball.overshootProgress, ball.overshootTarget, 0.1);
+    } else {
+      ball.overshootTarget = ball.initialOvershoot;
+      ball.overshootProgress = lerp(ball.overshootProgress, ball.initialOvershoot, 0.1);
+    }
+
     ball.move();
     ball.collide(balls);
     ball.display();
   }
+
+  for (let h of heartParticles) {
+    h.update();
+    h.display();
+  }
+  heartParticles = heartParticles.filter(h => !h.isDead());
 }
 
-export async function mousePressedGendersScene() {
+export function mousePressedGendersScene() {
+  let currentTime = millis();
+  let maxOvershoot = min(width, height);
+
   for (let ball of balls) {
     if (ball.contains(mouseX, mouseY)) {
-      ball.tryGrow(balls);
-      await postGenderPick(ball.label)
+      ball.clickPulse = 1;
+
+      if (lastClickedBall === ball) {
+        ball.overshootTarget = min(ball.overshootTarget + 2, maxOvershoot);
+      } else {
+        for (let b of balls) {
+          b.overshootTarget = b.initialOvershoot;
+          b.overshootProgress = b.initialOvershoot;
+        }
+        ball.overshootTarget = 2 + ball.initialOvershoot;
+      }
+
+      ball.lastClickTime = currentTime;
+      lastClickedBall = ball;
+
+      if (selectedBall && selectedBall !== ball) selectedBall.selected = false;
+      selectedBall = ball;
+      selectedBall.selected = true;
+
+      if (!ball.userPickedLogged) {
+        userPicked = ball.label;
+        console.log("User picked:", userPicked);
+        ball.userPickedLogged = true;
+      }
+
+      if (!hasInvertedOnce) {
+        isInverted = true;
+        hasInvertedOnce = true;
+      }
+
+      break;
     }
   }
 }
 
-class Ball {
+// GenderBall class with new display() method
+
+class GenderBall {
   constructor(x, y, baseR, label, vx, vy, col, shapeType) {
     this.pos = createVector(x, y);
     this.vel = createVector(vx, vy);
     this.baseR = baseR;
-    this.scale = 1;
-    this.label = label.replace(/[^A-Z0-9\s\-]/gi, ''); // Clean again just in case
+    this.baseScale = 1;
+    this.hoverScale = 1;
+    this.label = label;
     this.col = col;
     this.shapeType = shapeType;
-    this.padding = 20;
+    this.padding = 32;
+    this.selected = false;
+    this.selectionOffset = createVector(0, 0);
+    this.overshootProgress = 0;
+    this.overshootTarget = 0;
+    this.initialOvershoot = 0;
+    this.lastClickTime = 0;
+    this.clickPulse = 0;
+    this.userPickedLogged = false;
+    this.hasInitialized = false;
 
     if (shapeType === 'starburst') {
       this.innerRatio = 0.5;
@@ -130,13 +216,14 @@ class Ball {
   }
 
   get r() {
-    return this.baseR * this.scale;
+    const base = this.baseR * this.baseScale * this.hoverScale;
+    const overshootFactor = 1 + (this.overshootProgress / base);
+    const pulseFactor = easeOutBack(this.clickPulse) * 0.1;
+    return base * overshootFactor * (1 + pulseFactor);
   }
 
   get shapeWidth() {
-    textFont(grottaFont);
-    textSize(12);
-    return max(this.r * 2, textWidth(this.label) + this.padding);
+    return this.r * 2;
   }
 
   get shapeHeight() {
@@ -144,28 +231,52 @@ class Ball {
   }
 
   move() {
-    this.pos.add(this.vel);
-    let halfW = this.shapeWidth / 2;
-    let halfH = this.shapeHeight / 2;
-    let margin = this.shapeType === 'starburst' ? this.r * 0.5 : 0;
+    if (this.hasInitialized) {
+      this.vel.x += random(-0.02, 0.02);
+      this.vel.y += random(-0.02, 0.02);
+      this.vel.limit(0.5);
+      this.pos.add(this.vel);
+    } else {
+      this.hasInitialized = true;
+    }
 
-    this.pos.x = constrain(this.pos.x, halfW + margin, width - halfW - margin);
-    this.pos.y = constrain(this.pos.y, halfH + margin, height - halfH - margin);
+    let buffer = 50;
+    if (this.pos.x < buffer) this.vel.x += 0.05;
+    if (this.pos.x > width - buffer) this.vel.x -= 0.05;
+    if (this.pos.y < buffer) this.vel.y += 0.05;
+    if (this.pos.y > height - buffer) this.vel.y -= 0.05;
+
+    let hover = this.contains(mouseX, mouseY);
+    this.hoverScale = lerp(this.hoverScale, hover ? 1.1 : 1, 0.1);
+    this.clickPulse = lerp(this.clickPulse, 0, 0.1);
+
+    if (this.selected) {
+      this.selectionOffset.x = sin(frameCount * 5) * 2;
+      this.selectionOffset.y = cos(frameCount * 5) * 2;
+    } else {
+      this.selectionOffset.set(0, 0);
+    }
   }
 
   display() {
     push();
-    translate(this.pos.x, this.pos.y);
-    noStroke();
-    fill(this.col);
+    translate(this.pos.x + this.selectionOffset.x, this.pos.y + this.selectionOffset.y);
 
-    let shapeToDraw = (this.shapeType === 'scallop') ? 'circle' : this.shapeType;
+    if (this.selected) {
+      stroke(isInverted ? 255 : 0);
+      strokeWeight(2);
+    } else {
+      noStroke();
+    }
+
+    fill(this.col);
+    let shapeToDraw = this.shapeType === 'scallop' ? 'circle' : this.shapeType;
 
     switch (shapeToDraw) {
       case 'circle':
         ellipse(0, 0, this.shapeWidth, this.shapeHeight);
         break;
-      case 'rect':
+      case 'rect': {
         let petals = 7;
         let radius = this.r * 1.2;
         beginShape();
@@ -177,6 +288,7 @@ class Ball {
         }
         endShape(CLOSE);
         break;
+      }
       case 'starburst':
         this.drawStarburst(0, 0, this.r * this.innerRatio, this.r, this.points);
         break;
@@ -186,7 +298,18 @@ class Ball {
     noStroke();
     textAlign(CENTER, CENTER);
     textFont(grottaFont);
-    textSize(10 * this.scale);
+
+    // 🆕 Smoothed dynamic text size based on shape width (dampened)
+    let baseFontSize = 14;
+    textSize(baseFontSize);
+    let labelW = textWidth(this.label);
+    let availableW = this.shapeWidth - this.padding;
+
+    let rawScale = availableW / max(labelW, 1);
+    let dampedScale = 1 + (rawScale - 1) * 0.4; // ✨ less aggressive growth
+    let scaledSize = constrain(baseFontSize * dampedScale, 8, 36);
+
+    textSize(scaledSize);
     text(this.label, 0, 0);
     pop();
   }
@@ -195,74 +318,35 @@ class Ball {
     return dist(mx, my, this.pos.x, this.pos.y) < this.shapeWidth / 2;
   }
 
-  tryGrow(others) {
-    let test = this.clone();
-    test.scale *= 1.05;
-    test.ensureTextFits();
-
-    let maxW = width * 0.8;
-    let maxH = height * 0.8;
-
-    if (test.shapeWidth < maxW && test.shapeHeight < maxH) {
-      this.scale = test.scale;
-      for (let other of others) {
-        if (other !== this) {
-          let dir = p5.Vector.sub(other.pos, this.pos);
-          let d = dir.mag();
-          let minDist = (this.shapeWidth + other.shapeWidth) / 2;
-          if (d < minDist && d > 0) {
-            let overlap = minDist - d;
-            dir.normalize();
-            dir.mult(overlap / 2);
-            other.pos.add(dir);
-            this.pos.sub(dir);
-          }
-        }
-      }
-    }
-  }
-
   ensureTextFits() {
     textFont(grottaFont);
-    textSize(12);
+    textSize(14);
     let labelW = textWidth(this.label) + this.padding;
+    let maxShapeW = width * 0.9;
+    let maxShapeH = height * 0.9;
+
     if (this.shapeType === 'starburst') {
       let targetInnerR = labelW / 2;
       let outerR = targetInnerR / this.innerRatio;
-      let requiredR = outerR;
-      if (this.r < requiredR) {
-        this.baseR = requiredR / this.scale;
+      if (this.r < outerR) {
+        this.baseR = outerR / (this.baseScale * this.hoverScale);
+      }
+      if (outerR * 2 > maxShapeW || outerR * 2 > maxShapeH) {
+        let maxR = min(maxShapeW, maxShapeH) / 2;
+        this.baseR = maxR / (this.baseScale * this.hoverScale);
       }
     } else {
       let requiredR = labelW / 2;
       if (this.r < requiredR) {
-        this.baseR = requiredR / this.scale;
+        this.baseR = requiredR / (this.baseScale * this.hoverScale);
+      }
+      let shapeW = requiredR * 2;
+      let shapeH = requiredR * 1.6;
+      if (shapeW > maxShapeW || shapeH > maxShapeH) {
+        let maxR = min(maxShapeW / 2, maxShapeH / 1.6);
+        this.baseR = maxR / (this.baseScale * this.hoverScale);
       }
     }
-  }
-
-  isInCanvas() {
-    let w = this.shapeWidth / 2;
-    let h = this.shapeHeight / 2;
-    let margin = this.shapeType === 'starburst' ? this.r * 0.5 : 0;
-
-    return (
-      this.pos.x - w - margin > 0 &&
-      this.pos.x + w + margin < width &&
-      this.pos.y - h - margin > 0 &&
-      this.pos.y + h + margin < height
-    );
-  }
-
-  overlaps(other) {
-    return dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y) <
-      (this.shapeWidth + other.shapeWidth) / 2;
-  }
-
-  clone() {
-    let clone = new Ball(this.pos.x, this.pos.y, this.baseR, this.label, this.vel.x, this.vel.y, this.col, this.shapeType);
-    clone.scale = this.scale;
-    return clone;
   }
 
   collide(others) {
@@ -295,10 +379,8 @@ class Ball {
 
       let x1 = cos(angle1) * outerR;
       let y1 = sin(angle1) * outerR;
-
       let x2 = cos(angle2) * innerR;
       let y2 = sin(angle2) * innerR;
-
       let x3 = cos(angle3) * outerR;
       let y3 = sin(angle3) * outerR;
 
@@ -308,4 +390,9 @@ class Ball {
     endShape(CLOSE);
     pop();
   }
+}
+
+//lior's code
+export function getGendersUserPick() {
+  return userPicked
 }
