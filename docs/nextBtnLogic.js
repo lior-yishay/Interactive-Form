@@ -21,6 +21,7 @@ import {
 } from "./scenes/name/logic.js";
 import { postPoliticsPick } from "./scenes/politics/logic.js";
 import { getPoliticsUserPick } from "./scenes/politics/scene.js";
+import { getUnrealPostedUserPicksFlag } from "./scenes/unreal/scene.js";
 import { getCurrentScene } from "./sketch.js";
 
 export const onNextBtnClick = async () => {
@@ -43,7 +44,7 @@ const postSceneUserPicks = {
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
   [SMILE]: () => undefined,
-  [UNREAL]: () => undefined,
+  [UNREAL]: nextScene,
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => undefined,
 };
@@ -55,7 +56,7 @@ const hasNoAnswer = {
   [POLITICS]: () => !getPoliticsUserPick(),
   [ICE_CREAM_SANDWICH]: () => !getIceCreamSandwichUserPick(),
   [SMILE]: () => undefined,
-  [UNREAL]: () => undefined,
+  [UNREAL]: () => !getUnrealPostedUserPicksFlag(),
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => undefined,
 };

@@ -7,6 +7,7 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  UNREAL,
 } from "./scenes-names.js";
 import {
   drawFooter,

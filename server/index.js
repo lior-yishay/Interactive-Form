@@ -53,12 +53,18 @@ import {
   SMILE,
   SMILE_LEADERBOARD,
   SMILE_TIME,
+  UNREAL,
   USER_NUMBER,
 } from "./routes/routes.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
 import { resetGenders } from "./business/scenes-logic/gender/reset.js";
 import { resetIceCreamSandwich } from "./business/scenes-logic/ice-cream-sandwich/reset.js";
+import { resetUnreal } from "./business/scenes-logic/unreal/reset.js";
+import {
+  getAllUnrealCounts,
+  incrementUnrealPicksByOne,
+} from "./business/scenes-logic/unreal/api.js";
 
 dotenv.config();
 
@@ -177,6 +183,15 @@ app.route(I_BELIEVE_IN).all(
     methodHandlers: {
       post: (req) => saveMagnetPositions(req.body.magnets),
       get: (req) => getMagnetPositions(Number(req.query.top)),
+    },
+  })
+);
+
+app.route(UNREAL).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementUnrealPicksByOne(req.body.picks),
+      get: () => getAllUnrealCounts(),
     },
   })
 );

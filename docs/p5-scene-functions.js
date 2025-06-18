@@ -5,6 +5,7 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  UNREAL,
 } from "./scenes-names.js";
 import {
   drawGendersScene,
@@ -47,6 +48,13 @@ import {
   setupSmileScene,
   windowResizedSmileScene,
 } from "./scenes/smile/scene.js";
+import {
+  drawUnrealScene,
+  mousePressedUnrealScene,
+  preloadUnrealScene,
+  setupUnrealScene,
+  windowResizedUnrealScene,
+} from "./scenes/unreal/scene.js";
 
 export const p5Functions = {
   [NAME]: {
@@ -93,5 +101,12 @@ export const p5Functions = {
     draw: drawIceCreamSandwichScene,
     windowResized: windowResizedIceCreamSandwichScene,
     mouseReleased: mouseReleasedIceCreamSandwichScene,
+  },
+  [UNREAL]: {
+    preload: preloadUnrealScene,
+    setup: setupUnrealScene,
+    draw: drawUnrealScene,
+    windowResized: windowResizedUnrealScene,
+    mousePressed: mousePressedUnrealScene,
   },
 };

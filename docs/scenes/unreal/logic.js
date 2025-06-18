@@ -1,12 +1,13 @@
-import { UNREAL } from "../../scenes-names"
-import { setSceneAnswer } from "../i-belive-in/logic"
+import { get, post } from "../../api/axios.js";
+import { UNREAL } from "../../scenes-names.js";
+import { setSceneAnswer } from "../i-belive-in/logic.js";
 
 export const getUnrealCounts = async () => {
-  return await get(UNREAL)
-}
+  return await get(UNREAL);
+};
 
 export const postUnrealPicks = async (picks) => {
-  await post(UNREAL, {picks})
-  setSceneAnswer(UNREAL, {picks})
+  await post(UNREAL, { picks });
+  setSceneAnswer(UNREAL, { picks });
   //nextScene()
-}
+};

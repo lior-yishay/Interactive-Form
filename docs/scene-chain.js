@@ -1,12 +1,10 @@
 import { p5Functions } from "./p5-scene-functions.js";
 import {
-  AGE,
   AI,
   END,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
-  LIVING_HERE,
   NAME,
   POLITICS,
   SMILE,
