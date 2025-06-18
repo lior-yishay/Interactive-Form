@@ -44,7 +44,7 @@ const postSceneUserPicks = {
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
   [SMILE]: () => undefined,
-  [UNREAL]: nextScene,
+  [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => undefined,
 };
