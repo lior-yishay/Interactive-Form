@@ -1,21 +1,19 @@
-import { nextScene } from "../../scene-chain.js"
-import { AI } from "../../scenes-names.js"
-import { setSceneAnswer } from "../i-belive-in/logic.js"
+import { AI } from "../../scenes-names.js";
+import { setSceneAnswer } from "../i-belive-in/logic.js";
 
 export const getAiCounts = async () => {
-  return await get(AI)
-}
+  return await get(AI);
+};
 
 export const postAiFriend = async () => {
-  postAiPick('friend')
-}
+  postAiPick("friend");
+};
 
 export const postAiEnemy = async () => {
-  postAiPick('friend')
-}
+  postAiPick("friend");
+};
 
 const postAiPick = async (ai) => {
-  await post(AI, {ai})
-  setSceneAnswer(AI, {ai})
-  //nextScene()
-}
+  await post(AI, { ai });
+  setSceneAnswer(AI, { ai });
+};

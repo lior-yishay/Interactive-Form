@@ -1,5 +1,4 @@
 import { get, post } from "../../api/axios.js";
-import { nextScene } from "../../scene-chain.js";
 import { ICE_CREAM_SANDWICH } from "../../scenes-names.js";
 import { getIceCreamSandwichUserPick } from "./scene.js";
 
@@ -10,5 +9,4 @@ export const getIceCreamSandwichCounts = async () => {
 export const postIceCreamSandwichPick = async () => {
   const flavor = getIceCreamSandwichUserPick();
   await post(ICE_CREAM_SANDWICH, { flavor });
-  nextScene();
 };

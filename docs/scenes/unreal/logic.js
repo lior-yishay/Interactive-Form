@@ -9,5 +9,4 @@ export const getUnrealCounts = async () => {
 export const postUnrealPicks = async (picks) => {
   await post(UNREAL, { picks });
   setSceneAnswer(UNREAL, { picks });
-  //nextScene()
 };

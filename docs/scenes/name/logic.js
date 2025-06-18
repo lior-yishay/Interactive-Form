@@ -1,24 +1,24 @@
-import { get, post } from "../../api/axios.js"
-import { NAME } from "../../scenes-names.js"
-import { setSceneAnswer } from "../i-belive-in/logic.js"
+import { get, post } from "../../api/axios.js";
+import { NAME } from "../../scenes-names.js";
+import { setSceneAnswer } from "../i-belive-in/logic.js";
 
 const MAX_ALPHA = 50,
-      MIN_ALPHA = 5
+  MIN_ALPHA = 5;
 
-const strokes = []
-let mergedHistoryBuffer
+const strokes = [];
+let mergedHistoryBuffer;
 
 export const getNameHistory = async (top = 3) => {
-  return await get(NAME, {top})
-}
+  return await get(NAME, { top });
+};
 
-export const isStrokesEmpty = () => strokes.length === 0
+export const isStrokesEmpty = () => strokes.length === 0;
 
 export const postName = async () => {
-  console.log(strokes)
-  await post(NAME, {strokes})
-  setSceneAnswer(NAME, {strokes})
-}
+  console.log(strokes);
+  await post(NAME, { strokes });
+  setSceneAnswer(NAME, { strokes });
+};
 
 export const setupNameHistoryBuffer = async (top = 3) => {
   const nameHistory = await getNameHistory(top);
@@ -35,14 +35,13 @@ export const setupNameHistoryBuffer = async (top = 3) => {
   );
 
   mergedHistoryBuffer = mergeBuffersWithTransparency(originalBuffers, alphas);
-}
-
+};
 
 export const drawNameHistoryBuffer = () => {
   if (mergedHistoryBuffer) {
     image(mergedHistoryBuffer, 0, 0);
   }
-}
+};
 
 const mergeBuffersWithTransparency = (buffers, alphas) => {
   const merged = createGraphics(width, height);
@@ -73,19 +72,18 @@ const drawStrokesToBuffer = (pg, strokes) => {
   }
 
   pg.noErase();
-}
+};
 
 export const recordStroke = (from, to, colorValue, weight) => {
-    strokes.push({from, to, colorValue, weight})
-}
+  strokes.push({ from, to, colorValue, weight });
+};
 
 //teardown dom elements
-let uiElements = []
+let uiElements = [];
 
-export const recordUiElement = (element) => uiElements.push(element)
+export const recordUiElement = (element) => uiElements.push(element);
 
 export const teardownNameScene = () => {
-  uiElements.forEach(el => el.remove());
+  uiElements.forEach((el) => el.remove());
   uiElements = [];
-}
-
+};
