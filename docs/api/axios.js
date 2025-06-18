@@ -1,5 +1,8 @@
-const URL_PREFIX = "https://interactive-form.onrender.com/api/";
-// const URL_PREFIX = "http://localhost:3000/api/";
+const isLocal = window.location.hostname === "127.0.0.1";
+
+export const URL_PREFIX = isLocal
+  ? "http://localhost:3000/api/"
+  : "https://interactive-form.onrender.com/api/";
 
 export const get = async (sceneName, sendingData) => {
   try {
