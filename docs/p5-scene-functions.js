@@ -1,4 +1,5 @@
 import {
+  COUNTRY,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -7,6 +8,12 @@ import {
   SMILE,
   UNREAL,
 } from "./scenes-names.js";
+import {
+  drawCountryScene,
+  preloadCountryScene,
+  setupCountryScene,
+  windowResizedCountryScene,
+} from "./scenes/country/scene.js";
 import {
   drawGendersScene,
   mousePressedGendersScene,
@@ -108,5 +115,11 @@ export const p5Functions = {
     draw: drawUnrealScene,
     windowResized: windowResizedUnrealScene,
     mousePressed: mousePressedUnrealScene,
+  },
+  [COUNTRY]: {
+    preload: preloadCountryScene,
+    setup: setupCountryScene,
+    draw: drawCountryScene,
+    windowResized: windowResizedCountryScene,
   },
 };
