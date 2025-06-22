@@ -38,6 +38,10 @@ import {
   getTotalSmileTime,
   insertSmile,
 } from "./business/scenes-logic/smile/api.js";
+import {
+  getAllUnrealCounts,
+  incrementUnrealPicksByOne,
+} from "./business/scenes-logic/unreal/api.js";
 import { getAndIncrementUserNumber } from "./business/scenes-logic/user-number/api.js";
 import { logger } from "./logger/logger.js";
 import {
@@ -58,13 +62,7 @@ import {
 } from "./routes/routes.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
-import { resetGenders } from "./business/scenes-logic/gender/reset.js";
-import { resetIceCreamSandwich } from "./business/scenes-logic/ice-cream-sandwich/reset.js";
-import { resetUnreal } from "./business/scenes-logic/unreal/reset.js";
-import {
-  getAllUnrealCounts,
-  incrementUnrealPicksByOne,
-} from "./business/scenes-logic/unreal/api.js";
+import { resetAi } from "./business/scenes-logic/ai/reset.js";
 
 dotenv.config();
 

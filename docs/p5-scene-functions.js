@@ -1,4 +1,5 @@
 import {
+  AI,
   COUNTRY,
   GENDERS,
   I_BELIEVE_IN,
@@ -9,11 +10,19 @@ import {
   UNREAL,
 } from "./scenes-names.js";
 import {
-  drawCountryScene,
-  preloadCountryScene,
-  setupCountryScene,
-  windowResizedCountryScene,
-} from "./scenes/country/scene.js";
+  drawAiScene,
+  mousePressedAiScene,
+  mouseWheelAiScene,
+  preloadAiScene,
+  setupAiScene,
+  windowResizedAiScene,
+} from "./scenes/AI/scene.js";
+// import {
+//   drawCountryScene,
+//   preloadCountryScene,
+//   setupCountryScene,
+//   windowResizedCountryScene,
+// } from "./scenes/country/scene.js";
 import {
   drawGendersScene,
   mousePressedGendersScene,
@@ -116,10 +125,18 @@ export const p5Functions = {
     windowResized: windowResizedUnrealScene,
     mousePressed: mousePressedUnrealScene,
   },
-  [COUNTRY]: {
-    preload: preloadCountryScene,
-    setup: setupCountryScene,
-    draw: drawCountryScene,
-    windowResized: windowResizedCountryScene,
+  // [COUNTRY]: {
+  //   preload: preloadCountryScene,
+  //   setup: setupCountryScene,
+  //   draw: drawCountryScene,
+  //   windowResized: windowResizedCountryScene,
+  // },
+  [AI]: {
+    preload: preloadAiScene,
+    setup: setupAiScene,
+    draw: drawAiScene,
+    windowResized: windowResizedAiScene,
+    mousePressed: mousePressedAiScene,
+    mouseWheel: mouseWheelAiScene,
   },
 };

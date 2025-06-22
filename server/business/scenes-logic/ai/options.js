@@ -1,1 +1,1 @@
-export const AI_OPTIONS = ['enemy, friend']
+export const AI_OPTIONS = ["friend", "enemy"];

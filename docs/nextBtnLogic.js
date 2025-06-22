@@ -10,6 +10,8 @@ import {
   START,
   UNREAL,
 } from "./scenes-names.js";
+import { postAiPick, teardownAiScene } from "./scenes/AI/logic.js";
+import { getSelectedAiPick } from "./scenes/AI/scene.js";
 import { postGenderPick } from "./scenes/genders/logic.js";
 import { getGendersUserPick } from "./scenes/genders/sketch.js";
 import { postIceCreamSandwichPick } from "./scenes/ice-cream-sandwich/logic.js";
@@ -46,7 +48,10 @@ const postSceneUserPicks = {
   [SMILE]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,
-  [AI]: () => undefined,
+  [AI]: () => {
+    postAiPick();
+    teardownAiScene();
+  },
 };
 
 const hasNoAnswer = {
@@ -58,5 +63,5 @@ const hasNoAnswer = {
   [SMILE]: () => undefined,
   [UNREAL]: () => !getUnrealPostedUserPicksFlag(),
   [I_BELIEVE_IN]: () => undefined,
-  [AI]: () => undefined,
+  [AI]: () => !getSelectedAiPick(),
 };

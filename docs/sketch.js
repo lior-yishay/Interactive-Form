@@ -1,6 +1,7 @@
 import { onNextBtnClick } from "./nextBtnLogic.js";
 import { p5Functions } from "./p5-scene-functions.js";
 import {
+  AI,
   COUNTRY,
   GENDERS,
   I_BELIEVE_IN,
@@ -18,7 +19,7 @@ import {
   setupBoarder,
 } from "./scenesBorder.js";
 
-let currentScene = COUNTRY;
+let currentScene = AI;
 export const getCurrentScene = () => currentScene;
 
 export const setCurrentScene = (sceneName) => {
