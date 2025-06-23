@@ -63,6 +63,11 @@ import {
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
 import { resetAi } from "./business/scenes-logic/ai/reset.js";
+import { COUNTRY } from "../docs/scenes-names.js";
+import {
+  getCountryCounts,
+  incrementCountryPicks,
+} from "./business/scenes-logic/country/api.js";
 
 dotenv.config();
 
@@ -190,6 +195,15 @@ app.route(UNREAL).all(
     methodHandlers: {
       post: (req) => incrementUnrealPicksByOne(req.body.picks),
       get: () => getAllUnrealCounts(),
+    },
+  })
+);
+
+app.route(COUNTRY).all(
+  createRoute({
+    methodHandlers: {
+      post: (req) => incrementCountryPicks(req.body.picks),
+      get: () => getCountryCounts(),
     },
   })
 );
