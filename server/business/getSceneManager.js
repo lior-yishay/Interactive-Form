@@ -19,7 +19,7 @@ export const getSceneManager = (collectionName) => {
       await collection.bulkWrite(bulkOps);
     },
 
-    getCounts: async ({ asObject = false }) => {
+    getCounts: async ({ asList = false }) => {
       const db = await connectToScenesDB();
       const collection = db.collection(collectionName);
 
@@ -27,7 +27,8 @@ export const getSceneManager = (collectionName) => {
         .find({}, { projection: { _id: 0, name: 1, count: 1 } })
         .toArray();
 
-      if (asObject) {
+      if (!asList) {
+        //return a single object
         return documents.reduce((acc, { name, count }) => {
           acc[name] = count;
           return acc;
