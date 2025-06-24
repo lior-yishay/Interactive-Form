@@ -77,7 +77,7 @@ export function preloadCountryScene() {
   bingBong = loadSound("./assets/happy-tune-29317.mp3"); // todo: replace
   // airportVoice = loadSound("./assets/airportvoice.mp3");
   airportVoice = loadSound("./assets/radio-static-6382.mp3"); // todo: replace
-  scannerBeep = loadSound("./assets/Scanner.mp3");
+  // scannerBeep = loadSound("./assets/Scanner.mp3");
 }
 
 /* ───────────────── setup ───────────────── */
