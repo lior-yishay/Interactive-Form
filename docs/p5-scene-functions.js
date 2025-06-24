@@ -17,6 +17,12 @@ import {
   setupAiScene,
   windowResizedAiScene,
 } from "./scenes/AI/scene.js";
+import {
+  drawCountryScene,
+  preloadCountryScene,
+  setupCountryScene,
+  windowResizedCountryScene,
+} from "./scenes/country/scene.js";
 // import {
 //   drawCountryScene,
 //   preloadCountryScene,
@@ -125,12 +131,12 @@ export const p5Functions = {
     windowResized: windowResizedUnrealScene,
     mousePressed: mousePressedUnrealScene,
   },
-  // [COUNTRY]: {
-  //   preload: preloadCountryScene,
-  //   setup: setupCountryScene,
-  //   draw: drawCountryScene,
-  //   windowResized: windowResizedCountryScene,
-  // },
+  [COUNTRY]: {
+    preload: preloadCountryScene,
+    setup: setupCountryScene,
+    draw: drawCountryScene,
+    windowResized: windowResizedCountryScene,
+  },
   [AI]: {
     preload: preloadAiScene,
     setup: setupAiScene,

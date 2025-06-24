@@ -1,4 +1,4 @@
-import { connectToScenesDB } from "../data-access/db";
+import { connectToScenesDB } from "../data-access/db.js";
 
 export const getSceneManager = (collectionName) => {
   return {
@@ -19,7 +19,7 @@ export const getSceneManager = (collectionName) => {
       await collection.bulkWrite(bulkOps);
     },
 
-    getCounts: async ({ asList = false }) => {
+    getCounts: async (asList) => {
       const db = await connectToScenesDB();
       const collection = db.collection(collectionName);
 
@@ -38,7 +38,7 @@ export const getSceneManager = (collectionName) => {
       return documents;
     },
 
-    resetCollection: async ({ options }) => {
+    resetCollection: async (options) => {
       const db = await connectToScenesDB();
       const collection = db.collection(collectionName);
 

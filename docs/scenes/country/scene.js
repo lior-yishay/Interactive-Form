@@ -8,6 +8,8 @@
     • DOM “Check in” button (hidden until sticker scanned, hover style)
     ---------------------------------------------------------- */
 
+import { getCountryCounts } from "./logic.js";
+
 /* ───────── ASSETS ───────── */
 let grottaMedium,
   grottaBold,
@@ -28,14 +30,15 @@ const baseHeight = 1080;
 const BARCODE_SIZE = 89;
 
 /* ───────── STATE ───────── */
-const stickers = [];
+let stickers = []; //lior's code. changed from const to let
 let easedCursor = 200,
   glow = false,
   glowTimer = 0;
 let doneBtn,
   boardActive = false,
   boardRows = [],
-  boardStart = 0;
+  boardStart = 0,
+  boardDone = false; //lior's code
 
 /* loader state */
 let loading = false;
@@ -45,53 +48,62 @@ const LOAD_TIME = 3000; // 3-second fill
 /* play-once flag for chime+voice */
 let paPlayed = false;
 
+/* ───────── STICKERS TEXT & POSITIONS (lior's code) ───────── */
+const stickerPos = [
+  { label: "education", x: 800, y: 700 },
+  { label: "peace of mind", x: 1150, y: 350 },
+  { label: "love", x: 1500, y: 200 },
+  { label: "a better future", x: 1300, y: 530 },
+  { label: "anything", x: 350, y: 200 },
+  { label: "nothing", x: 160, y: 350 },
+  { label: "a better job", x: 1000, y: 180 },
+  { label: "hope", x: 1150, y: 650 },
+  { label: "a working government", x: 170, y: 630 },
+];
+
 /* ───────────────── preload ───────────────── */
-function preload() {
-  grottaMedium = loadFont("Grotta-Trial-Medium.otf");
-  grottaBold = loadFont("Grotta-Trial-Bold.otf");
-  snellScript = loadFont("SnellRoundhand-BoldScript.otf");
-  barcodeFont = loadFont("LibreBarcode128Text-Regular.ttf");
-  perfogramaFont = loadFont("Perfograma.otf");
+export function preloadCountryScene() {
+  grottaMedium = loadFont("./assets/Grotta-Trial-Medium.otf");
+  grottaBold = loadFont("./assets/Grotta-Trial-Bold.otf");
+  snellScript = loadFont("./assets/SnellRoundhand-BoldScript.otf");
+  barcodeFont = loadFont("./assets/LibreBarcode128Text-Regular.ttf");
+  perfogramaFont = loadFont("./assets/Grotta-Trial-Medium.otf"); //todo: change to ./assets/Perfograma.otf
+  scannerCursor = loadImage("./assets/scaner.png");
+  backgroundImg = loadImage("./assets/backgroundIMG.png");
+  airplaneImg = loadImage("./assets/airplane.svg");
+  loaderPlaneImg = loadImage("./assets/airplaneyellow.svg");
 
-  scannerCursor = loadImage("scaner.png");
-  backgroundImg = loadImage("backgroundIMG.png");
-
-  airplaneImg = loadImage("airplane.svg");
-  loaderPlaneImg = loadImage("airplaneyellow.svg");
-
-  bingBong = loadSound("bingbong.mp3");
-  airportVoice = loadSound("airportvoice.mp3");
-
-  scannerBeep = loadSound("store-scanner-beep-90395 (1).mp3");
+  // bingBong = loadSound("./assets/bingbong.mp3");
+  bingBong = loadSound("./assets/happy-tune-29317.mp3"); // todo: replace
+  // airportVoice = loadSound("./assets/airportvoice.mp3");
+  airportVoice = loadSound("./assets/radio-static-6382.mp3"); // todo: replace
+  scannerBeep = loadSound("./assets/scanner.mp3");
 }
 
 /* ───────────────── setup ───────────────── */
-function setup() {
+export async function setupCountryScene() {
   createCanvas(windowWidth, windowHeight);
   userStartAudio(); // unlocks audio on first click
   textAlign(LEFT, TOP);
   noCursor();
 
   /* stickers */
-  stickers.push(new Sticker("education", 800, 700));
-  stickers.push(new Sticker("peace of Mind", 1150, 350));
-  stickers.push(new Sticker("love", 1500, 200));
-  stickers.push(new Sticker("a better future", 1300, 530));
-  stickers.push(new Sticker("anything", 350, 200));
-  stickers.push(new Sticker("nothing", 160, 350));
-  stickers.push(new Sticker("a better job", 1000, 180));
-  stickers.push(new Sticker("hope", 1150, 650));
-  stickers.push(new Sticker("a working government", 170, 630));
+  const serverScanCounts = await getCountryCounts();
+  console.log(serverScanCounts);
+  stickers = stickerPos.map(
+    ({ label, x, y }) => new Sticker(label, x, y, serverScanCounts[label] ?? 0)
+  );
 
   createDoneButton();
 }
 
-function windowResized() {
+export function windowResizedCountryScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
 /* ───────────────── main draw ───────────────── */
-function draw() {
+
+export function drawCountryScene() {
   clear();
   drawResponsiveBackground(backgroundImg);
 
@@ -123,8 +135,8 @@ function drawScene1() {
   /* play bing-bong and airport voice together (once) */
   if (!paPlayed && (bingBong.isLoaded() || airportVoice.isLoaded())) {
     paPlayed = true;
-    if (bingBong.isLoaded()) bingBong.play();
-    if (airportVoice.isLoaded()) airportVoice.play();
+    // if (bingBong.isLoaded()) bingBong.play(); todo: uncomment
+    // if (airportVoice.isLoaded()) airportVoice.play();  todo: uncomment
   }
 
   const s = min(width / baseWidth, height / baseHeight);
@@ -143,8 +155,9 @@ function drawScene1() {
 
   /* reveal button once ANY sticker is scanned */
   if (
+    doneBtn &&
     doneBtn.elt.style.display === "none" &&
-    stickers.some((st) => st.scans > 0)
+    stickers.some((st) => st.userScanned)
   ) {
     doneBtn.show();
   }
@@ -179,6 +192,8 @@ function drawTicket() {
 
   noStroke();
   fill(0);
+
+  textAlign(LEFT, TOP); //lior's code important!
   textFont(grottaMedium);
   textSize(45);
   const lp = -cardW / 2 + 80,
@@ -202,12 +217,12 @@ function drawTicket() {
 
 /* ---------- Sticker class ---------- */
 class Sticker {
-  constructor(label, x, y) {
+  constructor(label, x, y, scans = 0) {
     this.label = label;
     this.baseX = x;
     this.baseY = y;
     this.rotation = random(-0.25, 0.25);
-    this.scans = 0;
+    this.scans = scans; //lior's code. changed from 0
     this.scanProg = 0;
     this.padX = 40;
     this.padY = 35;
@@ -218,6 +233,8 @@ class Sticker {
     this.wAmp = random(2.5, 7.0);
     this.rOff = random(TWO_PI);
     this.sOff = random(TWO_PI);
+
+    this.userScanned = false; //lior's code
   }
 
   update(s) {
@@ -236,13 +253,14 @@ class Sticker {
 
     if (mouseIsPressed && inside) {
       this.scanProg = constrain(this.scanProg + 0.01, 0, 1);
-      if (this.scanProg === 1 && this.scans === 0) {
-        this.scans = 1;
+      if (this.scanProg === 1 && !this.userScanned) {
+        this.userScanned = true;
+        this.scans += 1;
         glow = true;
         glowTimer = 10;
-        if (!scannerBeep.isPlaying()) scannerBeep.play();
+        // if (!scannerBeep.isPlaying()) scannerBeep.play(); //todo: remove comment
       }
-    } else if (!mouseIsPressed && this.scans === 0) {
+    } else if (!mouseIsPressed && !this.userScanned) {
       this.scanProg = 0;
     }
   }
@@ -274,7 +292,7 @@ class Sticker {
     noStroke();
     rect(0, 0, w, h, 6);
 
-    if (this.scanProg > 0 && this.scans === 0) {
+    if (this.scanProg > 0 && !this.userScanned) {
       const wave = (sin(this.scanProg * PI * 1.5) + 1) / 2;
       stroke(255, 255, 255, 150);
       strokeWeight(2);
@@ -290,6 +308,7 @@ class Sticker {
     endShape(CLOSE);
 
     fill(0);
+    textAlign(LEFT, TOP); //lior's code important!
     text(this.label, this.padX, this.padY);
     pop();
   }
@@ -550,4 +569,19 @@ function drawFlightBoard() {
       }
     }
   }
+
+  //lior's code
+  let totalRows = boardRows.length;
+  let lastRowIdx = totalRows - 1;
+  let lastCharIdx = Math.max(AC, RC) - 1; // longest column
+  let lastFlipTime =
+    boardStart + lastRowIdx * ROW_DELAY + lastCharIdx * LET_DELAY + FLIP;
+  boardDone = millis() > lastFlipTime;
 }
+
+export const getCountryUserPicks = () =>
+  stickers
+    .filter((sticker) => sticker.userScanned)
+    .map((sticker) => sticker.label);
+
+export const didUserFinishCountyScene = () => boardDone;

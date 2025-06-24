@@ -1,15 +1,14 @@
-import { COUNTRY_COLLECTION } from "../../../data-access/collections";
-import { getSceneManager } from "../../getSceneManager";
-import { COUNTRY_OPTIONS } from "./options";
+import { COUNTRY_COLLECTION } from "../../../data-access/collections.js";
+import { getSceneManager } from "../../getSceneManager.js";
+import { COUNTRY_OPTIONS } from "./options.js";
 
 const countrySceneManager = getSceneManager(COUNTRY_COLLECTION);
 
 export const incrementCountryPicks = async (picks) =>
-  countrySceneManager.incrementPicks(picks);
+  await countrySceneManager.incrementPicks(picks);
 
-export const getCountryCounts = async () => countrySceneManager.getCounts();
+export const getCountryCounts = async () =>
+  await countrySceneManager.getCounts();
 
 export const resetCountryScene = async () =>
-  countrySceneManager.resetCollection({
-    options: COUNTRY_OPTIONS,
-  });
+  await countrySceneManager.resetCollection(COUNTRY_OPTIONS);

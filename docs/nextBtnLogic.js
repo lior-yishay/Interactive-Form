@@ -1,6 +1,7 @@
 import { nextScene } from "./scene-chain.js";
 import {
   AI,
+  COUNTRY,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -12,6 +13,8 @@ import {
 } from "./scenes-names.js";
 import { postAiPick, teardownAiScene } from "./scenes/AI/logic.js";
 import { getSelectedAiPick } from "./scenes/AI/scene.js";
+import { postCountryPick } from "./scenes/country/logic.js";
+import { didUserFinishCountyScene } from "./scenes/country/scene.js";
 import { postGenderPick } from "./scenes/genders/logic.js";
 import { getGendersUserPick } from "./scenes/genders/sketch.js";
 import { postIceCreamSandwichPick } from "./scenes/ice-cream-sandwich/logic.js";
@@ -33,7 +36,7 @@ export const onNextBtnClick = async () => {
 };
 
 export const isNextBtnDisabled = () => {
-  return hasNoAnswer[getCurrentScene()]() ?? false;
+  return (hasNoAnswer[getCurrentScene()] || (() => false))() ?? false;
 };
 
 const postSceneUserPicks = {
@@ -52,6 +55,7 @@ const postSceneUserPicks = {
     postAiPick();
     teardownAiScene();
   },
+  [COUNTRY]: postCountryPick,
 };
 
 const hasNoAnswer = {
@@ -64,4 +68,5 @@ const hasNoAnswer = {
   [UNREAL]: () => !getUnrealPostedUserPicksFlag(),
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => !getSelectedAiPick(),
+  [COUNTRY]: () => !didUserFinishCountyScene(),
 };

@@ -19,7 +19,7 @@ import {
   setupBoarder,
 } from "./scenesBorder.js";
 
-let currentScene = AI;
+let currentScene = COUNTRY;
 export const getCurrentScene = () => currentScene;
 
 export const setCurrentScene = (sceneName) => {
