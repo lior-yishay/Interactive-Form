@@ -1,27 +1,16 @@
-import { ICE_CREAM_SANDWICH_COLLECTION } from "../../../data-access/collections.js"
-import { connectToScenesDB } from "../../../data-access/db.js"
+import { ICE_CREAM_SANDWICH_COLLECTION } from "../../../data-access/collections.js";
+import { getSceneManager } from "../../getSceneManager.js";
+import { FLAVORS } from "./flavors.js";
 
-export const incrementFlavorByOne = async (flavor) => {
-    const db = await connectToScenesDB()
-    const collection = db.collection(ICE_CREAM_SANDWICH_COLLECTION)
+const iceCreamSandwichSceneManager = getSceneManager(
+  ICE_CREAM_SANDWICH_COLLECTION
+);
 
-    await collection.updateOne(
-        { name: flavor },
-        { $inc: { count: 1 } },
-        { upsert: true }
-    )
-}
+export const incrementIceCreamSandwichPick = async (pick) =>
+  await iceCreamSandwichSceneManager.incrementPicks(pick);
 
-export const getAllFlavorsCounts = async () => {
-  const db = await connectToScenesDB();
-  const collection = db.collection(ICE_CREAM_SANDWICH_COLLECTION);
+export const getIceCreamSandwichCounts = async () =>
+  await iceCreamSandwichSceneManager.getCounts();
 
-  const allDocuments = await collection.find().toArray();
-
-  const result = {};
-  for (const doc of allDocuments) {
-    result[doc.name] = doc.count;
-  }
-
-  return result;
-};
+export const resetIceCreamSandwichScene = async () =>
+  await iceCreamSandwichSceneManager.resetCollection(FLAVORS);

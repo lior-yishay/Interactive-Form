@@ -44,17 +44,20 @@ export const getSceneManager = (collectionName) => {
 
       await collection.deleteMany({});
 
-      const docs = options.map((opt) => ({ name: opt, count: 0 }));
+      if (options?.length > 0) {
+        const docs = options.map((opt) => ({ name: opt, count: 0 }));
 
-      const bulkOps = docs.map((doc) => ({
-        updateOne: {
-          filter: { name: doc.name },
-          update: { $set: doc },
-          upsert: true,
-        },
-      }));
+        const bulkOps = docs.map((doc) => ({
+          updateOne: {
+            filter: { name: doc.name },
+            update: { $set: doc },
+            upsert: true,
+          },
+        }));
 
-      await collection.bulkWrite(bulkOps);
+        await collection.bulkWrite(bulkOps);
+      }
+
       console.log(`✅ ${collectionName} reset.`);
     },
   };

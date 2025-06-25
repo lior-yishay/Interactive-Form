@@ -1,23 +1,16 @@
-import { GENDERS_COLLECTION } from "../../../data-access/collections.js"
-import { connectToScenesDB } from "../../../data-access/db.js"
+import { GENDERS_COLLECTION } from "../../../data-access/collections.js";
+import { getSceneManager } from "../../getSceneManager.js";
+import { GENDERS } from "./genders.js";
 
-export const incrementGenderByOne = async (gender) => {
-    const db = await connectToScenesDB()
-    const collection = db.collection(GENDERS_COLLECTION)
+const gendersSceneManager = getSceneManager(GENDERS_COLLECTION);
 
-    await collection.updateOne(
-        { name: gender },
-        { $inc: { count: 1 } },
-        { upsert: true }
-    )
-}
+export const incrementGenderPick = async (pick) =>
+  await gendersSceneManager.incrementPicks(pick);
 
-export const getAllGenderCounts = async () => {
-  const db = await connectToScenesDB();
-  const collection = db.collection(GENDERS_COLLECTION);
+export const getGendersCounts = async () =>
+  await gendersSceneManager.getCounts(true);
 
-  // Return all documents with only name and count fields
-  const results = await collection.find({}, { projection: { _id: 0, name: 1, count: 1 } }).toArray();
-
-  return results;
-};
+export const resetGendersScene = async () =>
+  await gendersSceneManager.resetCollection(
+    GENDERS.map((gender) => gender.toUpperCase())
+  );

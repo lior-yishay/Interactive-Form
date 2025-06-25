@@ -1,33 +1,13 @@
 import { UNREAL_COLLECTION } from "../../../data-access/collections.js";
-import { connectToScenesDB } from "../../../data-access/db.js";
+import { getSceneManager } from "../../getSceneManager.js";
+import { UNREAL_OPTIONS } from "./options.js";
 
-export const incrementUnrealPicksByOne = async (unrealPicks) => {
-  if (unrealPicks.length === 0) return;
+const unrealSceneManager = getSceneManager(UNREAL_COLLECTION);
 
-  const db = await connectToScenesDB();
-  const collection = db.collection(UNREAL_COLLECTION);
+export const incrementUnrealPicks = async (picks) =>
+  await unrealSceneManager.incrementPicks(picks);
 
-  const bulkOps = unrealPicks.map((pick) => ({
-    updateOne: {
-      filter: { name: pick },
-      update: { $inc: { count: 1 } },
-      upsert: true,
-    },
-  }));
+export const getUnrealCounts = async () => await unrealSceneManager.getCounts();
 
-  await collection.bulkWrite(bulkOps);
-};
-
-export const getAllUnrealCounts = async () => {
-  const db = await connectToScenesDB();
-  const collection = db.collection(UNREAL_COLLECTION);
-
-  const allDocuments = await collection.find().toArray();
-
-  const result = {};
-  for (const doc of allDocuments) {
-    result[doc.name] = doc.count;
-  }
-
-  return result;
-};
+export const resetUnrealScene = async () =>
+  await unrealSceneManager.resetCollection(UNREAL_OPTIONS);

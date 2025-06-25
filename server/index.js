@@ -5,37 +5,29 @@ import { closeConnection, connectToScenesDB } from "./data-access/db.js";
 
 import dotenv from "dotenv";
 import {
-  getAllAgeCounts,
-  incrementAgeByOne,
-} from "./business/scenes-logic/age/api.js";
-import {
-  getAllAiCounts,
-  incrementAiByOne,
+  getAiCounts,
+  incrementAiPick,
 } from "./business/scenes-logic/ai/api.js";
 import {
   getCountryCounts,
   incrementCountryPicks,
 } from "./business/scenes-logic/country/api.js";
 import {
-  getAllGenderCounts,
-  incrementGenderByOne,
+  getGendersCounts,
+  incrementGenderPick,
 } from "./business/scenes-logic/gender/api.js";
 import {
   getMagnetPositions,
   saveMagnetPositions,
 } from "./business/scenes-logic/i belive in/api.js";
 import {
-  getAllFlavorsCounts,
-  incrementFlavorByOne,
+  getIceCreamSandwichCounts,
+  incrementIceCreamSandwichPick,
 } from "./business/scenes-logic/ice-cream-sandwich/api.js";
-import {
-  getAllLivingHereRecords,
-  postLivingHerePick,
-} from "./business/scenes-logic/living-here/api.js";
 import { getNameHistory, postName } from "./business/scenes-logic/name/api.js";
 import {
-  getAllPoliticalSideCounts,
-  incrementPoliticalSideByOne,
+  getPoliticsCounts,
+  incrementPoliticsPick,
 } from "./business/scenes-logic/politics/api.js";
 import {
   getSmileLeaderboard,
@@ -43,19 +35,18 @@ import {
   insertSmile,
 } from "./business/scenes-logic/smile/api.js";
 import {
-  getAllUnrealCounts,
-  incrementUnrealPicksByOne,
+  getUnrealCounts,
+  incrementUnrealPicks,
 } from "./business/scenes-logic/unreal/api.js";
 import { getAndIncrementUserNumber } from "./business/scenes-logic/user-number/api.js";
 import { logger } from "./logger/logger.js";
 import {
-  AGE,
   AI,
+  COUNTRY,
   EVENTS,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
-  LIVING_HERE,
   NAME,
   POLITICS,
   SMILE,
@@ -63,7 +54,6 @@ import {
   SMILE_TIME,
   UNREAL,
   USER_NUMBER,
-  COUNTRY,
 } from "./routes/routes.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
@@ -92,8 +82,8 @@ app.route(USER_NUMBER).all(
 app.route(GENDERS).all(
   createRoute({
     methodHandlers: {
-      post: (req) => incrementGenderByOne(req.body.gender),
-      get: () => getAllGenderCounts(),
+      post: (req) => incrementGenderPick(req.body.gender),
+      get: getGendersCounts,
     },
   })
 );
@@ -101,20 +91,8 @@ app.route(GENDERS).all(
 app.route(POLITICS).all(
   createRoute({
     methodHandlers: {
-      post: (req) => incrementPoliticalSideByOne(req.body.side),
-      get: () => getAllPoliticalSideCounts(),
-    },
-  })
-);
-
-app.route(LIVING_HERE).all(
-  createRoute({
-    methodHandlers: {
-      post: (req) => {
-        const { x, y, pick } = req.body;
-        return postLivingHerePick(x, y, pick);
-      },
-      get: () => getAllLivingHereRecords(),
+      post: (req) => incrementPoliticsPick(req.body.side),
+      get: getPoliticsCounts,
     },
   })
 );
@@ -122,8 +100,8 @@ app.route(LIVING_HERE).all(
 app.route(ICE_CREAM_SANDWICH).all(
   createRoute({
     methodHandlers: {
-      post: (req) => incrementFlavorByOne(req.body.flavor),
-      get: () => getAllFlavorsCounts(),
+      post: (req) => incrementIceCreamSandwichPick(req.body.flavor),
+      get: getIceCreamSandwichCounts,
     },
   })
 );
@@ -165,17 +143,8 @@ app.route(SMILE_TIME).all(
 app.route(AI).all(
   createRoute({
     methodHandlers: {
-      post: (req) => incrementAiByOne(req.body.ai),
-      get: () => getAllAiCounts(),
-    },
-  })
-);
-
-app.route(AGE).all(
-  createRoute({
-    methodHandlers: {
-      post: (req) => incrementAgeByOne(req.body.age),
-      get: () => getAllAgeCounts(),
+      post: (req) => incrementAiPick(req.body.ai),
+      get: getAiCounts,
     },
   })
 );
@@ -192,8 +161,8 @@ app.route(I_BELIEVE_IN).all(
 app.route(UNREAL).all(
   createRoute({
     methodHandlers: {
-      post: (req) => incrementUnrealPicksByOne(req.body.picks),
-      get: () => getAllUnrealCounts(),
+      post: (req) => incrementUnrealPicks(req.body.picks),
+      get: getUnrealCounts,
     },
   })
 );
@@ -202,7 +171,7 @@ app.route(COUNTRY).all(
   createRoute({
     methodHandlers: {
       post: (req) => incrementCountryPicks(req.body.picks),
-      get: () => getCountryCounts(),
+      get: getCountryCounts,
     },
   })
 );

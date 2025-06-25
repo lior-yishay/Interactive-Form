@@ -2,25 +2,31 @@ import { NAME_COLLECTION } from "../../../data-access/collections.js";
 import { connectToScenesDB } from "../../../data-access/db.js";
 
 export const postName = async (strokes) => {
-    const db = await connectToScenesDB()
-    const collection = db.collection(NAME_COLLECTION)
+  const db = await connectToScenesDB();
+  const collection = db.collection(NAME_COLLECTION);
 
-    await collection.insertOne(
-        { createdOn: new Date, strokes }
-    )
+  await collection.insertOne({ createdOn: new Date(), strokes });
 
-    return strokes
-}
+  return strokes;
+};
 
 export const getNameHistory = async (top) => {
-    const db = await connectToScenesDB();
-    const collection = db.collection(NAME_COLLECTION);
-  
-    let query = collection.find({}).sort({ createdOn: -1 });
+  const db = await connectToScenesDB();
+  const collection = db.collection(NAME_COLLECTION);
 
-    if (typeof top === 'number' && top > 0) {
-        query = query.limit(top);
-    }
+  let query = collection.find({}).sort({ createdOn: -1 });
 
-    return await query.toArray();
+  if (typeof top === "number" && top > 0) {
+    query = query.limit(top);
+  }
+
+  return await query.toArray();
+};
+
+export const resetName = async () => {
+  const db = await connectToScenesDB();
+  const collection = db.collection(NAME_COLLECTION);
+
+  await collection.deleteMany({});
+  console.log("✅ name records reset.");
 };

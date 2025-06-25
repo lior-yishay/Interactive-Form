@@ -1,27 +1,14 @@
 import { POLITICS_COLLECTION } from "../../../data-access/collections.js";
-import { connectToScenesDB } from "../../../data-access/db.js";
+import { getSceneManager } from "../../getSceneManager.js";
+import { POLITICAL_SIDES } from "./sides.js";
 
-export const incrementPoliticalSideByOne = async (side) => {
-    const db = await connectToScenesDB()
-    const collection = db.collection(POLITICS_COLLECTION)
+const politicsSceneManager = getSceneManager(POLITICS_COLLECTION);
 
-    await collection.updateOne(
-        { name: side },
-        { $inc: { count: 1 } },
-        { upsert: true }
-    )
-}
+export const incrementPoliticsPick = async (pick) =>
+  await politicsSceneManager.incrementPicks(pick);
 
-export const getAllPoliticalSideCounts = async () => {
-  const db = await connectToScenesDB();
-  const collection = db.collection(POLITICS_COLLECTION);
+export const getPoliticsCounts = async () =>
+  await politicsSceneManager.getCounts();
 
-  const allDocuments = await collection.find().toArray();
-
-  const result = {};
-  for (const doc of allDocuments) {
-    result[doc.name] = doc.count;
-  }
-
-  return result;
-};
+export const resetPoliticsScene = async () =>
+  await politicsSceneManager.resetCollection(POLITICAL_SIDES);

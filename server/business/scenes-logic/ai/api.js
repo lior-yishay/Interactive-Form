@@ -1,27 +1,13 @@
-import { AI_COLLECTION } from "../../../data-access/collections.js"
-import { connectToScenesDB } from "../../../data-access/db.js"
+import { AI_COLLECTION } from "../../../data-access/collections.js";
+import { getSceneManager } from "../../getSceneManager.js";
+import { AI_OPTIONS } from "./options.js";
 
-export const incrementAiByOne = async (AiPick) => {
-    const db = await connectToScenesDB()
-    const collection = db.collection(AI_COLLECTION)
+const aiSceneManager = getSceneManager(AI_COLLECTION);
 
-    await collection.updateOne(
-        { name: AiPick },
-        { $inc: { count: 1 } },
-        { upsert: true }
-    )
-}
+export const incrementAiPick = async (pick) =>
+  await aiSceneManager.incrementPicks(pick);
 
-export const getAllAiCounts = async () => {
-  const db = await connectToScenesDB();
-  const collection = db.collection(AI_COLLECTION);
+export const getAiCounts = async () => await aiSceneManager.getCounts();
 
-  const allDocuments = await collection.find().toArray();
-
-  const result = {};
-  for (const doc of allDocuments) {
-    result[doc.name] = doc.count;
-  }
-
-  return result;
-};
+export const resetAiScene = async () =>
+  await aiSceneManager.resetCollection(AI_OPTIONS);
