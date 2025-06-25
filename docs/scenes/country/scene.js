@@ -67,17 +67,15 @@ export function preloadCountryScene() {
   grottaBold = loadFont("./assets/Grotta-Trial-Bold.otf");
   snellScript = loadFont("./assets/SnellRoundhand-BoldScript.otf");
   barcodeFont = loadFont("./assets/LibreBarcode128Text-Regular.ttf");
-  perfogramaFont = loadFont("./assets/Grotta-Trial-Medium.otf"); //todo: change to ./assets/Perfograma.otf
+  perfogramaFont = loadFont("./assets/Perfograma.otf");
   scannerCursor = loadImage("./assets/scaner.png");
   backgroundImg = loadImage("./assets/backgroundIMG.png");
   airplaneImg = loadImage("./assets/airplane.svg");
   loaderPlaneImg = loadImage("./assets/airplaneyellow.svg");
 
-  // bingBong = loadSound("./assets/bingbong.mp3");
-  bingBong = loadSound("./assets/happy-tune-29317.mp3"); // todo: replace
-  // airportVoice = loadSound("./assets/airportvoice.mp3");
-  airportVoice = loadSound("./assets/radio-static-6382.mp3"); // todo: replace
-  // scannerBeep = loadSound("./assets/Scanner.mp3");
+  bingBong = loadSound("./assets/bingbong.mp3");
+  airportVoice = loadSound("./assets/airportvoice.mp3");
+  scannerBeep = loadSound("./assets/Scanner.mp3");
 }
 
 /* ───────────────── setup ───────────────── */
@@ -89,9 +87,14 @@ export async function setupCountryScene() {
 
   /* stickers */
   const serverScanCounts = await getCountryCounts();
-  console.log(serverScanCounts);
   stickers = stickerPos.map(
-    ({ label, x, y }) => new Sticker(label, x, y, serverScanCounts[label] ?? 0)
+    ({ label, x, y }) =>
+      new Sticker(
+        label,
+        x,
+        y,
+        serverScanCounts ? serverScanCounts[label] ?? 0 : 0
+      )
   );
 
   createDoneButton();
@@ -135,8 +138,8 @@ function drawScene1() {
   /* play bing-bong and airport voice together (once) */
   if (!paPlayed && (bingBong.isLoaded() || airportVoice.isLoaded())) {
     paPlayed = true;
-    // if (bingBong.isLoaded()) bingBong.play(); todo: uncomment
-    // if (airportVoice.isLoaded()) airportVoice.play();  todo: uncomment
+    if (bingBong && bingBong.isLoaded()) bingBong.play();
+    if (airportVoice && airportVoice.isLoaded()) airportVoice.play();
   }
 
   const s = min(width / baseWidth, height / baseHeight);
@@ -258,7 +261,7 @@ class Sticker {
         this.scans += 1;
         glow = true;
         glowTimer = 10;
-        // if (!scannerBeep.isPlaying()) scannerBeep.play(); //todo: remove comment
+        if (!scannerBeep.isPlaying()) scannerBeep.play();
       }
     } else if (!mouseIsPressed && !this.userScanned) {
       this.scanProg = 0;
