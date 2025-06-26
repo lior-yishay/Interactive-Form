@@ -1,6 +1,6 @@
 import { onNextBtnClick } from "./nextBtnLogic.js";
 import { p5Functions } from "./p5-scene-functions.js";
-import { COUNTRY, GENDERS } from "./scenes-names.js";
+import { COUNTRY, GENDERS, NAME } from "./scenes-names.js";
 import {
   drawFooter,
   drawNextButton,
@@ -8,7 +8,7 @@ import {
   setupFooter,
 } from "./footer.js";
 
-let currentScene = GENDERS;
+let currentScene = NAME;
 export const getCurrentScene = () => currentScene;
 
 export const setCurrentScene = (sceneName) => {
