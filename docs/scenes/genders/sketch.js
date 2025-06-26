@@ -1,3 +1,4 @@
+import { getFooterTop } from "../../footer.js";
 import { getGenderCounts, postGenderPick } from "./logic.js";
 // import { getGenderCounts, postGenderPick } from "../../../proxy server/proxyServer.js"
 
@@ -5,7 +6,7 @@ let genderCounts = [];
 let balls = [];
 
 let userPicked = null;
-let palette = ['#F14E1D', '#FFC700', '#10A959', '#C9B8FF', '#FFCBCB'];
+let palette = ["#F14E1D", "#FFC700", "#10A959", "#C9B8FF", "#FFCBCB"];
 let grottaFont;
 let snellFont;
 let heartParticles = [];
@@ -18,8 +19,8 @@ let lastClickedBall = null;
 const maxCount = 200;
 
 export function preloadGendersScene() {
-  grottaFont = loadFont('./assets/Grotta-Trial-Medium.ttf');
-  snellFont = loadFont('./assets/SnellBT-Bold.otf');
+  grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
+  snellFont = loadFont("./assets/SnellBT-Bold.otf");
 }
 
 function easeOutBack(t) {
@@ -56,17 +57,29 @@ export async function setupGendersScene() {
   for (let i = 0; i < genderCounts.length; i++) {
     let { name, count } = genderCounts[i];
     let cleanLabel = getCleanLabel(name);
-    let shapeType = cleanLabel.length > 9 ? 'circle' : random(['circle', 'starburst', 'scallop', 'rect']);
+    let shapeType =
+      cleanLabel.length > 9
+        ? "circle"
+        : random(["circle", "starburst", "scallop", "rect"]);
     let col = color(random(palette));
 
     let angle = random(TWO_PI);
     let speed = random(0.3, 1.2);
-    let vx = cos(angle) * speed / 10;
-    let vy = sin(angle) * speed / 10;
+    let vx = (cos(angle) * speed) / 10;
+    let vy = (sin(angle) * speed) / 10;
 
-    let tempBall = new GenderBall(origin.x, origin.y, baseR, cleanLabel, vx, vy, col, shapeType);
+    let tempBall = new GenderBall(
+      origin.x,
+      origin.y,
+      baseR,
+      cleanLabel,
+      vx,
+      vy,
+      col,
+      shapeType
+    );
 
-    if (shapeType === 'starburst') {
+    if (shapeType === "starburst") {
       tempBall.baseR *= 0.7;
     }
 
@@ -77,18 +90,18 @@ export async function setupGendersScene() {
 
   let maxStarburstHeight = 0;
   for (let b of tempBalls) {
-    if (b.shapeType === 'starburst') {
+    if (b.shapeType === "starburst") {
       maxStarburstHeight = max(maxStarburstHeight, b.shapeHeight);
     }
   }
 
   if (maxStarburstHeight === 0) {
-    maxStarburstHeight = max(tempBalls.map(b => b.shapeHeight));
+    maxStarburstHeight = max(tempBalls.map((b) => b.shapeHeight));
   }
 
   for (let b of tempBalls) {
     let currentH = b.shapeHeight;
-    let visualAdjust = (b.shapeType === 'starburst') ? 1 : 1.2;
+    let visualAdjust = b.shapeType === "starburst" ? 1 : 1.2;
     let targetH = maxStarburstHeight;
     let scaleFactor = (targetH * visualAdjust) / currentH;
     b.baseR *= scaleFactor;
@@ -100,7 +113,9 @@ export async function setupGendersScene() {
   for (let b of balls) b.baseR *= globalScaleDown;
 
   for (let ball of balls) {
-    const genderCount = genderCounts.find(({ name }) => getCleanLabel(name) === ball.label)?.count ?? 0;
+    const genderCount =
+      genderCounts.find(({ name }) => getCleanLabel(name) === ball.label)
+        ?.count ?? 0;
     ball.overshootTarget = genderCount;
     ball.overshootProgress = 0;
     ball.initialOvershoot = genderCount;
@@ -112,7 +127,7 @@ export function windowResizedGendersScene() {
 }
 
 export function drawGendersScene() {
-  background(isInverted ? 0 : 'EEEEEE');
+  background(isInverted ? 0 : "EEEEEE");
   fill(isInverted ? 255 : 0);
   textAlign(CENTER, CENTER);
 
@@ -127,10 +142,18 @@ export function drawGendersScene() {
   for (let ball of balls) {
     let timeSinceClick = millis() - ball.lastClickTime;
     if (timeSinceClick < 1000) {
-      ball.overshootProgress = lerp(ball.overshootProgress, ball.overshootTarget, 0.1);
+      ball.overshootProgress = lerp(
+        ball.overshootProgress,
+        ball.overshootTarget,
+        0.1
+      );
     } else {
       ball.overshootTarget = ball.initialOvershoot;
-      ball.overshootProgress = lerp(ball.overshootProgress, ball.initialOvershoot, 0.1);
+      ball.overshootProgress = lerp(
+        ball.overshootProgress,
+        ball.initialOvershoot,
+        0.1
+      );
     }
 
     ball.move();
@@ -142,7 +165,7 @@ export function drawGendersScene() {
     h.update();
     h.display();
   }
-  heartParticles = heartParticles.filter(h => !h.isDead());
+  heartParticles = heartParticles.filter((h) => !h.isDead());
 }
 
 export function mousePressedGendersScene() {
@@ -209,7 +232,7 @@ class GenderBall {
     this.userPickedLogged = false;
     this.hasInitialized = false;
 
-    if (shapeType === 'starburst') {
+    if (shapeType === "starburst") {
       this.innerRatio = 0.5;
       this.points = 16;
     }
@@ -217,7 +240,7 @@ class GenderBall {
 
   get r() {
     const base = this.baseR * this.baseScale * this.hoverScale;
-    const overshootFactor = 1 + (this.overshootProgress / base);
+    const overshootFactor = 1 + this.overshootProgress / base;
     const pulseFactor = easeOutBack(this.clickPulse) * 0.1;
     return base * overshootFactor * (1 + pulseFactor);
   }
@@ -227,7 +250,7 @@ class GenderBall {
   }
 
   get shapeHeight() {
-    return this.r * 1.6;
+    return this.shapeType === "rect" ? this.r * 2 : this.r * 1.6; //lior's code chaned this
   }
 
   move() {
@@ -240,11 +263,34 @@ class GenderBall {
       this.hasInitialized = true;
     }
 
-    let buffer = 50;
-    if (this.pos.x < buffer) this.vel.x += 0.05;
-    if (this.pos.x > width - buffer) this.vel.x -= 0.05;
-    if (this.pos.y < buffer) this.vel.y += 0.05;
-    if (this.pos.y > height - buffer) this.vel.y -= 0.05;
+    //previous
+    // let buffer = 50;
+    // if (this.pos.x < buffer) this.vel.x += 0.05;
+    // if (this.pos.x > width - buffer) this.vel.x -= 0.05;
+    // if (this.pos.y < buffer) this.vel.y += 0.05;
+    // if (this.pos.y > height - buffer) this.vel.y -= 0.05;
+
+    //lior's code
+    if (this.pos.x < this.shapeWidth / 2) {
+      this.pos.x = this.shapeWidth / 2;
+      this.vel.x *= -0.7; // bounce back (dampen velocity)
+    }
+
+    if (this.pos.x > width - this.shapeWidth / 2) {
+      this.pos.x = width - this.shapeWidth / 2;
+      this.vel.x *= -0.7; // bounce back (dampen velocity) 
+    }
+
+    if (this.pos.y < this.shapeHeight / 2) {
+      this.pos.y = this.shapeHeight / 2;
+      this.vel.y *= -0.7; // bounce back (dampen velocity)
+    }
+
+    if (this.pos.y > getFooterTop() - this.shapeHeight / 2) {
+      this.pos.y = getFooterTop() - this.shapeHeight / 2;
+      this.vel.y *= -0.7; // bounce back (dampen velocity)
+    }
+    //end of lior's code
 
     let hover = this.contains(mouseX, mouseY);
     this.hoverScale = lerp(this.hoverScale, hover ? 1.1 : 1, 0.1);
@@ -260,7 +306,10 @@ class GenderBall {
 
   display() {
     push();
-    translate(this.pos.x + this.selectionOffset.x, this.pos.y + this.selectionOffset.y);
+    translate(
+      this.pos.x + this.selectionOffset.x,
+      this.pos.y + this.selectionOffset.y
+    );
 
     if (this.selected) {
       stroke(isInverted ? 255 : 0);
@@ -270,13 +319,13 @@ class GenderBall {
     }
 
     fill(this.col);
-    let shapeToDraw = this.shapeType === 'scallop' ? 'circle' : this.shapeType;
+    let shapeToDraw = this.shapeType === "scallop" ? "circle" : this.shapeType;
 
     switch (shapeToDraw) {
-      case 'circle':
+      case "circle":
         ellipse(0, 0, this.shapeWidth, this.shapeHeight);
         break;
-      case 'rect': {
+      case "rect": {
         let petals = 7;
         let radius = this.r * 1.2;
         beginShape();
@@ -289,7 +338,7 @@ class GenderBall {
         endShape(CLOSE);
         break;
       }
-      case 'starburst':
+      case "starburst":
         this.drawStarburst(0, 0, this.r * this.innerRatio, this.r, this.points);
         break;
     }
@@ -325,7 +374,7 @@ class GenderBall {
     let maxShapeW = width * 0.9;
     let maxShapeH = height * 0.9;
 
-    if (this.shapeType === 'starburst') {
+    if (this.shapeType === "starburst") {
       let targetInnerR = labelW / 2;
       let outerR = targetInnerR / this.innerRatio;
       if (this.r < outerR) {
@@ -394,5 +443,5 @@ class GenderBall {
 
 //lior's code
 export function getGendersUserPick() {
-  return userPicked
+  return userPicked;
 }

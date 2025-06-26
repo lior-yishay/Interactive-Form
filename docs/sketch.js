@@ -1,25 +1,14 @@
 import { onNextBtnClick } from "./nextBtnLogic.js";
 import { p5Functions } from "./p5-scene-functions.js";
-import {
-  AI,
-  COUNTRY,
-  GENDERS,
-  I_BELIEVE_IN,
-  ICE_CREAM_SANDWICH,
-  NAME,
-  POLITICS,
-  SMILE,
-  UNREAL,
-} from "./scenes-names.js";
+import { COUNTRY, GENDERS } from "./scenes-names.js";
 import {
   drawFooter,
-  drawNavbar,
   drawNextButton,
   mouseOnNextBtn,
-  setupBoarder,
-} from "./scenesBorder.js";
+  setupFooter,
+} from "./footer.js";
 
-let currentScene = COUNTRY;
+let currentScene = GENDERS;
 export const getCurrentScene = () => currentScene;
 
 export const setCurrentScene = (sceneName) => {
@@ -29,14 +18,12 @@ export const setCurrentScene = (sceneName) => {
 const callIfExsist = (func, ...props) => (func ? func(...props) : undefined);
 
 window.setup = () => {
-  callIfExsist(p5Functions[currentScene]?.setup);
-  setupBoarder();
+  p5Functions[currentScene].setup();
+  setupFooter();
 };
 window.draw = () => {
-  callIfExsist(p5Functions[currentScene]?.draw);
-  drawNavbar();
+  p5Functions[currentScene].draw();
   drawFooter();
-  drawNextButton();
 };
 window.mousePressed = () => {
   callIfExsist(p5Functions[currentScene]?.mousePressed);
