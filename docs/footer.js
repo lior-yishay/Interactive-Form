@@ -15,22 +15,30 @@ import {
   UNREAL,
 } from "./scenes-names.js";
 import { getCurrentScene } from "./sketch.js";
+import { isSoundOn } from "./soundManager.js";
 
 const padding = 5;
-let footerHeight,
-  nextButton = {
+
+const BLACK = 0,
+  WHITE = 255;
+
+let footerHeight, footerMiddleH;
+
+let nextButton = {
     x: undefined,
     y: undefined,
     h: undefined,
     w: undefined,
   },
-  userNumber;
-let footerMiddleH;
+  soundToggleBtn = {
+    x: undefined,
+    y: undefined,
+    h: undefined,
+    w: undefined,
+  };
 
+let userNumber;
 let arrowLength = 10;
-
-const BLACK = 0,
-  WHITE = 255;
 
 export const getFooterTop = () => height - footerHeight;
 
@@ -45,6 +53,18 @@ export const setupFooter = async () => {
   nextButton.h = (footerHeight * 5) / 8;
   nextButton.y = windowHeight - (footerHeight + nextButton.h) / 2;
   nextButton.x = windowWidth - nextButton.w - (footerHeight - nextButton.h);
+
+  textSize(22);
+  textFont("Calibri");
+  soundToggleBtn.w = textWidth("Sound ");
+  textSize(12);
+  textFont("Calibri");
+  soundToggleBtn.w += textWidth("Off");
+  soundToggleBtn.h = nextButton.h;
+  soundToggleBtn.y = nextButton.y;
+  soundToggleBtn.x = windowWidth / 2 - soundToggleBtn.w / 2;
+
+  console.log(soundToggleBtn);
 };
 
 // Shared footer
@@ -55,13 +75,20 @@ export const drawFooter = () => {
   line(0, height - footerHeight, width, height - footerHeight);
   noStroke();
   drawPeopleCountAndName();
-  drawSoundOnOff();
+  drawSoundToggleBtn();
   drawNextButton();
+
+  cursor(
+    (!isNextBtnDisabled() && mouseOnNextBtn()) || mouseOnSoundBtn()
+      ? "pointer"
+      : "default"
+  );
 };
 
 export const drawNextButton = () => {
   const { x, y, w, h } = nextButton;
 
+  textSize(22);
   const textStr = "Next";
   const textW = textWidth(textStr);
 
@@ -92,12 +119,45 @@ export const drawNextButton = () => {
     line(arrowX + arrowLength - 5, arrowY - 5, arrowX + arrowLength, arrowY); // upper head
     line(arrowX + arrowLength - 5, arrowY + 5, arrowX + arrowLength, arrowY); // lower head
   }
-
-  cursor(!isNextBtnDisabled() && mouseOnNextBtn() ? "pointer" : "default");
 };
 
 export const mouseOnNextBtn = () => {
   const { x, y, w, h } = nextButton;
+
+  return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
+};
+
+const drawSoundToggleBtn = () => {
+  const { x, y, w, h } = soundToggleBtn;
+
+  textSize(22);
+  const soundText = "Sound ";
+  const soundW = textWidth(soundText);
+
+  fill(getFooterTextColor());
+  noStroke();
+  textAlign(LEFT, CENTER);
+  text(soundText, x, y + h / 2);
+
+  textSize(12);
+  const onOffText = isSoundOn() ? "On" : "Off";
+  const onOffW = textWidth(onOffText);
+
+  fill(getFooterTextColor());
+  noStroke();
+  textAlign(LEFT, CENTER);
+  text(onOffText, x + soundW, y + h / 2);
+
+  // Draw underline
+  const underlineY = y + h / 2 + 7;
+  stroke(getFooterTextColor());
+  noFill();
+  strokeWeight(1);
+  line(x + soundW, underlineY, x + soundW + onOffW, underlineY);
+};
+
+export const mouseOnSoundBtn = () => {
+  const { x, y, w, h } = soundToggleBtn;
 
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 };
@@ -109,10 +169,6 @@ const drawPeopleCountAndName = () => {
   fill(getFooterTextColor());
   text(`\t${userNumber} People : 1 Click : 0 Impact`, padding, footerMiddleH);
 };
-
-const drawSoundOnOff = () => {};
-
-export const mouseOnSoundBtn = () => {};
 
 const footerTextColor = {
   [START]: () => BLACK,

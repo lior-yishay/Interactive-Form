@@ -1,12 +1,14 @@
 import { onNextBtnClick } from "./nextBtnLogic.js";
 import { p5Functions } from "./p5-scene-functions.js";
-import { COUNTRY, GENDERS, NAME } from "./scenes-names.js";
+import { AI, COUNTRY, GENDERS, NAME } from "./scenes-names.js";
 import {
   drawFooter,
   drawNextButton,
   mouseOnNextBtn,
+  mouseOnSoundBtn,
   setupFooter,
 } from "./footer.js";
+import { toggleSound } from "./soundManager.js";
 
 let currentScene = NAME;
 export const getCurrentScene = () => currentScene;
@@ -28,6 +30,7 @@ window.draw = () => {
 window.mousePressed = () => {
   callIfExsist(p5Functions[currentScene]?.mousePressed);
   if (mouseOnNextBtn()) onNextBtnClick();
+  if (mouseOnSoundBtn()) toggleSound();
 };
 window.windowResized = () =>
   callIfExsist(p5Functions[currentScene]?.windowResized);

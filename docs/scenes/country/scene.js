@@ -8,6 +8,7 @@
     • DOM “Check in” button (hidden until sticker scanned, hover style)
     ---------------------------------------------------------- */
 
+import { playSound } from "../../soundManager.js";
 import { getCountryCounts } from "./logic.js";
 
 /* ───────── ASSETS ───────── */
@@ -93,7 +94,7 @@ export async function setupCountryScene() {
         label,
         x,
         y,
-        serverScanCounts ? serverScanCounts[label] ?? 0 : 0
+        serverScanCounts ? (serverScanCounts[label] ?? 0) : 0
       )
   );
 
@@ -138,8 +139,8 @@ function drawScene1() {
   /* play bing-bong and airport voice together (once) */
   if (!paPlayed && (bingBong.isLoaded() || airportVoice.isLoaded())) {
     paPlayed = true;
-    if (bingBong && bingBong.isLoaded()) bingBong.play();
-    if (airportVoice && airportVoice.isLoaded()) airportVoice.play();
+    playSound(bingBong);
+    playSound(airportVoice);
   }
 
   const s = min(width / baseWidth, height / baseHeight);
@@ -261,7 +262,7 @@ class Sticker {
         this.scans += 1;
         glow = true;
         glowTimer = 10;
-        if (!scannerBeep.isPlaying()) scannerBeep.play();
+        playSound(scannerBeep);
       }
     } else if (!mouseIsPressed && !this.userScanned) {
       this.scanProg = 0;

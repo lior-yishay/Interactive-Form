@@ -28,10 +28,12 @@ import { postPoliticsPick } from "./scenes/politics/logic.js";
 import { getPoliticsUserPick } from "./scenes/politics/scene.js";
 import { getUnrealPostedUserPicksFlag } from "./scenes/unreal/scene.js";
 import { getCurrentScene } from "./sketch.js";
+import { resetRegisteredSounds } from "./soundManager.js";
 
 export const onNextBtnClick = async () => {
   if (isNextBtnDisabled()) return;
   await postSceneUserPicks[getCurrentScene()]();
+  resetRegisteredSounds();
   nextScene();
 };
 
