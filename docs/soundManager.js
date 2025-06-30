@@ -5,8 +5,8 @@ export const toggleSound = () => {
   soundEnabled = !soundEnabled;
 
   registeredSounds
-    .filter((sound) => sound.isLoaded())
-    .forEach((sound) => sound.setVolume(soundEnabled ? 1 : 0));
+    .filter(({ sound }) => sound.isLoaded())
+    .forEach(({ sound, volume }) => sound.setVolume(soundEnabled ? volume : 0));
 };
 
 export const isSoundOn = () => soundEnabled;
@@ -38,7 +38,7 @@ const addSoundAndSetVolume = (sound, volume) => {
   if (!sound) return;
 
   if (!registeredSounds.map(({ sound }) => sound).includes(sound)) {
-    registeredSounds.push(sound);
+    registeredSounds.push({ sound, volume });
   }
 
   sound.setVolume(soundEnabled ? volume : 0);
