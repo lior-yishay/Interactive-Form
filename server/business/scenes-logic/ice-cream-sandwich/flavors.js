@@ -1,1 +1,1 @@
-export const FLAVORS = ["vanila", "chocolate"];
+export const FLAVORS = ["vanilla", "chocolate"];

@@ -1,6 +1,12 @@
 import { onNextBtnClick } from "./nextBtnLogic.js";
 import { p5Functions } from "./p5-scene-functions.js";
-import { AI, COUNTRY, GENDERS, NAME } from "./scenes-names.js";
+import {
+  AI,
+  COUNTRY,
+  GENDERS,
+  ICE_CREAM_SANDWICH,
+  NAME,
+} from "./scenes-names.js";
 import {
   drawFooter,
   drawNextButton,
@@ -10,7 +16,7 @@ import {
 } from "./footer.js";
 import { toggleSound } from "./soundManager.js";
 
-let currentScene = NAME;
+let currentScene = ICE_CREAM_SANDWICH;
 export const getCurrentScene = () => currentScene;
 
 export const setCurrentScene = (sceneName) => {

@@ -1,3 +1,4 @@
+import { loopSound } from "../../soundManager.js";
 import { getIceCreamSandwichCounts } from "./logic.js";
 
 /*  sketch.js — pop-art "which flavor first?" — interactive
@@ -18,6 +19,7 @@ let pulseTimer = 0;
 let particles = [];
 let starAngle = 0;
 let iceCreamTruckSound;
+let pulseProgress; //lior's code
 
 /* ---------- FLAVOR SYSTEM ---------- */
 const VANILLA_COLOR = "#f6f2e8";
@@ -39,7 +41,7 @@ let dragStartTime = 0;
 
 /* ---------- INTERACTION STATE ---------- */
 let flavor = null; // VANILLA or CHOCOLATE
-const VANILLA = "vanila",
+const VANILLA = "vanilla",
   CHOCOLATE = "chocolate"; //lior's code
 let flavorProgress = 0;
 let flavorTime = 0; // reset animation time      // 0 → 1 animated preference // Timer for flavor animation
@@ -79,14 +81,14 @@ let windowPositions = {
 };
 
 export function preloadIceCreamSandwichScene() {
-  grotta = loadFont("Grotta-Trial-Bold.otf");
-  snell = loadFont("SnellRoundhand-BlackScript.otf");
+  grotta = loadFont("./assets/Grotta-Trial-Bold.otf");
+  snell = loadFont("./assets/SnellRoundhand-BlackScript.otf");
 
-  topBiscuit = loadImage("CasataTop.png");
-  bottomBiscuit = loadImage("CasataBottom.png");
-  patternImg = loadImage("Pattern.png");
+  topBiscuit = loadImage("./assets/CasataTop.png");
+  bottomBiscuit = loadImage("./assets/CasataBottom.png");
+  patternImg = loadImage("./assets/Pattern.png");
 
-  iceCreamTruckSound = loadSound("ice-cream-truck-theme-77464.mp3");
+  iceCreamTruckSound = loadSound("./assets/ice-cream-truck-theme-77464.mp3");
 }
 
 /* ---------- CONSTANTS ---------- */
@@ -109,13 +111,6 @@ export async function setupIceCreamSandwichScene() {
   flavorCounts = await getIceCreamSandwichCounts();
 
   // Audio will be started on first user interaction
-}
-
-function startAudio() {
-  if (iceCreamTruckSound && !iceCreamTruckSound.isPlaying()) {
-    iceCreamTruckSound.setVolume(0.3); // Set to 30% volume
-    iceCreamTruckSound.loop();
-  }
 }
 
 export function windowResizedIceCreamSandwichScene() {
@@ -216,7 +211,7 @@ function smoothStep(edge0, edge1, x) {
 /* ---------- CLICK HANDLER ---------- */
 export function mousePressedIceCreamSandwichScene() {
   // Start audio on first interaction
-  startAudio();
+  loopSound(iceCreamTruckSound, 0.3);
 
   const s = min(width / BASE_W, height / BASE_H);
 
@@ -314,18 +309,17 @@ export function mousePressedIceCreamSandwichScene() {
   if (my >= fillY && my <= fillY + blockH && !flavor) {
     // Only allow click if no previous selection
     if (mx >= fillX && mx < fillX + clickableHalf) {
-      flavorCounts.vanila++;
+      flavorCounts.vanilla++;
       flavor = VANILLA;
       flavorRatio =
-        flavorCounts.vanila / (flavorCounts.vanila + flavorCounts.chocolate);
-      postIceCreamSandwichVanila();
+        flavorCounts.vanilla / (flavorCounts.vanilla + flavorCounts.chocolate);
       createParticles(mouseX, mouseY, VANILLA);
     } else if (mx >= fillX + clickableHalf && mx < fillX + fillingW) {
       flavorCounts.chocolate++;
       flavor = CHOCOLATE;
       flavorRatio =
-        flavorCounts.chocolate / (flavorCounts.vanila + flavorCounts.chocolate);
-      postIceCreamSandwichChocolate();
+        flavorCounts.chocolate /
+        (flavorCounts.vanilla + flavorCounts.chocolate);
       createParticles(mouseX, mouseY, CHOCOLATE);
     }
 
@@ -748,7 +742,7 @@ function drawCasata() {
     push();
     translate(fillX + vanillaW / 2, fillY + blockH / 2);
     rotate(0);
-    text(flavorCounts.vanila, 0, -10);
+    text(flavorCounts.vanilla, 0, -10);
 
     // Add "votes" text underneath
     textSize(12);
