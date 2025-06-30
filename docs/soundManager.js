@@ -11,20 +11,35 @@ export const toggleSound = () => {
 
 export const isSoundOn = () => soundEnabled;
 
-export const playSound = (sound) => {
-  if (sound && !registeredSounds.includes(sound)) {
-    registeredSounds.push(sound);
-    sound.setVolume(soundEnabled ? 1 : 0);
-  }
+export const playSound = (sound, volume = 1) => {
+  addSoundAndSetVolume(sound, volume);
 
-  if (soundEnabled && sound?.isLoaded()) {
+  if (soundEnabled && sound.isLoaded()) {
     sound.play();
+  }
+};
+
+export const loopSound = (sound, volume = 1) => {
+  addSoundAndSetVolume(sound, volume);
+
+  if (soundEnabled && sound.isLoaded()) {
+    sound.loop();
   }
 };
 
 export const resetRegisteredSounds = () => {
   registeredSounds
-    .filter((sound) => sound.isPlaying())
-    .forEach((sound) => sound.stop());
+    .filter(({ sound }) => sound.isPlaying())
+    .forEach(({ sound }) => sound.stop());
   registeredSounds = [];
+};
+
+const addSoundAndSetVolume = (sound, volume) => {
+  if (!sound) return;
+
+  if (!registeredSounds.map(({ sound }) => sound).includes(sound)) {
+    registeredSounds.push(sound);
+  }
+
+  sound.setVolume(soundEnabled ? volume : 0);
 };
