@@ -46,6 +46,8 @@ import {
 } from "./scenes/i-belive-in/scene.js";
 import {
   drawIceCreamSandwichScene,
+  mouseDraggedIceCreamSandwichScene,
+  mousePressedIceCreamSandwichScene,
   mouseReleasedIceCreamSandwichScene,
   preloadIceCreamSandwichScene,
   setupIceCreamSandwichScene,
@@ -123,6 +125,8 @@ export const p5Functions = {
     draw: drawIceCreamSandwichScene,
     windowResized: windowResizedIceCreamSandwichScene,
     mouseReleased: mouseReleasedIceCreamSandwichScene,
+    mouseDragged: mouseDraggedIceCreamSandwichScene,
+    mousePressed: mousePressedIceCreamSandwichScene,
   },
   [UNREAL]: {
     preload: preloadUnrealScene,
