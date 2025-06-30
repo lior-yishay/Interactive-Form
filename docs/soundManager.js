@@ -14,7 +14,7 @@ export const isSoundOn = () => soundEnabled;
 export const playSound = (sound, volume = 1) => {
   addSoundAndSetVolume(sound, volume);
 
-  if (soundEnabled && sound.isLoaded()) {
+  if (soundEnabled && sound.isLoaded() && !sound.isPlaying()) {
     sound.play();
   }
 };
@@ -22,7 +22,7 @@ export const playSound = (sound, volume = 1) => {
 export const loopSound = (sound, volume = 1) => {
   addSoundAndSetVolume(sound, volume);
 
-  if (soundEnabled && sound.isLoaded()) {
+  if (soundEnabled && sound.isLoaded() && !sound.isPlaying()) {
     sound.loop();
   }
 };
