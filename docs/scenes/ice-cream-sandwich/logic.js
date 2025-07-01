@@ -1,5 +1,5 @@
 import { get, post } from "../../api/axios.js";
-import { ICE_CREAM_SANDWICH } from "../../scenes-names.js";
+import { ICE_CREAM_SANDWICH } from "../../consts/scenes-names.js";
 import { getIceCreamSandwichUserPick } from "./scene.js";
 
 export const getIceCreamSandwichCounts = async () => {

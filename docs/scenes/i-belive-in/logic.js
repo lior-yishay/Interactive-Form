@@ -1,5 +1,5 @@
 import { get, post } from "../../api/axios.js";
-import { I_BELIEVE_IN } from "../../scenes-names.js";
+import { I_BELIEVE_IN } from "../../consts/scenes-names.js";
 import { Magnet, setupMagnets } from "./scene.js";
 
 export const answers = {};
@@ -44,7 +44,7 @@ export const getMagnets = async (
   const magnetsRecords = (await getMagnetRecords(1))[0];
   return !magnetsRecords
     ? setupMagnets()
-    : magnetsRecords.magnets.map(
+    : (magnetsRecords.magnets.map(
         (magnetPosition, index) =>
           new Magnet(
             magnetPosition.letter,
@@ -57,7 +57,7 @@ export const getMagnets = async (
             boundW,
             boundH
           )
-      ) ?? [];
+      ) ?? []);
 };
 
 export const updateWindowSizeAndMagnetsPos = (magnets) => {

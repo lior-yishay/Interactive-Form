@@ -1,5 +1,5 @@
 import { get, post } from "../../api/axios.js";
-import { NAME } from "../../scenes-names.js";
+import { NAME } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
 
 const MAX_ALPHA = 50,

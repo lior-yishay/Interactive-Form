@@ -1,6 +1,10 @@
 import { get, post } from "../../api/axios.js";
 import { imageToBase64 } from "../../api/utils.js";
-import { SMILE, SMILE_LEADERBOARD, SMILE_TIME } from "../../scenes-names.js";
+import {
+  SMILE,
+  SMILE_LEADERBOARD,
+  SMILE_TIME,
+} from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
 
 export const getSmileLeaderboard = async (top) => {

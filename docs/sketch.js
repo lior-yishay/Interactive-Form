@@ -1,49 +1,34 @@
-import { onNextBtnClick } from "./nextBtnLogic.js";
-import { p5Functions } from "./p5-scene-functions.js";
-import {
-  AI,
-  COUNTRY,
-  GENDERS,
-  ICE_CREAM_SANDWICH,
-  NAME,
-} from "./scenes-names.js";
 import {
   drawFooter,
-  drawNextButton,
   mouseOnNextBtn,
   mouseOnSoundBtn,
   setupFooter,
-} from "./footer.js";
+} from "./footer/footer.js";
+import { onNextBtnClick } from "./footer/nextBtnLogic.js";
+import { p5Functions } from "./scene-managment/p5-scene-functions.js";
+import { getCurrentScene } from "./scene-managment/sceneOrder.js";
 import { toggleSound } from "./soundManager.js";
-
-let currentScene = ICE_CREAM_SANDWICH;
-export const getCurrentScene = () => currentScene;
-
-export const setCurrentScene = (sceneName) => {
-  currentScene = sceneName;
-};
-
-const callIfExsist = (func, ...props) => (func ? func(...props) : undefined);
+import { callIfExsist } from "./utils/callIfExsist.js";
 
 window.setup = () => {
-  p5Functions[currentScene].setup();
+  p5Functions[getCurrentScene()].setup();
   setupFooter();
 };
 window.draw = () => {
-  p5Functions[currentScene].draw();
+  p5Functions[getCurrentScene()].draw();
   drawFooter();
 };
 window.mousePressed = () => {
-  callIfExsist(p5Functions[currentScene]?.mousePressed);
+  callIfExsist(p5Functions[getCurrentScene()]?.mousePressed);
   if (mouseOnNextBtn()) onNextBtnClick();
   if (mouseOnSoundBtn()) toggleSound();
 };
 window.windowResized = () =>
-  callIfExsist(p5Functions[currentScene]?.windowResized);
-window.preload = () => callIfExsist(p5Functions[currentScene]?.preload);
+  callIfExsist(p5Functions[getCurrentScene()]?.windowResized);
+window.preload = () => callIfExsist(p5Functions[getCurrentScene()]?.preload);
 window.mouseDragged = () =>
-  callIfExsist(p5Functions[currentScene]?.mouseDragged);
+  callIfExsist(p5Functions[getCurrentScene()]?.mouseDragged);
 window.mouseReleased = () =>
-  callIfExsist(p5Functions[currentScene]?.mouseReleased);
+  callIfExsist(p5Functions[getCurrentScene()]?.mouseReleased);
 window.mouseWheel = (event) =>
-  callIfExsist(p5Functions[currentScene]?.mouseWheel, event);
+  callIfExsist(p5Functions[getCurrentScene()]?.mouseWheel, event);

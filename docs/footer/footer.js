@@ -1,21 +1,20 @@
-import { get, post } from "./api/axios.js";
-import { isNextBtnDisabled } from "./nextBtnLogic.js";
-import { USER_NUMBER } from "./scenes-names.js";
+import { post } from "../api/axios.js";
 import {
-  AGE,
   AI,
+  COUNTRY,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
-  COUNTRY,
   NAME,
   POLITICS,
   SMILE,
   START,
   UNREAL,
-} from "./scenes-names.js";
-import { getCurrentScene } from "./sketch.js";
-import { isSoundOn } from "./soundManager.js";
+  USER_NUMBER,
+} from "../consts/scenes-names.js";
+import { getCurrentScene } from "../scene-managment/sceneOrder.js";
+import { isSoundOn } from "../soundManager.js";
+import { isNextBtnDisabled } from "./nextBtnLogic.js";
 
 const padding = 5;
 

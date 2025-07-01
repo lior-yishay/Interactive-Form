@@ -1,5 +1,5 @@
 import { get, post } from "../../api/axios.js";
-import { UNREAL } from "../../scenes-names.js";
+import { UNREAL } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
 
 export const getUnrealCounts = async () => {

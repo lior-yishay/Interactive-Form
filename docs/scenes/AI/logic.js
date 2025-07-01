@@ -1,5 +1,5 @@
 import { get, post } from "../../api/axios.js";
-import { AI } from "../../scenes-names.js";
+import { AI } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
 import { getSelectedAiPick } from "./scene.js";
 

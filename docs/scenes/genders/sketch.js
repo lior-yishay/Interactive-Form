@@ -1,4 +1,4 @@
-import { getFooterTop } from "../../footer.js";
+import { getFooterTop } from "../../footer/footer.js";
 import { getGenderCounts, postGenderPick } from "./logic.js";
 // import { getGenderCounts, postGenderPick } from "../../../proxy server/proxyServer.js"
 
@@ -278,7 +278,7 @@ class GenderBall {
 
     if (this.pos.x > width - this.shapeWidth / 2) {
       this.pos.x = width - this.shapeWidth / 2;
-      this.vel.x *= -0.7; // bounce back (dampen velocity) 
+      this.vel.x *= -0.7; // bounce back (dampen velocity)
     }
 
     if (this.pos.y < this.shapeHeight / 2) {

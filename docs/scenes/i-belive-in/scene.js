@@ -1,8 +1,12 @@
-import { SMILE } from "../../scenes-names.js";
-import { getMagnets, getSceneAnswer, postMagnetPositions, updateWindowSizeAndMagnetsPos } from "./logic.js";
+import { SMILE } from "../../consts/scenes-names.js";
+import {
+  getMagnets,
+  getSceneAnswer,
+  updateWindowSizeAndMagnetsPos,
+} from "./logic.js";
 
 let magnets = [];
-let colors = ['#10A959', '#FFC700', '#F14E1D', '#EEEEEE'];
+let colors = ["#10A959", "#FFC700", "#F14E1D", "#EEEEEE"];
 let maruFont;
 let noteImage;
 let smileImage; // my code
@@ -15,21 +19,19 @@ let textSizeVal;
 let planetX;
 let noteX, noteY;
 
-
-
 export function preloadIBeliveInScene() {
   // maruFont = loadFont('./assets/GT-Maru-Mono-Bold-Trial.otf');
-  maruFont = loadFont('./assets/GT-Maru-Bold-Trial.otf')
-  noteImage = loadImage('./assets/note1.png');
+  maruFont = loadFont("./assets/GT-Maru-Bold-Trial.otf");
+  noteImage = loadImage("./assets/note1.png");
   // mayaShiriImage = loadImage('twopeople.jpg'); // NEW
 }
 
 export async function setupIBeliveInScene() {
   createCanvas(windowWidth, windowHeight);
-  // setupMagnets(); 
+  // setupMagnets();
   planetX = 0;
 
-  let noteScale = 0.10;
+  let noteScale = 0.1;
   let noteWidth = width * noteScale;
   let handleHeight = height * 0.5;
   let handleY = height - handleHeight;
@@ -37,7 +39,7 @@ export async function setupIBeliveInScene() {
   noteY = handleY + handleHeight - 180;
 
   //my code
-  smileImage = getSceneAnswer(SMILE)?.image
+  smileImage = getSceneAnswer(SMILE)?.image;
 
   textSizeVal = width * 0.045;
   textSize(textSizeVal);
@@ -49,13 +51,20 @@ export async function setupIBeliveInScene() {
   let topWidth = fridgeWidth - 20;
   let topHeight = height - topOffset + 50;
 
-  magnets = await getMagnets(colors, () => radians(random(-15, 15)), topX, topOffset, topWidth, topHeight)
-  setupMagnets()
+  magnets = await getMagnets(
+    colors,
+    () => radians(random(-15, 15)),
+    topX,
+    topOffset,
+    topWidth,
+    topHeight
+  );
+  setupMagnets();
 }
 
 export function windowResizedIBeliveIn() {
   resizeCanvas(windowWidth, windowHeight);
-  updateWindowSizeAndMagnetsPos(magnets)
+  updateWindowSizeAndMagnetsPos(magnets);
   //setupMagnets();
 }
 
@@ -79,18 +88,23 @@ export function setupMagnets() {
       let col = colors[(i + j) % colors.length];
 
       let x = random(topX + textSizeVal, topX + topWidth - textSizeVal);
-      let y = random(topOffset + textSizeVal, topOffset + topHeight - textSizeVal);
+      let y = random(
+        topOffset + textSizeVal,
+        topOffset + topHeight - textSizeVal
+      );
 
       let rot = radians(random(-15, 15));
-      newMagnets.push(new Magnet(letter, x, y, col, rot, topX, topOffset, topWidth, topHeight));
+      newMagnets.push(
+        new Magnet(letter, x, y, col, rot, topX, topOffset, topWidth, topHeight)
+      );
     }
   }
 
-  return newMagnets
+  return newMagnets;
 }
 
 export function drawIBeliveInScene() {
-  background('#C9B8FF');
+  background("#C9B8FF");
   let gridSpacing = 60;
   stroke(255, 150);
   strokeWeight(1);
@@ -103,8 +117,17 @@ export function drawIBeliveInScene() {
 
   stroke(0);
   strokeWeight(2);
-  fill('#E1D5C2');
-  rect(fridgeX, topOffset, fridgeWidth, height - topOffset + 50, 120, 120, 0, 0);
+  fill("#E1D5C2");
+  rect(
+    fridgeX,
+    topOffset,
+    fridgeWidth,
+    height - topOffset + 50,
+    120,
+    120,
+    0,
+    0
+  );
 
   let topX = fridgeX - 20;
   let topY = topOffset;
@@ -113,14 +136,18 @@ export function drawIBeliveInScene() {
 
   stroke(0);
   strokeWeight(2);
-  fill('#F4EBDC');
+  fill("#F4EBDC");
   rect(topX, topY, topWidth, topHeight, 120, 120, 0, 0);
 
   // Pot and plant
   push();
   let potWidth = topWidth * 0.15;
   let potHeight = topY;
-  let potX = constrain(planetX + topWidth / 2 - potWidth / 2, topX, topX + topWidth - potWidth - 60);
+  let potX = constrain(
+    planetX + topWidth / 2 - potWidth / 2,
+    topX,
+    topX + topWidth - potWidth - 60
+  );
   let potY = topY;
   translate(potX, potY - potHeight);
   stroke(0);
@@ -134,7 +161,7 @@ export function drawIBeliveInScene() {
   vertex(potWidth * 0.2, potHeight);
   endShape(CLOSE);
 
-  fill('#10A959');
+  fill("#10A959");
   beginShape();
   vertex(potWidth * 0.2, 0);
   vertex(potWidth * 0.1, potHeight - 50 * 1.2);
@@ -163,64 +190,68 @@ export function drawIBeliveInScene() {
   let stickerH = width * 0.05;
   rect(-stickerW / 2, -stickerH / 2, stickerW, stickerH, 5);
 
-  fill('#10A959');
+  fill("#10A959");
   noStroke();
   let circleSize = stickerH * 0.7;
-  ellipse(-stickerW / 2 + circleSize / 2, -stickerH / 2 + circleSize / 2, circleSize);
+  ellipse(
+    -stickerW / 2 + circleSize / 2,
+    -stickerH / 2 + circleSize / 2,
+    circleSize
+  );
 
   fill(255);
-  textFont('Georgia');
+  textFont("Georgia");
   textAlign(CENTER, CENTER);
   textSize(stickerH * 0.6);
   text("I believe in", 0, 0);
   pop();
 
-// Right side Shiri & Maya photo magnet WITH IMAGE + TEXT
-push();
-let photoW = width * 0.12;
-let photoH = photoW * 0.8;
-let photoX = fridgeX + 120 + fridgeWidth * 0.75;
-let photoY = topY + 300;
+  // Right side Shiri & Maya photo magnet WITH IMAGE + TEXT
+  push();
+  let photoW = width * 0.12;
+  let photoH = photoW * 0.8;
+  let photoX = fridgeX + 120 + fridgeWidth * 0.75;
+  let photoY = topY + 300;
 
-translate(photoX, photoY);
-rotate(radians(5));
+  translate(photoX, photoY);
+  rotate(radians(5));
 
-fill(255);
-stroke(0);
-strokeWeight(1);
-rectMode(CENTER);
-rect(0, 0, photoW, photoH);
+  fill(255);
+  stroke(0);
+  strokeWeight(1);
+  rectMode(CENTER);
+  rect(0, 0, photoW, photoH);
 
-// Insert loaded image inside (with inset and top margin)
-let imgInset = photoW * 0.15;
-let topMargin = photoH * 0.1;
-let imageAreaHeight = photoH * 0.8; // reserve bottom for text
-imageMode(CENTER);
+  // Insert loaded image inside (with inset and top margin)
+  let imgInset = photoW * 0.15;
+  let topMargin = photoH * 0.1;
+  let imageAreaHeight = photoH * 0.8; // reserve bottom for text
+  imageMode(CENTER);
 
-if(smileImage) { //my if statment. 
-  image(
-    smileImage,
-    0,
-    -imageAreaHeight * 0.15, // shift slightly up within the image area
-    photoW - imgInset,
-    imageAreaHeight - imgInset
-  );
-}
+  if (smileImage) {
+    //my if statment.
+    image(
+      smileImage,
+      0,
+      -imageAreaHeight * 0.15, // shift slightly up within the image area
+      photoW - imgInset,
+      imageAreaHeight - imgInset
+    );
+  }
 
+  // Green circle magnet on top
+  fill("#10A959");
+  noStroke();
+  ellipse(0, -photoH / 2 + 10, photoW * 0.15); // adjust position to stay near the top edge
 
-// Green circle magnet on top
-fill('#10A959');
-noStroke();
-ellipse(0, -photoH / 2 + 10, photoW * 0.15); // adjust position to stay near the top edge
+  // Keep the text label UNDER the image with space
+  fill(0);
+  textAlign(CENTER, CENTER);
+  textSize(photoH * 0.08);
+  text("Maya & Shiri\nFridge Magnet", 0, photoH * 0.3); // push text down slightly for spacing
+  pop();
 
-// Keep the text label UNDER the image with space
-fill(0);
-textAlign(CENTER, CENTER);
-textSize(photoH * 0.08);
-text("Maya & Shiri\nFridge Magnet", 0, photoH * 0.3); // push text down slightly for spacing
-pop();
-
-  let noteScale = 0.10;
+  let noteScale = 0.1;
   let noteWidth = width * noteScale;
   let noteHeight = noteImage.height * (noteWidth / noteImage.width);
   image(noteImage, noteX, noteY, noteWidth, noteHeight);
@@ -242,7 +273,7 @@ pop();
 
   stroke(0);
   strokeWeight(2);
-  fill('#d9d9d9');
+  fill("#d9d9d9");
   rect(handleX, handleY, handleWidth, handleHeight, 10, 10, 0, 0);
 
   stroke(255);
@@ -254,12 +285,16 @@ pop();
 }
 
 export async function mousePressedIBeliveInScene() {
-  let noteScale = 0.10;
+  let noteScale = 0.1;
   let noteWidth = width * noteScale;
   let noteHeight = noteImage.height * (noteWidth / noteImage.width);
 
-  if (mouseX >= noteX && mouseX <= noteX + noteWidth &&
-      mouseY >= noteY && mouseY <= noteY + noteHeight) {
+  if (
+    mouseX >= noteX &&
+    mouseX <= noteX + noteWidth &&
+    mouseY >= noteY &&
+    mouseY <= noteY + noteHeight
+  ) {
     draggingNote = true;
     offsetX = mouseX - noteX;
     offsetY = mouseY - noteY;
@@ -287,7 +322,7 @@ export function mouseDraggedIBeliveInScene() {
   let topHeight = height - topY + 50;
 
   if (draggingNote) {
-    let noteScale = 0.10;
+    let noteScale = 0.1;
     let noteW = width * noteScale;
     let noteH = noteImage.height * (noteW / noteImage.width);
 
@@ -299,7 +334,11 @@ export function mouseDraggedIBeliveInScene() {
   } else if (draggingPlanet) {
     let potWidth = topWidth * 0.15;
     planetX = mouseX - offsetX;
-    planetX = constrain(planetX, topX - topWidth / 2 + potWidth / 2, topX + topWidth / 2 - potWidth / 2);
+    planetX = constrain(
+      planetX,
+      topX - topWidth / 2 + potWidth / 2,
+      topX + topWidth / 2 - potWidth / 2
+    );
   } else if (draggingMagnet) {
     draggingMagnet.target.x = mouseX - offsetX;
     draggingMagnet.target.y = mouseY - offsetY;
@@ -335,8 +374,16 @@ export class Magnet {
   clampToBounds() {
     let halfW = textWidth(this.char) / 2;
     let halfH = (textAscent() + textDescent()) / 2;
-    this.target.x = constrain(this.target.x, this.boundX + halfW, this.boundX + this.boundW - halfW);
-    this.target.y = constrain(this.target.y, this.boundY + halfH, this.boundY + this.boundH - halfH);
+    this.target.x = constrain(
+      this.target.x,
+      this.boundX + halfW,
+      this.boundX + this.boundW - halfW
+    );
+    this.target.y = constrain(
+      this.target.y,
+      this.boundY + halfH,
+      this.boundY + this.boundH - halfH
+    );
   }
 
   display() {
@@ -356,8 +403,12 @@ export class Magnet {
   isMouseOver() {
     let w = textWidth(this.char);
     let h = textAscent() + textDescent();
-    return (mouseX > this.pos.x - w / 2 && mouseX < this.pos.x + w / 2 &&
-            mouseY > this.pos.y - h / 2 && mouseY < this.pos.y + h / 2);
+    return (
+      mouseX > this.pos.x - w / 2 &&
+      mouseX < this.pos.x + w / 2 &&
+      mouseY > this.pos.y - h / 2 &&
+      mouseY < this.pos.y + h / 2
+    );
   }
 
   resolveCollision(other) {
