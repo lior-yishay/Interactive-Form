@@ -211,7 +211,7 @@ function smoothStep(edge0, edge1, x) {
 /* ---------- CLICK HANDLER ---------- */
 export function mousePressedIceCreamSandwichScene() {
   // Start audio on first interaction
-  loopSound(iceCreamTruckSound, 0.3);
+  loopSound(iceCreamTruckSound, {volume: 0.3});
 
   const s = min(width / BASE_W, height / BASE_H);
 

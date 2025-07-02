@@ -98,7 +98,7 @@ export async function setupStartScene() {
 
 /* — start audio on first user interaction — */
 function startAudioOnInteraction() {
-  loopSound(jazzMusic, 0.3);
+  loopSound(jazzMusic, { volume: 0.3 });
 }
 
 /* — responsive — */

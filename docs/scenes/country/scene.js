@@ -139,8 +139,8 @@ function drawScene1() {
   /* play bing-bong and airport voice together (once) */
   if (!paPlayed && (bingBong.isLoaded() || airportVoice.isLoaded())) {
     paPlayed = true;
-    playSound(bingBong);
-    playSound(airportVoice);
+    playSound(bingBong, { withOverlapping: false });
+    playSound(airportVoice, { withOverlapping: false });
   }
 
   const s = min(width / baseWidth, height / baseHeight);

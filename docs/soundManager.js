@@ -11,15 +11,22 @@ export const toggleSound = () => {
 
 export const isSoundOn = () => soundEnabled;
 
-export const playSound = (sound, volume = 1) => {
+export const playSound = (
+  sound,
+  { volume, withOverlapping } = { volume: 1, withOverlapping: true }
+) => {
   addSoundAndSetVolume(sound, volume);
 
-  if (soundEnabled && sound.isLoaded() && !sound.isPlaying()) {
+  if (
+    soundEnabled &&
+    sound.isLoaded() &&
+    (withOverlapping || !sound.isPlaying())
+  ) {
     sound.play();
   }
 };
 
-export const loopSound = (sound, volume = 1) => {
+export const loopSound = (sound, { volume } = { volume: 1 }) => {
   addSoundAndSetVolume(sound, volume);
 
   if (soundEnabled && sound.isLoaded() && !sound.isPlaying()) {
