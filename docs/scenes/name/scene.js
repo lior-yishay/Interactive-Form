@@ -1,3 +1,4 @@
+import { playSound } from "../../soundManager.js";
 import {
   drawNameHistoryBuffer,
   recordStroke,
@@ -15,6 +16,8 @@ let isErasing = false;
 
 let snellFont;
 let grottaFont;
+let clickSound;
+
 let eraserBtn;
 
 let helloYTarget, nameYTarget;
@@ -25,6 +28,9 @@ let nameAlpha = 0;
 export function preloadNameScene() {
   snellFont = loadFont("./assets/snellroundhand_bold.otf");
   grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
+
+  // Load the click sound effect
+  clickSound = loadSound("./assets/click-345983.mp3");
 }
 
 export async function setupNameScene() {
@@ -69,6 +75,9 @@ export async function setupNameScene() {
     btn.mousePressed(() => {
       selectedColor = color(colorValues[i]);
       isErasing = false;
+
+      // Play click sound when selecting color
+      playSound(clickSound);
     });
 
     colors.push(btn);
@@ -101,6 +110,8 @@ export async function setupNameScene() {
   eraserBtn.mousePressed(() => {
     selectedColor = color(255);
     isErasing = true;
+
+    playSound(clickSound);
   });
 
   brushSizeSlider = createSlider(10, 50, 15);
@@ -158,6 +169,28 @@ export function drawNameScene() {
   ) {
     drawBrush();
   }
+  // Draw custom cursor - circular brush preview at mouse position
+  if (!isMouseOverColor() && !isMouseOverSlider() && !isSliding) {
+    drawCustomCursor();
+  }
+}
+
+function drawCustomCursor() {
+  // Hide default cursor
+  noCursor();
+
+  const brushSize = brushSizeSlider ? brushSizeSlider.value() : 1;
+
+  // Draw cursor as circle with brush color and size
+  noFill();
+  stroke(selectedColor ?? 0);
+  strokeWeight(2);
+  ellipse(mouseX, mouseY, brushSize);
+
+  // Add small center dot for precision
+  fill(selectedColor ?? 0);
+  noStroke();
+  ellipse(mouseX, mouseY, 3);
 }
 
 function drawCardLayout() {
@@ -255,23 +288,50 @@ export function mouseReleasedNameScene() {
 }
 
 function isMouseOverSlider() {
+  if (!brushSizeSlider) return false;
+
   const rect = brushSizeSlider.elt.getBoundingClientRect();
   const canvasRect = canvas.getBoundingClientRect();
   const x = mouseX + canvasRect.left;
   const y = mouseY + canvasRect.top;
-  return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  const isOver =
+    x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+
+  // Show default cursor when over slider
+  if (isOver) {
+    cursor();
+  }
+
+  return isOver;
 }
 
 function isMouseOverColor() {
   const canvasRect = canvas.getBoundingClientRect();
   const x = mouseX + canvasRect.left;
   const y = mouseY + canvasRect.top;
-  return colors.some((btn) => {
+  const isOver = colors.some((btn) => {
     const rect = btn.elt.getBoundingClientRect();
     return (
       x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom
     );
   });
+
+  // Also check eraser button
+  if (!eraserBtn) return isOver;
+
+  const eraserRect = eraserBtn.elt.getBoundingClientRect();
+  const isOverEraser =
+    x >= eraserRect.left &&
+    x <= eraserRect.right &&
+    y >= eraserRect.top &&
+    y <= eraserRect.bottom;
+
+  // Show default cursor when over color buttons or eraser
+  if (isOver || isOverEraser) {
+    cursor();
+  }
+
+  return isOver || isOverEraser;
 }
 
 function addCustomSliderStyles() {

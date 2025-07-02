@@ -11,7 +11,7 @@
 import { post } from "../../api/axios.js";
 import { USER_NUMBER } from "../../consts/scenes-names.js";
 import { nextScene } from "../../scene-managment/sceneOrder.js";
-import { loopSound } from "../../soundManager.js";
+import { loopSound, resetRegisteredSounds } from "../../soundManager.js";
 
 let userNumber;
 
@@ -652,7 +652,10 @@ export function mousePressedStartScene() {
   }
 
   //lior's code: add click logic for cast your vote
-  if (isButtonHovered) nextScene();
+  if (isButtonHovered) {
+    resetRegisteredSounds();
+    nextScene();
+  }
 }
 
 /* — additional interaction events for audio — */
