@@ -30,6 +30,7 @@ export function preloadNameScene() {
 export async function setupNameScene() {
   createCanvas(windowWidth, windowHeight);
   imageMode(CORNER);
+  rectMode(CORNER);
   noStroke();
 
   canvasBuffer = createGraphics(width, height);

@@ -7,11 +7,12 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  START,
   UNREAL,
 } from "../consts/scenes-names.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = NAME;
+let currentScene = START;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -28,6 +29,7 @@ const changeToScene = (sceneName) => {
 };
 
 const sceneList = [
+  START,
   NAME,
   GENDERS,
   POLITICS,

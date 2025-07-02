@@ -23,12 +23,14 @@ window.mousePressed = () => {
   if (mouseOnNextBtn()) onNextBtnClick();
   if (mouseOnSoundBtn()) toggleSound();
 };
-window.windowResized = () =>
-  callIfExsist(p5Functions[getCurrentScene()]?.windowResized);
-window.preload = () => callIfExsist(p5Functions[getCurrentScene()]?.preload);
-window.mouseDragged = () =>
-  callIfExsist(p5Functions[getCurrentScene()]?.mouseDragged);
-window.mouseReleased = () =>
-  callIfExsist(p5Functions[getCurrentScene()]?.mouseReleased);
-window.mouseWheel = (event) =>
-  callIfExsist(p5Functions[getCurrentScene()]?.mouseWheel, event);
+
+const excluded = new Set(["draw", "setup", "mousePressed"]);
+const allHandlers = Object.values(p5Functions)
+  .flatMap(Object.keys)
+  .filter((handler) => !excluded.has(handler));
+
+[...new Set(allHandlers)].forEach(
+  (event) =>
+    (window[event] = (...args) =>
+      callIfExsist(p5Functions[getCurrentScene()]?.[event], ...args))
+);

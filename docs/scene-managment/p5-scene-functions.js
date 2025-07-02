@@ -7,6 +7,7 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  START,
   UNREAL,
 } from "../consts/scenes-names.js";
 import {
@@ -72,6 +73,16 @@ import {
   setupSmileScene,
   windowResizedSmileScene,
 } from "../scenes/smile/scene.js";
+import {
+  drawStartScene,
+  keyPressedStartScene,
+  mouseMovedStartScene,
+  mousePressedStartScene,
+  preloadStartScene,
+  setupStartScene,
+  touchStartedStartScene,
+  windowResizedStartScene,
+} from "../scenes/start/scene.js";
 import {
   drawUnrealScene,
   mousePressedUnrealScene,
@@ -148,5 +159,15 @@ export const p5Functions = {
     windowResized: windowResizedAiScene,
     mousePressed: mousePressedAiScene,
     mouseWheel: mouseWheelAiScene,
+  },
+  [START]: {
+    preload: preloadStartScene,
+    setup: setupStartScene,
+    draw: drawStartScene,
+    windowResized: windowResizedStartScene,
+    mousePressed: mousePressedStartScene,
+    mouseMoved: mouseMovedStartScene,
+    keyPressed: keyPressedStartScene,
+    touchStarted: touchStartedStartScene,
   },
 };

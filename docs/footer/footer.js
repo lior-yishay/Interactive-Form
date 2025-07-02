@@ -42,7 +42,8 @@ let arrowLength = 10;
 export const getFooterTop = () => height - footerHeight;
 
 export const setupFooter = async () => {
-  userNumber = (await post(USER_NUMBER)).value;
+  if (getCurrentScene() !== START) userNumber = (await post(USER_NUMBER)).value;
+
   footerHeight = windowHeight / 20;
   footerMiddleH = windowHeight - footerHeight / 2;
 
@@ -68,6 +69,11 @@ export const setupFooter = async () => {
 
 // Shared footer
 export const drawFooter = () => {
+  if (getCurrentScene() === START) {
+    drawSoundToggleBtn();
+    return;
+  }
+
   stroke(getFooterTextColor());
   noFill();
   strokeWeight(1);
@@ -77,15 +83,16 @@ export const drawFooter = () => {
   drawSoundToggleBtn();
   drawNextButton();
 
-  cursor(
-    (!isNextBtnDisabled() && mouseOnNextBtn()) || mouseOnSoundBtn()
-      ? "pointer"
-      : "default"
-  );
+  // cursor(
+  //   (!isNextBtnDisabled() && mouseOnNextBtn()) || mouseOnSoundBtn()
+  //     ? "pointer"
+  //     : "default"
+  // );
 };
 
 export const drawNextButton = () => {
   const { x, y, w, h } = nextButton;
+  if (!x || !y || !w || !h) return;
 
   textSize(22);
   const textStr = "Next";
@@ -122,12 +129,14 @@ export const drawNextButton = () => {
 
 export const mouseOnNextBtn = () => {
   const { x, y, w, h } = nextButton;
+  if (!x || !y || !w || !h) return false;
 
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 };
 
 const drawSoundToggleBtn = () => {
   const { x, y, w, h } = soundToggleBtn;
+  if (!x || !y || !w || !h) return;
 
   textSize(22);
   const soundText = "Sound ";
@@ -157,6 +166,7 @@ const drawSoundToggleBtn = () => {
 
 export const mouseOnSoundBtn = () => {
   const { x, y, w, h } = soundToggleBtn;
+  if (!x || !y || !w || !h) return false;
 
   return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 };
@@ -170,7 +180,7 @@ const drawPeopleCountAndName = () => {
 };
 
 const footerTextColor = {
-  [START]: () => BLACK,
+  [START]: () => WHITE,
   [NAME]: () => BLACK,
   [GENDERS]: () => (isNextBtnDisabled() ? BLACK : WHITE),
   [COUNTRY]: () => BLACK,
