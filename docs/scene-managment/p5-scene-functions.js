@@ -36,7 +36,7 @@ import {
   preloadGendersScene,
   setupGendersScene,
   windowResizedGendersScene,
-} from "../scenes/genders/sketch.js";
+} from "../scenes/genders/scene.js";
 import {
   drawIBeliveInScene,
   mouseDraggedIBeliveInScene,

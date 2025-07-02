@@ -16,7 +16,7 @@ import { getSelectedAiPick } from "../scenes/AI/scene.js";
 import { postCountryPick } from "../scenes/country/logic.js";
 import { didUserFinishCountyScene } from "../scenes/country/scene.js";
 import { postGenderPick } from "../scenes/genders/logic.js";
-import { getGendersUserPick } from "../scenes/genders/sketch.js";
+import { getGendersUserPick } from "../scenes/genders/scene.js";
 import { postIceCreamSandwichPick } from "../scenes/ice-cream-sandwich/logic.js";
 import { getIceCreamSandwichUserPick } from "../scenes/ice-cream-sandwich/scene.js";
 import {

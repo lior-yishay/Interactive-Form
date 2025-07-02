@@ -1,4 +1,5 @@
 import { getFooterTop } from "../../footer/footer.js";
+import { playSound } from "../../soundManager.js";
 import { getGenderCounts, postGenderPick } from "./logic.js";
 // import { getGenderCounts, postGenderPick } from "../../../proxy server/proxyServer.js"
 
@@ -16,11 +17,15 @@ let hasInvertedOnce = false;
 
 let lastClickedBall = null;
 
+let clickSound;
+
 const maxCount = 200;
 
 export function preloadGendersScene() {
   grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
   snellFont = loadFont("./assets/SnellBT-Bold.otf");
+
+  clickSound = loadSound("./assets/minimal-pop-click-ui-3-198303.mp3");
 }
 
 function easeOutBack(t) {
@@ -203,6 +208,8 @@ export function mousePressedGendersScene() {
         isInverted = true;
         hasInvertedOnce = true;
       }
+
+      playSound(clickSound);
 
       break;
     }

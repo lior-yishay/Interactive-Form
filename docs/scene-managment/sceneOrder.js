@@ -12,7 +12,7 @@ import {
 } from "../consts/scenes-names.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = GENDERS;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
