@@ -1,4 +1,3 @@
-import { post } from "../api/axios.js";
 import {
   AI,
   COUNTRY,
@@ -10,8 +9,8 @@ import {
   SMILE,
   START,
   UNREAL,
-  USER_NUMBER,
 } from "../consts/scenes-names.js";
+import { getCurrentUser } from "../currentUser.js";
 import { getCurrentScene } from "../scene-managment/sceneOrder.js";
 import { isSoundOn } from "../soundManager.js";
 import { isNextBtnDisabled } from "./nextBtnLogic.js";
@@ -42,7 +41,7 @@ let arrowLength = 10;
 export const getFooterTop = () => height - footerHeight;
 
 export const setupFooter = async () => {
-  if (getCurrentScene() !== START) userNumber = (await post(USER_NUMBER)).value;
+  userNumber = await getCurrentUser();
 
   footerHeight = windowHeight / 20;
   footerMiddleH = windowHeight - footerHeight / 2;

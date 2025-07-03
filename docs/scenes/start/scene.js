@@ -8,8 +8,7 @@
   Music: jazz-lounge-elevator-music-332339.mp3
 */
 
-import { post } from "../../api/axios.js";
-import { USER_NUMBER } from "../../consts/scenes-names.js";
+import { getCurrentUser } from "../../currentUser.js";
 import { nextScene } from "../../scene-managment/sceneOrder.js";
 import { loopSound, resetRegisteredSounds } from "../../soundManager.js";
 
@@ -93,7 +92,7 @@ export async function setupStartScene() {
   noCursor();
   updateWhiteNotePosition();
 
-  userNumber = (await post(USER_NUMBER)).value;
+  userNumber = await getCurrentUser();
 }
 
 /* — start audio on first user interaction — */
