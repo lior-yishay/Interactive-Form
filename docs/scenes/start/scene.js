@@ -193,9 +193,6 @@ function addTrailIcon() {
 
 /* — draw loop — */
 export function drawStartScene() {
-  // Try to start audio if conditions are met
-  startAudioOnInteraction();
-
   background(BG);
 
   const s = min(width, height),
