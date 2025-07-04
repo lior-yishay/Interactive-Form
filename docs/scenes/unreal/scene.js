@@ -220,7 +220,6 @@ export function drawUnrealScene() {
 
   // Draw verification message if active
   if (showMessage) {
-    console.log(resultCounts);
     let elapsed = millis() - messageStartTime;
     if (elapsed < messageDuration) {
       push();

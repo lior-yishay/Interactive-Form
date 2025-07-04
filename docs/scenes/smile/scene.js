@@ -646,7 +646,6 @@ function drawBannerLoader() {
 
       // Draw achievement circle ON the progress bar
       noStroke();
-      console.log(index);
       fill(achievementColors[index]);
       circle(achievementX, achievementY, 18);
 

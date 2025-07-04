@@ -201,7 +201,6 @@ export function mousePressedGendersScene() {
 
       if (!ball.userPickedLogged) {
         userPicked = ball.label;
-        console.log("User picked:", userPicked);
         ball.userPickedLogged = true;
       }
 

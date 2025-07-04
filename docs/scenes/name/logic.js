@@ -15,7 +15,6 @@ export const getNameHistory = async (top = 3) => {
 export const isStrokesEmpty = () => strokes.length === 0;
 
 export const postName = async () => {
-  console.log(strokes);
   await post(NAME, { strokes });
   setSceneAnswer(NAME, { strokes });
 };
