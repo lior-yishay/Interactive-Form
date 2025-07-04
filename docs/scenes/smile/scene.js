@@ -1,4 +1,10 @@
 import { getSmileLeaderboard, getTotalSmileTime, postSmile } from "./logic.js";
+import {
+  getDetections,
+  getVideo,
+  getVideoDimensions,
+  startFaceDetection,
+} from "./videoManager.js";
 
 let snellFont, grottaFont;
 let smileImg;
@@ -19,15 +25,9 @@ const PROG_SPEED = 1 / 7200;
 
 let userAchievements = [];
 
-let faceapi,
-  detections = [];
-let video;
-let vidW = 640,
-  vidH = 480;
 let coverS = 1,
   offX = 0,
-  offY = 0,
-  videoReady = false;
+  offY = 0;
 // let serial,
 // serialReady = false;
 let bannerIconImg = null;
@@ -53,24 +53,10 @@ let bouncingSmiles = [];
 export async function setupSmileScene() {
   createCanvas(windowWidth, windowHeight);
   textFont(FONT_FAMILY);
-  video = createCapture(VIDEO, () => {
-    vidW = video.elt.videoWidth;
-    vidH = video.elt.videoHeight;
-  });
-  video.hide();
-  video.elt.onloadeddata = () => (videoReady = true);
+  imageMode(CORNER);
+  cursor();
 
-  faceapi = ml5.faceApi(
-    video,
-    {
-      withLandmarks: true,
-      withExpressions: true,
-      withDescriptors: true,
-      minConfidence: 0.5,
-    },
-    () => faceapi.detect(gotFaces)
-  );
-
+  startFaceDetection();
   leaderboard = await getSmileLeaderboard();
   totalSmileFrames = await getTotalSmileTime();
 
@@ -104,8 +90,8 @@ export function drawSmileScene() {
     rect(r.x, r.y, r.w, r.h);
   }
 
-  // if (serialReady && detections.length) {
-  //   const emo = detections[0].expressions.asSortedArray()[0].expression;
+  // if (serialReady && getDetections().length) {
+  //   const emo = getDetections()[0].expressions.asSortedArray()[0].expression;
   //   try {
   //     serial.write(emo + "\n");
   //   } catch (e) {}
@@ -165,16 +151,9 @@ export function windowResizedSmileScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-function gotFaces(err, res) {
-  if (err) {
-    console.log(err);
-    return;
-  }
-  detections = res;
-  faceapi.detect(gotFaces);
-}
-
 function computeCover() {
+  const { vidW, vidH } = getVideoDimensions();
+  console.log(vidW, vidW);
   coverS = max(width / vidW, height / vidH);
   offX = (width - vidW * coverS) / 2;
   offY = (height - vidH * coverS) / 2;
@@ -201,16 +180,17 @@ function drawBouncingSmiles() {
 }
 
 function drawVideo() {
-  if (!videoReady) return;
+  const { vidW, vidH } = getVideoDimensions();
+
   push();
   translate(width, 0);
   scale(-1, 1);
-  image(video, offX, offY, vidW * coverS, vidH * coverS);
+  image(getVideo(), offX, offY, vidW * coverS, vidH * coverS);
   pop();
 }
 
 function drawFaceBoxes() {
-  detections.forEach((d) => {
+  getDetections().forEach((d) => {
     const b = d.alignedRect._box;
     stroke(255);
     noFill();
@@ -225,7 +205,7 @@ function drawFaceBoxes() {
 }
 
 function drawMouthOverlay() {
-  detections.forEach((d) => {
+  getDetections().forEach((d) => {
     const happy = d.expressions.happy;
     if (happy <= 0.95) return;
     if (happy > currentBestHappy) {
@@ -285,11 +265,12 @@ function drawMouthOverlay() {
 }
 
 function captureMirroredVideo() {
+  const { vidW, vidH } = getVideoDimensions();
   const g = createGraphics(vidW, vidH);
   g.push();
   g.translate(vidW, 0);
   g.scale(-1, 1);
-  g.image(video, 0, 0, vidW, vidH);
+  g.image(getVideo(), 0, 0, vidW, vidH);
   g.pop();
   return g.get();
 }
@@ -300,15 +281,15 @@ let smileSpawned = [false, false, false, false]; // tracks which smiles have app
 const SMILE_SIZE = 60; // fixed size for all
 
 function updateSmileTracking() {
-  if (!detections.length) {
+  if (!getDetections().length) {
     peaceProgress = max(0, peaceProgress - PROG_SPEED);
     // Reset current session when not smiling
     currentSessionSmileTime = 0;
     return;
   }
-  const primary = detections[0];
+  const primary = getDetections()[0];
   let smiling = 0;
-  detections.forEach((d) => {
+  getDetections().forEach((d) => {
     if (d.expressions.happy > 0.95) smiling++;
   });
 

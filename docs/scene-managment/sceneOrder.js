@@ -14,7 +14,7 @@ import {
 } from "../consts/scenes-names.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = SMILE;
+let currentScene = SMILE_LOADER;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {

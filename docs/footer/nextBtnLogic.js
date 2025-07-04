@@ -32,6 +32,7 @@ import {
   getSmileDurationList,
   getSmileUserImage,
 } from "../scenes/smile/scene.js";
+import { stopFaceDetection, stopVideo } from "../scenes/smile/videoManager.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
 import { resetRegisteredSounds } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
@@ -56,7 +57,11 @@ const postSceneUserPicks = {
   [GENDERS]: postGenderPick,
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
-  [SMILE]: postSmile,
+  [SMILE]: () => {
+    postSmile();
+    stopFaceDetection();
+    stopVideo();
+  },
   [SMILE_ENDING]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,

@@ -1,3 +1,6 @@
+import { nextScene } from "../../scene-managment/sceneOrder.js";
+import { setupVideoAndFaceApi } from "./videoManager.js";
+
 let grottaFont, snellFont, smilyImg, customCursor;
 let smilies = [];
 let miniSmilies = [];
@@ -8,6 +11,8 @@ let draggingSmiley = null;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 let starImg;
+
+const MIN_LOADING_TIME = 5000; // 5 seconds
 
 export function preloadSmileLoaderScene() {
   grottaFont = loadFont("./assets/Grotta-Trial-Regular.ttf");
@@ -37,6 +42,13 @@ export function setupSmileLoaderScene() {
       hasDuplicated: false,
     });
   }
+
+  Promise.all([
+    setupVideoAndFaceApi(),
+    new Promise((resolve) => setTimeout(resolve, MIN_LOADING_TIME)),
+  ]).then(() => {
+    nextScene(); // Only proceeds when both are done
+  });
 }
 
 export function drawSmileLoaderScene() {
