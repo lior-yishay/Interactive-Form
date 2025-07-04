@@ -1,3 +1,5 @@
+import { playSound } from "../../soundManager.js";
+
 let palette = {};
 let fireGif; // Changed from tvImg to fireGif
 let tickerOffset = 0;
@@ -28,12 +30,6 @@ export function setupSmileEndingScene() {
     white: color(255),
     grey: color(229),
   };
-
-  // Play the breaking news sound once at startup
-  if (breakingNewsSound && !soundPlayed) {
-    breakingNewsSound.play();
-    soundPlayed = true;
-  }
 }
 
 export function windowResizedSmileEndingScene() {
@@ -41,6 +37,12 @@ export function windowResizedSmileEndingScene() {
 }
 
 export function drawSmileEndingScene() {
+  //i don't know why but it has to be done like so
+  if (breakingNewsSound && breakingNewsSound.isPlaying()) soundPlayed = true;
+  if (!soundPlayed) {
+    playSound(breakingNewsSound, { volume: 0.5 });
+  }
+
   background(palette.pageBg);
   noStroke();
 
@@ -57,7 +59,7 @@ export function drawSmileEndingScene() {
     // Only play if it's been at least 3 seconds since last glitch sound
     if (random() < 0.3) {
       // 30% chance to play sound with visual glitch
-      glitchSound.play();
+      playSound(glitchSound);
       lastGlitchSoundTime = millis();
     }
   }

@@ -45,9 +45,6 @@ let typewriterStarted = false; // track if typewriter has started
 let typewriterCompleted = false; // track if typewriter is done
 let hasShownTypewriterOnce = false; // track if we've shown the effect once
 
-/* AUDIO STATE */
-let userInteracted = false; // track if user has interacted (needed for audio autoplay)
-
 /* WHITE NOTE STATE */
 const YSHIFT = 0.08; // drop 8% (increased from 5%)
 
@@ -131,10 +128,7 @@ function updateWhiteNotePosition() {
 /* — cursor movement (trail) — */
 export function mouseMovedStartScene() {
   // Mark user interaction and try to start audio
-  if (!userInteracted) {
-    userInteracted = true;
-    startAudioOnInteraction();
-  }
+  startAudioOnInteraction();
 
   const cv = dist(mouseX, mouseY, lastMousePos.x, lastMousePos.y);
   mouseVelocity = lerp(mouseVelocity, cv, 0.1);
@@ -604,10 +598,7 @@ function drawWhiteNote() {
 /* — click toggles card position — */
 export function mousePressedStartScene() {
   // Mark user interaction and try to start audio
-  if (!userInteracted) {
-    userInteracted = true;
-    startAudioOnInteraction();
-  }
+  startAudioOnInteraction();
 
   const baseW = whiteNote.baseWidth * scaleFactor,
     baseH = whiteNote.baseHeight * scaleFactor;
@@ -656,15 +647,9 @@ export function mousePressedStartScene() {
 
 /* — additional interaction events for audio — */
 export function keyPressedStartScene() {
-  if (!userInteracted) {
-    userInteracted = true;
-    startAudioOnInteraction();
-  }
+  startAudioOnInteraction();
 }
 
 export function touchStartedStartScene() {
-  if (!userInteracted) {
-    userInteracted = true;
-    startAudioOnInteraction();
-  }
+  startAudioOnInteraction();
 }

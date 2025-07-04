@@ -451,6 +451,8 @@ function drawLoadingBar() {
    Scene 2 : centred split-flap board
    ========================================================== */
 function drawFlightBoard() {
+  cursor();
+
   fill(35, 23, 23, 200);
   noStroke();
 

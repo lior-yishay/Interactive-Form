@@ -53,6 +53,7 @@ export async function setupGendersScene() {
   createCanvas(windowWidth, windowHeight);
   textFont(grottaFont);
   textSize(14);
+  cursor();
   angleMode(DEGREES);
 
   let baseR = 5;

@@ -14,7 +14,7 @@ import {
 } from "../consts/scenes-names.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = SMILE_LOADER;
+let currentScene = START;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -34,13 +34,13 @@ const sceneList = [
   START,
   NAME,
   GENDERS,
+  SMILE_LOADER,
+  SMILE,
+  SMILE_ENDING,
   POLITICS,
   ICE_CREAM_SANDWICH,
   UNREAL,
   AI,
   COUNTRY,
-  SMILE_LOADER,
-  SMILE,
-  SMILE_ENDING,
   I_BELIEVE_IN,
 ];

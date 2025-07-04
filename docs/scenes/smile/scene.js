@@ -153,7 +153,6 @@ export function windowResizedSmileScene() {
 
 function computeCover() {
   const { vidW, vidH } = getVideoDimensions();
-  console.log(vidW, vidW);
   coverS = max(width / vidW, height / vidH);
   offX = (width - vidW * coverS) / 2;
   offY = (height - vidH * coverS) / 2;
