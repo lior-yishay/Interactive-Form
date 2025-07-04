@@ -7,7 +7,7 @@ import {
 } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
 
-export const getSmileLeaderboard = async (top) => {
+export const getSmileLeaderboard = async (top = 3) => {
   const leaderboardBase64 = await get(SMILE_LEADERBOARD, { top });
   return await loadLeaderboardImages(leaderboardBase64);
 };

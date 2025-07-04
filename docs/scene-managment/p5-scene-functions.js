@@ -7,6 +7,8 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  SMILE_ENDING,
+  SMILE_LOADER,
   START,
   UNREAL,
 } from "../consts/scenes-names.js";
@@ -69,6 +71,21 @@ import {
   windowResizedPoliticsScene,
 } from "../scenes/politics/scene.js";
 import {
+  drawSmileEndingScene,
+  preloadSmileEndingScene,
+  setupSmileEndingScene,
+  windowResizedSmileEndingScene,
+} from "../scenes/smile/endingScene.js";
+import {
+  drawSmileLoaderScene,
+  mouseDraggedSmileLoaderScene,
+  mousePressedSmileLoaderScene,
+  mouseReleasedSmileLoaderScene,
+  preloadSmileLoaderScene,
+  setupSmileLoaderScene,
+  windowResizedSmileLoaderScene,
+} from "../scenes/smile/loaderScene.js";
+import {
   drawSmileScene,
   setupSmileScene,
   windowResizedSmileScene,
@@ -106,11 +123,26 @@ export const p5Functions = {
     mousePressed: mousePressedGendersScene,
     windowResized: windowResizedGendersScene,
   },
+  [SMILE_LOADER]: {
+    preload: preloadSmileLoaderScene,
+    setup: setupSmileLoaderScene,
+    draw: drawSmileLoaderScene,
+    windowResized: windowResizedSmileLoaderScene,
+    mousePerssed: mousePressedSmileLoaderScene,
+    mouseDragged: mouseDraggedSmileLoaderScene,
+    mouseReleased: mouseReleasedSmileLoaderScene,
+  },
   [SMILE]: {
     preload: () => undefined,
     setup: setupSmileScene,
     draw: drawSmileScene,
     windowResized: windowResizedSmileScene,
+  },
+  [SMILE_ENDING]: {
+    preload: preloadSmileEndingScene,
+    setup: setupSmileEndingScene,
+    draw: drawSmileEndingScene,
+    windowResized: windowResizedSmileEndingScene,
   },
   [I_BELIEVE_IN]: {
     preload: preloadIBeliveInScene,

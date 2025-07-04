@@ -7,12 +7,15 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  SMILE_ENDING,
+  SMILE_LOADER,
   START,
   UNREAL,
 } from "../consts/scenes-names.js";
 import { getCurrentUser } from "../currentUser.js";
 import { getCurrentScene } from "../scene-managment/sceneOrder.js";
 import { isSoundOn } from "../soundManager.js";
+import { callIfExsist } from "../utils/callIfExsist.js";
 import { isNextBtnDisabled } from "./nextBtnLogic.js";
 
 const padding = 5;
@@ -68,6 +71,8 @@ export const setupFooter = async () => {
 
 // Shared footer
 export const drawFooter = () => {
+  if (getCurrentScene() === SMILE_LOADER) return;
+
   if (getCurrentScene() === START) {
     drawSoundToggleBtn();
     return;
@@ -185,10 +190,13 @@ const footerTextColor = {
   [COUNTRY]: () => BLACK,
   [POLITICS]: () => WHITE,
   [ICE_CREAM_SANDWICH]: () => BLACK,
+  [SMILE_LOADER]: () => WHITE,
   [SMILE]: () => WHITE,
+  [SMILE_ENDING]: () => WHITE,
   [UNREAL]: () => BLACK,
   [I_BELIEVE_IN]: () => WHITE,
   [AI]: () => BLACK,
 };
 
-const getFooterTextColor = () => footerTextColor[getCurrentScene()]();
+const getFooterTextColor = () =>
+  callIfExsist(footerTextColor[getCurrentScene()]) ?? WHITE;

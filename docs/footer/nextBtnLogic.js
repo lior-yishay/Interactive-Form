@@ -7,6 +7,7 @@ import {
   NAME,
   POLITICS,
   SMILE,
+  SMILE_ENDING,
   START,
   UNREAL,
 } from "../consts/scenes-names.js";
@@ -28,6 +29,7 @@ import { postPoliticsPick } from "../scenes/politics/logic.js";
 import { getPoliticsUserPick } from "../scenes/politics/scene.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
 import { resetRegisteredSounds } from "../soundManager.js";
+import { callIfExsist } from "../utils/callIfExsist.js";
 
 export const onNextBtnClick = async () => {
   if (isNextBtnDisabled()) return;
@@ -37,7 +39,7 @@ export const onNextBtnClick = async () => {
 };
 
 export const isNextBtnDisabled = () => {
-  return (hasNoAnswer[getCurrentScene()] || (() => false))() ?? false;
+  return callIfExsist(hasNoAnswer[getCurrentScene()]) ?? false;
 };
 
 const postSceneUserPicks = {
@@ -50,6 +52,7 @@ const postSceneUserPicks = {
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
   [SMILE]: () => undefined,
+  [SMILE_ENDING]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => {
