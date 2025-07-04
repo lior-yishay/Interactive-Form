@@ -127,9 +127,6 @@ function updateWhiteNotePosition() {
 
 /* — cursor movement (trail) — */
 export function mouseMovedStartScene() {
-  // Mark user interaction and try to start audio
-  startAudioOnInteraction();
-
   const cv = dist(mouseX, mouseY, lastMousePos.x, lastMousePos.y);
   mouseVelocity = lerp(mouseVelocity, cv, 0.1);
   lastMousePos = { x: mouseX, y: mouseY };
