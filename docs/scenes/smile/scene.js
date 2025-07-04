@@ -1,12 +1,17 @@
 import { getSmileLeaderboard, getTotalSmileTime, postSmile } from "./logic.js";
 
-let snellFont;
+let snellFont, grottaFont;
 let smileImg;
-function preload() {
-  bannerIconImg = loadImage("bird.png");
-  grottaFont = loadFont("Grotta-Trial-Medium.ttf");
-  snellFont = loadFont("SnellBT-Regular.otf");
-  smileImg = loadImage("imgnostroke.png"); // 🟡 load smile image
+
+//lior's code
+let currentBestFrame;
+let durationList = [];
+
+export function preloadSmileScene() {
+  bannerIconImg = loadImage("./assets/bird.png");
+  grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
+  snellFont = loadFont("./assets/SnellBT-Regular.otf");
+  smileImg = loadImage("./assets/imgnostroke.png"); // 🟡 load smile image
 }
 
 const FONT_FAMILY = "Helvetica";
@@ -23,8 +28,8 @@ let coverS = 1,
   offX = 0,
   offY = 0,
   videoReady = false;
-let serial,
-  serialReady = false;
+// let serial,
+// serialReady = false;
 let bannerIconImg = null;
 let yourSmileDuration = 0;
 let prevSmileActive = false;
@@ -45,7 +50,7 @@ const POPUP_DURATION = 180; // 3 seconds at 60 FPS
 // 🟡 Bouncing smile images
 let bouncingSmiles = [];
 
-export function setupSmileScene() {
+export async function setupSmileScene() {
   createCanvas(windowWidth, windowHeight);
   textFont(FONT_FAMILY);
   video = createCapture(VIDEO, () => {
@@ -66,15 +71,18 @@ export function setupSmileScene() {
     () => faceapi.detect(gotFaces)
   );
 
-  try {
-    serial = new p5.SerialPort();
-    serial.open("/dev/cu.usbmodem1301");
-    serial.on("connected", () => (serialReady = true));
-    serial.on("open", () => (serialReady = true));
-    serial.on("error", (err) => console.log(err));
-  } catch (e) {
-    console.log("Serial disabled");
-  }
+  leaderboard = await getSmileLeaderboard();
+  totalSmileFrames = await getTotalSmileTime();
+
+  // try {
+  //   serial = new p5.SerialPort();
+  //   serial.open("/dev/cu.usbmodem1301");
+  //   serial.on("connected", () => (serialReady = true));
+  //   serial.on("open", () => (serialReady = true));
+  //   serial.on("error", (err) => console.log(err));
+  // } catch (e) {
+  //   console.log("Serial disabled");
+  // }
 }
 
 export function drawSmileScene() {
@@ -96,12 +104,12 @@ export function drawSmileScene() {
     rect(r.x, r.y, r.w, r.h);
   }
 
-  if (serialReady && detections.length) {
-    const emo = detections[0].expressions.asSortedArray()[0].expression;
-    try {
-      serial.write(emo + "\n");
-    } catch (e) {}
-  }
+  // if (serialReady && detections.length) {
+  //   const emo = detections[0].expressions.asSortedArray()[0].expression;
+  //   try {
+  //     serial.write(emo + "\n");
+  //   } catch (e) {}
+  // }
 
   // Fixed popup code - slides from left
   if (popupTimer > 0) {
@@ -345,6 +353,10 @@ function updateSmileTracking() {
         isYours: true, // Mark this as your entry
       };
       leaderboard.push(newEntry);
+
+      //lior's code
+      durationList.push(yourSmileDuration);
+
       yourSmileDuration = 0;
       smileStopped = true;
 
@@ -701,6 +713,10 @@ function drawBannerLoader() {
     }
   }
 }
+
+//lior's code
+export const getSmileDurationList = () => durationList;
+export const getSmileUserImage = () => currentBestFrame;
 
 //unused functions
 function handleBannerPhoto(file) {

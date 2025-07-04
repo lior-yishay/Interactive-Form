@@ -81,7 +81,12 @@ export const drawFooter = () => {
   stroke(getFooterTextColor());
   noFill();
   strokeWeight(1);
-  line(0, height - footerHeight, width, height - footerHeight);
+  line(
+    0,
+    windowHeight - footerHeight,
+    windowWidth,
+    windowHeight - footerHeight
+  );
   noStroke();
   drawPeopleCountAndName();
   drawSoundToggleBtn();

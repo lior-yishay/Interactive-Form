@@ -6,6 +6,7 @@ import {
   SMILE_TIME,
 } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
+import { getSmileDurationList, getSmileUserImage } from "./scene.js";
 
 export const getSmileLeaderboard = async (top = 3) => {
   const leaderboardBase64 = await get(SMILE_LEADERBOARD, { top });
@@ -13,10 +14,13 @@ export const getSmileLeaderboard = async (top = 3) => {
 };
 
 export const getTotalSmileTime = async () => {
-  return await get(SMILE_TIME);
+  return (await get(SMILE_TIME)).value;
 };
 
-export const postSmile = async (durationList, image) => {
+export const postSmile = async () => {
+  const durationList = getSmileDurationList();
+  const image = getSmileUserImage();
+
   const { max, total } = durationList.reduce(
     (acc, current) => ({
       max: Math.max(acc.max, current),

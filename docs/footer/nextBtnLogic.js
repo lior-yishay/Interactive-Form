@@ -27,6 +27,11 @@ import {
 } from "../scenes/name/logic.js";
 import { postPoliticsPick } from "../scenes/politics/logic.js";
 import { getPoliticsUserPick } from "../scenes/politics/scene.js";
+import { postSmile } from "../scenes/smile/logic.js";
+import {
+  getSmileDurationList,
+  getSmileUserImage,
+} from "../scenes/smile/scene.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
 import { resetRegisteredSounds } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
@@ -51,7 +56,7 @@ const postSceneUserPicks = {
   [GENDERS]: postGenderPick,
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
-  [SMILE]: () => undefined,
+  [SMILE]: postSmile,
   [SMILE_ENDING]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: () => undefined,
@@ -68,7 +73,7 @@ const hasNoAnswer = {
   [GENDERS]: () => !getGendersUserPick(),
   [POLITICS]: () => !getPoliticsUserPick(),
   [ICE_CREAM_SANDWICH]: () => !getIceCreamSandwichUserPick(),
-  [SMILE]: () => undefined,
+  [SMILE]: () => !getSmileUserImage() || !getSmileDurationList().length,
   [UNREAL]: () => !getUnrealPostedUserPicksFlag(),
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => !getSelectedAiPick(),

@@ -87,6 +87,7 @@ import {
 } from "../scenes/smile/loaderScene.js";
 import {
   drawSmileScene,
+  preloadSmileScene,
   setupSmileScene,
   windowResizedSmileScene,
 } from "../scenes/smile/scene.js";
@@ -133,7 +134,7 @@ export const p5Functions = {
     mouseReleased: mouseReleasedSmileLoaderScene,
   },
   [SMILE]: {
-    preload: () => undefined,
+    preload: preloadSmileScene,
     setup: setupSmileScene,
     draw: drawSmileScene,
     windowResized: windowResizedSmileScene,
