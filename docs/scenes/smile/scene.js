@@ -23,13 +23,9 @@ export function preloadSmileScene() {
 const FONT_FAMILY = "Helvetica";
 const PROG_SPEED = 1 / 7200;
 
-let userAchievements = [];
-
 let coverS = 1,
   offX = 0,
   offY = 0;
-// let serial,
-// serialReady = false;
 let bannerIconImg = null;
 let yourSmileDuration = 0;
 let prevSmileActive = false;
@@ -50,6 +46,15 @@ const POPUP_DURATION = 180; // 3 seconds at 60 FPS
 // 🟡 Bouncing smile images
 let bouncingSmiles = [];
 
+const maxTimeForSmileBar = 300; //5 min
+
+// ▸ Achievement indicators ON TOP of progress bar - positioned by their smile duration
+const achievementColors = [
+  "#ffd900", // Gold for 1st
+  "#c0c0c0", // Silver for 2nd
+  "#cd8032", // Bronze for 3rd
+];
+
 export async function setupSmileScene() {
   createCanvas(windowWidth, windowHeight);
   textFont(FONT_FAMILY);
@@ -59,16 +64,6 @@ export async function setupSmileScene() {
   startFaceDetection();
   leaderboard = await getSmileLeaderboard();
   totalSmileFrames = await getTotalSmileTime();
-
-  // try {
-  //   serial = new p5.SerialPort();
-  //   serial.open("/dev/cu.usbmodem1301");
-  //   serial.on("connected", () => (serialReady = true));
-  //   serial.on("open", () => (serialReady = true));
-  //   serial.on("error", (err) => console.log(err));
-  // } catch (e) {
-  //   console.log("Serial disabled");
-  // }
 }
 
 export function drawSmileScene() {
@@ -89,13 +84,6 @@ export function drawSmileScene() {
     const r = stopSmileFrame;
     rect(r.x, r.y, r.w, r.h);
   }
-
-  // if (serialReady && getDetections().length) {
-  //   const emo = getDetections()[0].expressions.asSortedArray()[0].expression;
-  //   try {
-  //     serial.write(emo + "\n");
-  //   } catch (e) {}
-  // }
 
   // Fixed popup code - slides from left
   if (popupTimer > 0) {
@@ -347,14 +335,8 @@ function updateSmileTracking() {
       const sorted = leaderboard.sort((a, b) => b.duration - a.duration);
       const rank = sorted.indexOf(newEntry);
       if (rank > -1 && rank < 3) {
-        // 🎯 RECORD THE ACHIEVEMENT: place and actual time when smile ended
+        //show achievement popup
         const place = rank + 1;
-        const timeWhenFinished = floor(totalSmileFrames / 60); // Time in seconds when you finished this smile
-
-        // Remove any previous achievement at this place and add new one
-        userAchievements = userAchievements.filter((a) => a.place !== place);
-        userAchievements.push({ place: place, timeSeconds: timeWhenFinished });
-
         popupMessage = `${place}${place === 1 ? "st" : place === 2 ? "nd" : "rd"} place`;
         popupTimer = POPUP_DURATION;
       }
@@ -637,8 +619,7 @@ function drawBannerLoader() {
   // Progress bar fill - based on current session smile time, full bar = 5 minutes
   // Use smooth interpolation instead of floor for smoother animation
   const currentSessionSeconds = currentSessionSmileTime / 60; // Remove floor() for smooth progress
-  const maxTimeForBar = 300; // 5 minutes (300 seconds) for full bar
-  const sessionProgress = min(currentSessionSeconds / maxTimeForBar, 1);
+  const sessionProgress = min(currentSessionSeconds / maxTimeForSmileBar, 1);
   const progW = (bw - progressBarPadding * 2) * sessionProgress;
 
   if (progW > 0) {
@@ -650,38 +631,23 @@ function drawBannerLoader() {
   drawingContext.restore(); // Restore clipping mask
   pop(); // Restore drawing state
 
-  // ▸ Achievement indicators ON TOP of progress bar - positioned by their smile duration
-  const achievementColors = [
-    [255, 215, 0], // Gold for 1st
-    [192, 192, 192], // Silver for 2nd
-    [205, 127, 50], // Bronze for 3rd
-  ];
-
   // Show YOUR achievements positioned by the smile duration that earned each place
-  for (let achievement of userAchievements) {
-    const place = achievement.place;
-    const timeWhenAchieved = achievement.timeSeconds; // When you achieved this
-
-    // Find the smile duration that earned this place
-    const sorted = leaderboard.sort((a, b) => b.duration - a.duration);
-    const entryAtThisPlace = sorted[place - 1];
-    if (entryAtThisPlace && entryAtThisPlace.isYours) {
-      const smileDurationSeconds = floor(entryAtThisPlace.duration / 60); // How long the winning smile was
+  leaderboard
+    .sort((a, b) => b.duration - a.duration)
+    .slice(0, 3)
+    .forEach((leaderboardEntry, index) => {
+      const smileDurationSeconds = floor(leaderboardEntry.duration / 60); // How long the winning smile was
 
       // Position on progress bar based on smile duration (same scale as bar)
-      const maxTimeForBar = 300; // Same as progress bar (5 minutes)
-      const durationRatio = min(smileDurationSeconds / maxTimeForBar, 1);
+      const durationRatio = min(smileDurationSeconds / maxTimeForSmileBar, 1);
       const achievementX =
         x0 + progressBarPadding + (bw - progressBarPadding * 2) * durationRatio;
       const achievementY = progressBarY + progressBarHeight / 2; // Center on progress bar
 
       // Draw achievement circle ON the progress bar
       noStroke();
-      fill(
-        achievementColors[place - 1][0],
-        achievementColors[place - 1][1],
-        achievementColors[place - 1][2]
-      );
+      console.log(index);
+      fill(achievementColors[index]);
       circle(achievementX, achievementY, 18);
 
       // Number inside circle (place)
@@ -689,9 +655,8 @@ function drawBannerLoader() {
       textSize(10);
       textAlign(CENTER, CENTER);
       fill(0);
-      text(place, achievementX, achievementY);
-    }
-  }
+      text(index + 1, achievementX, achievementY);
+    });
 }
 
 //lior's code
