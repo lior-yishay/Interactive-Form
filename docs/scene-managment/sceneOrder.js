@@ -1,6 +1,7 @@
 import {
   AI,
   COUNTRY,
+  FEEDBACK,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -14,7 +15,7 @@ import {
 } from "../consts/scenes-names.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = FEEDBACK;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -43,4 +44,5 @@ const sceneList = [
   AI,
   COUNTRY,
   I_BELIEVE_IN,
+  FEEDBACK,
 ];

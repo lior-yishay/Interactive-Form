@@ -1,6 +1,7 @@
 import {
   AI,
   COUNTRY,
+  FEEDBACK,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -26,6 +27,7 @@ import {
   setupCountryScene,
   windowResizedCountryScene,
 } from "../scenes/country/scene.js";
+import { drawFeedbackScene, mouseDraggedFeedbackScene, mouseMovedFeedbackScene, mousePressedFeedbackScene, mouseReleasedFeedbackScene, preloadFeedbackScene, setupFeedbackScene, windowResizedFeedbackScene } from "../scenes/feedback/scene.js";
 // import {
 //   drawCountryScene,
 //   preloadCountryScene,
@@ -203,4 +205,14 @@ export const p5Functions = {
     keyPressed: keyPressedStartScene,
     touchStarted: touchStartedStartScene,
   },
+  [FEEDBACK]: {
+    preload: preloadFeedbackScene,
+    setup: setupFeedbackScene,
+    draw: drawFeedbackScene,
+    windowResized: windowResizedFeedbackScene,
+    mousePressed: mousePressedFeedbackScene,
+    mouseMoved: mouseMovedFeedbackScene,
+    mouseDragged: mouseDraggedFeedbackScene,
+    mouseReleased: mouseReleasedFeedbackScene
+  }
 };
