@@ -15,7 +15,9 @@ window.setup = () => {
   setupFooter();
 };
 window.draw = () => {
+  push();
   p5Functions[getCurrentScene()].draw();
+  pop();
   drawFooter();
 };
 window.mousePressed = () => {

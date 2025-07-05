@@ -13,9 +13,10 @@ import {
   START,
   UNREAL,
 } from "../consts/scenes-names.js";
+import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = SMILE_LOADER;
+let currentScene = START;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -27,6 +28,7 @@ export const nextScene = () => {
 
 const changeToScene = (sceneName) => {
   currentScene = sceneName;
+  resetDrawingState();
   p5Functions[sceneName].preload();
   p5Functions[sceneName].setup();
 };
