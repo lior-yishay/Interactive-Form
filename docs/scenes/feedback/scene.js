@@ -1,4 +1,5 @@
 import { getFooterTop } from "../../footer/footer.js";
+import { getFeedbackStickers } from "./logic.js";
 
 let grottaRegular;
 let grottaBold;
@@ -60,7 +61,9 @@ export function preloadFeedbackScene() {
   grottaBold = loadFont("./assets/Grotta-Trial-Bold.otf");
 }
 
-export function setupFeedbackScene() {
+export async function setupFeedbackScene() {
+  console.log("feedback:", await getFeedbackStickers());
+
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
 
@@ -168,7 +171,7 @@ export function mouseDraggedFeedbackScene() {
 
   if (isRotating && selectedSticker) {
     let currentAngle = atan2(
-      mouseY - stickerTransform.y * hieght,
+      mouseY - stickerTransform.y * height,
       mouseX - stickerTransform.x * width
     );
     let angleDiff = currentAngle - lastMouseAngle;
