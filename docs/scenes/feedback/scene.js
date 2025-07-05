@@ -153,8 +153,8 @@ export function mousePressedFeedbackScene() {
   if (selectedSticker && stickerSelected && isMouseOverRotationHandle()) {
     isRotating = true;
     lastMouseAngle = atan2(
-      mouseY - stickerTransform.y,
-      mouseX - stickerTransform.x
+      mouseY - stickerTransform.y * height,
+      mouseX - stickerTransform.x * width
     );
     return; // Don't check other interactions
   }
@@ -634,72 +634,9 @@ function diamond(cx, cy, w, h) {
 }
 
 function drawSelectedSticker() {
-  if (!selectedSticker) return;
+  if (!selectedSticker || !stickerTransform) return;
 
-  // Use transform position instead of fixed center
-  let centerX = stickerTransform.x * width;
-  let centerY = stickerTransform.y * height;
-
-  // Draw the sticker 2x bigger than in sidebar
-  let stickerColor = colors[selectedSticker.colorIndex];
-
-  push();
-  translate(centerX, centerY);
-  rotate(stickerTransform.rotation);
-  scale(stickerTransform.scale);
-
-  // For clover, handle it specially
-  if (selectedSticker.shapeIndex === 0) {
-    // Draw clover with filled circles only
-    let r = 45; // radius for big circles (double the sidebar size)
-    let offsetX = 54;
-    let offsetY = 30;
-
-    fill(stickerColor);
-    noStroke();
-
-    ellipse(-offsetX, -offsetY, r * 2, r * 2);
-    ellipse(0, -offsetY, r * 2, r * 2);
-    ellipse(offsetX, -offsetY, r * 2, r * 2);
-    ellipse(-offsetX, offsetY, r * 2, r * 2);
-    ellipse(0, offsetY, r * 2, r * 2);
-    ellipse(offsetX, offsetY, r * 2, r * 2);
-  } else {
-    // For other shapes, draw normally
-    fill(stickerColor);
-    noStroke();
-
-    switch (selectedSticker.shapeIndex) {
-      case 1:
-        blob(0, 0, 75, 24, 10);
-        break; // increased from 50, 16
-      case 2:
-        roundRect(-60, -90, 120, 180, 24);
-        break; // increased from -40, -60, 80, 120, 16
-      case 3:
-        ellipse(0, 0, 240, 180);
-        break; // increased from 160, 120
-      case 4:
-        rect(-120, -90, 240, 180);
-        break; // increased from -80, -60, 160, 120
-      case 5:
-        diamond(0, 0, 240, 180);
-        break; // increased from 160, 120
-    }
-  }
-
-  // Add text if there is any
-  if (selectedSticker.text && selectedSticker.text.length > 0) {
-    drawTextInShape(
-      0,
-      0,
-      selectedSticker.text,
-      selectedSticker.shapeIndex,
-      selectedSticker.colorIndex
-    );
-  }
-
-  pop();
+  drawSticker({ ...selectedSticker, ...stickerTransform });
 
   // Draw selection handles only if sticker is selected for editing
   if (stickerSelected) {
