@@ -1,6 +1,6 @@
-import { connectToScenesDB } from "../data-access/db.js";
+import { connectToScenesDB } from "../../data-access/db.js";
 
-export const getSceneManager = (collectionName) => {
+export const getScenePickManager = (collectionName) => {
   return {
     incrementPicks: async (picks) => {
       const db = await connectToScenesDB();

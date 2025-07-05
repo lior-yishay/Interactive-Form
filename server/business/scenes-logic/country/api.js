@@ -1,8 +1,8 @@
 import { COUNTRY_COLLECTION } from "../../../data-access/collections.js";
-import { getSceneManager } from "../../getSceneManager.js";
+import { getScenePickManager } from "../../scenes-managers/pickManager.js";
 import { COUNTRY_OPTIONS } from "./options.js";
 
-const countrySceneManager = getSceneManager(COUNTRY_COLLECTION);
+const countrySceneManager = getScenePickManager(COUNTRY_COLLECTION);
 
 export const incrementCountryPicks = async (picks) =>
   await countrySceneManager.incrementPicks(picks);

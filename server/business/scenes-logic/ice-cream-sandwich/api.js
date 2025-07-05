@@ -1,8 +1,8 @@
 import { ICE_CREAM_SANDWICH_COLLECTION } from "../../../data-access/collections.js";
-import { getSceneManager } from "../../getSceneManager.js";
+import { getScenePickManager } from "../../scenes-managers/pickManager.js";
 import { FLAVORS } from "./flavors.js";
 
-const iceCreamSandwichSceneManager = getSceneManager(
+const iceCreamSandwichSceneManager = getScenePickManager(
   ICE_CREAM_SANDWICH_COLLECTION
 );
 

@@ -1,8 +1,8 @@
 import { GENDERS_COLLECTION } from "../../../data-access/collections.js";
-import { getSceneManager } from "../../getSceneManager.js";
+import { getScenePickManager } from "../../scenes-managers/pickManager.js";
 import { GENDERS } from "./genders.js";
 
-const gendersSceneManager = getSceneManager(GENDERS_COLLECTION);
+const gendersSceneManager = getScenePickManager(GENDERS_COLLECTION);
 
 export const incrementGenderPick = async (pick) =>
   await gendersSceneManager.incrementPicks(pick);

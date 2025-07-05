@@ -1,8 +1,8 @@
 import { POLITICS_COLLECTION } from "../../../data-access/collections.js";
-import { getSceneManager } from "../../getSceneManager.js";
+import { getScenePickManager } from "../../scenes-managers/pickManager.js";
 import { POLITICAL_SIDES } from "./sides.js";
 
-const politicsSceneManager = getSceneManager(POLITICS_COLLECTION);
+const politicsSceneManager = getScenePickManager(POLITICS_COLLECTION);
 
 export const incrementPoliticsPick = async (pick) =>
   await politicsSceneManager.incrementPicks(pick);
