@@ -1,9 +1,6 @@
 import cors from "cors";
-import express from "express";
-
-import { closeConnection, connectToScenesDB } from "./data-access/db.js";
-
 import dotenv from "dotenv";
+import express from "express";
 import {
   getAiCounts,
   incrementAiPick,
@@ -39,11 +36,13 @@ import {
   incrementUnrealPicks,
 } from "./business/scenes-logic/unreal/api.js";
 import { getAndIncrementUserNumber } from "./business/scenes-logic/user-number/api.js";
+import { closeConnection, connectToScenesDB } from "./data-access/db.js";
 import { logger } from "./logger/logger.js";
 import {
   AI,
   COUNTRY,
   EVENTS,
+  FEEDBACK,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -57,6 +56,8 @@ import {
 } from "./routes/routes.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
+import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
+import { getFeedbackRecords, saveFeedbackRecord } from "./business/scenes-logic/feedback/api.js";
 
 dotenv.config();
 
@@ -172,6 +173,19 @@ app.route(COUNTRY).all(
     methodHandlers: {
       post: (req) => incrementCountryPicks(req.body.picks),
       get: getCountryCounts,
+    },
+  })
+);
+
+app.route(FEEDBACK).all(
+  createRoute({
+    methodHandlers: {
+      post: ({body}) => {
+        const parsed = feedbackSchema.safeParse(body)
+        if(!parsed.success) throw new Error(`given data was not in the right format: ${parsed.error.message}`)
+        saveFeedbackRecord(parsed.data)
+      },
+      get: ({query}) => getFeedbackRecords(Number(query.top)),
     },
   })
 );

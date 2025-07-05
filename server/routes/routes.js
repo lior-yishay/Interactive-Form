@@ -15,3 +15,4 @@ export const UNREAL = createUrl(PREFIX, "unreal");
 export const I_BELIEVE_IN = createUrl(PREFIX, "i-belive-in");
 export const USER_NUMBER = createUrl(PREFIX, "user-number");
 export const COUNTRY = createUrl(PREFIX, "country");
+export const FEEDBACK = createUrl(PREFIX, "feedback");
