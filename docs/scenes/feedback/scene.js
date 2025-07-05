@@ -1296,7 +1296,7 @@ function handleBackspaceLongPress() {
 }
 
 //lior's code
-export const getUserSticker = () =>
+export const getUserFeedbackSticker = () =>
   selectedSticker && stickerTransform
     ? { ...selectedSticker, ...stickerTransform }
     : null;

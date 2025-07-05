@@ -1,6 +1,7 @@
 import {
   AI,
   COUNTRY,
+  FEEDBACK,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -16,6 +17,8 @@ import { postAiPick, teardownAiScene } from "../scenes/AI/logic.js";
 import { getSelectedAiPick } from "../scenes/AI/scene.js";
 import { postCountryPick } from "../scenes/country/logic.js";
 import { didUserFinishCountyScene } from "../scenes/country/scene.js";
+import { postFeedbackSticker } from "../scenes/feedback/logic.js";
+import { getUserFeedbackSticker } from "../scenes/feedback/scene.js";
 import { postGenderPick } from "../scenes/genders/logic.js";
 import { getGendersUserPick } from "../scenes/genders/scene.js";
 import { postIceCreamSandwichPick } from "../scenes/ice-cream-sandwich/logic.js";
@@ -70,6 +73,7 @@ const postSceneUserPicks = {
     teardownAiScene();
   },
   [COUNTRY]: postCountryPick,
+  [FEEDBACK]: postFeedbackSticker,
 };
 
 const hasNoAnswer = {
@@ -83,4 +87,5 @@ const hasNoAnswer = {
   [I_BELIEVE_IN]: () => undefined,
   [AI]: () => !getSelectedAiPick(),
   [COUNTRY]: () => !didUserFinishCountyScene(),
+  [FEEDBACK]: () => !getUserFeedbackSticker(),
 };
