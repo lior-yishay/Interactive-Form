@@ -6,4 +6,8 @@ export const postFeedbackSticker = async () => {
   await post(FEEDBACK, { ...getUserFeedbackSticker() });
 };
 
-export const getFeedbackStickers = async () => await get(FEEDBACK);
+export const getFeedbackStickers = async () =>
+  ((await get(FEEDBACK)) ?? []).map(({ createdOn, ...otherProps }) => ({
+    createdOn: new Date(createdOn),
+    ...otherProps,
+  }));

@@ -56,16 +56,20 @@ let keyboard = [
   ["⇧", "z", "x", "c", "v", "b", "n", "m", "⌫"],
 ];
 
+let pastFeedbackStickers = [];
+
 export function preloadFeedbackScene() {
   grottaRegular = loadFont("./assets/Grotta-Trial-Regular.otf");
   grottaBold = loadFont("./assets/Grotta-Trial-Bold.otf");
 }
 
 export async function setupFeedbackScene() {
-  console.log("feedback:", await getFeedbackStickers());
-
   createCanvas(windowWidth, windowHeight);
   textAlign(CENTER, CENTER);
+
+  pastFeedbackStickers = (await getFeedbackStickers()).sort(
+    (a, b) => a.createdOn - b.createdOn
+  );
 
   // Initialize sticker position to center
   // lior's code: stickerTransform stores the relative position
@@ -89,6 +93,11 @@ export function drawFeedbackScene() {
 
   // Draw main content area first
   drawMainContent();
+
+  //lior's code: drawing past stickers
+  pastFeedbackStickers.forEach((sticker) => {
+    drawSticker(sticker);
+  });
 
   // Draw selected sticker in the center of the screen
   if (selectedSticker) {
@@ -681,7 +690,13 @@ function drawSelectedSticker() {
 
   // Add text if there is any
   if (selectedSticker.text && selectedSticker.text.length > 0) {
-    drawTextInShape(0, 0, selectedSticker.text, selectedSticker.shapeIndex);
+    drawTextInShape(
+      0,
+      0,
+      selectedSticker.text,
+      selectedSticker.shapeIndex,
+      selectedSticker.colorIndex
+    );
   }
 
   pop();
@@ -754,7 +769,13 @@ function isMouseOverSticker() {
   return dx > -halfW && dx < halfW && dy > -halfH && dy < halfH;
 }
 
-function drawTextInShape(centerX, centerY, textContent, shapeIndex) {
+function drawTextInShape(
+  centerX,
+  centerY,
+  textContent,
+  shapeIndex,
+  colorIndex
+) {
   // Define text area bounds for each shape - more conservative
   let maxWidth, maxHeight, textAreaCenterY;
 
@@ -791,7 +812,7 @@ function drawTextInShape(centerX, centerY, textContent, shapeIndex) {
       break;
   }
   // Get text color based on sticker background color
-  let textColor = getTextColor();
+  let textColor = getTextColor(colorIndex);
   fill(textColor);
   textAlign(LEFT, TOP);
   textFont(grottaBold);
@@ -873,10 +894,10 @@ function drawTextInShape(centerX, centerY, textContent, shapeIndex) {
   }
 }
 
-function getTextColor() {
-  if (!selectedSticker) return "#FFFFFF";
+function getTextColor(colorIndex) {
+  if (colorIndex === null || colorIndex === undefined) return "#FFFFFF";
 
-  let bgColor = colors[selectedSticker.colorIndex];
+  let bgColor = colors[colorIndex];
 
   switch (bgColor) {
     case "#10A959": // Green
@@ -1299,6 +1320,68 @@ function handleBackspaceLongPress() {
 }
 
 //lior's code
+const drawSticker = ({
+  x,
+  y,
+  scale: stickerScale,
+  rotation,
+  shapeIndex,
+  colorIndex,
+  text,
+}) => {
+  let centerX = x * width;
+  let centerY = y * height;
+
+  let stickerColor = colors[colorIndex];
+
+  push();
+  translate(centerX, centerY);
+  rotate(rotation);
+  scale(stickerScale);
+
+  // For clover, handle it specially
+  if (shapeIndex === 0) {
+    // Draw clover with filled circles only
+    let r = 45; // radius for big circles (double the sidebar size)
+    let offsetX = 54;
+    let offsetY = 30;
+
+    fill(stickerColor);
+    noStroke();
+
+    ellipse(-offsetX, -offsetY, r * 2, r * 2);
+    ellipse(0, -offsetY, r * 2, r * 2);
+    ellipse(offsetX, -offsetY, r * 2, r * 2);
+    ellipse(-offsetX, offsetY, r * 2, r * 2);
+    ellipse(0, offsetY, r * 2, r * 2);
+    ellipse(offsetX, offsetY, r * 2, r * 2);
+  } else {
+    // For other shapes, draw normally
+    fill(stickerColor);
+    noStroke();
+
+    switch (shapeIndex) {
+      case 1:
+        blob(0, 0, 75, 24, 10);
+        break; // increased from 50, 16
+      case 2:
+        roundRect(-60, -90, 120, 180, 24);
+        break; // increased from -40, -60, 80, 120, 16
+      case 3:
+        ellipse(0, 0, 240, 180);
+        break; // increased from 160, 120
+      case 4:
+        rect(-120, -90, 240, 180);
+        break; // increased from -80, -60, 160, 120
+      case 5:
+        diamond(0, 0, 240, 180);
+        break; // increased from 160, 120
+    }
+  }
+  drawTextInShape(0, 0, text, shapeIndex, colorIndex);
+  pop();
+};
+
 export const getUserFeedbackSticker = () =>
   selectedSticker && stickerTransform
     ? { ...selectedSticker, ...stickerTransform }
