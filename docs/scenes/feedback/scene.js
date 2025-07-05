@@ -65,8 +65,10 @@ export function setupFeedbackScene() {
   textAlign(CENTER, CENTER);
 
   // Initialize sticker position to center
-  stickerTransform.x = (width + 60) / 2;
-  stickerTransform.y = height / 2;
+  // lior's code: stickerTransform stores the relative position
+  // those fields were changed throughout the whole code
+  stickerTransform.x = (width + 60) / (2 * width);
+  stickerTransform.y = 0.5;
 }
 
 export function drawFeedbackScene() {
@@ -150,8 +152,8 @@ export function mousePressedFeedbackScene() {
     // Select the sticker and start dragging
     stickerSelected = true;
     isDragging = true;
-    dragOffset.x = mouseX - stickerTransform.x;
-    dragOffset.y = mouseY - stickerTransform.y;
+    dragOffset.x = mouseX - stickerTransform.x * width;
+    dragOffset.y = mouseY - stickerTransform.y * height;
   } else {
     // Clicked outside sticker and rotation handle - deselect it
     stickerSelected = false;
@@ -160,14 +162,14 @@ export function mousePressedFeedbackScene() {
 
 export function mouseDraggedFeedbackScene() {
   if (isDragging && selectedSticker) {
-    stickerTransform.x = mouseX - dragOffset.x;
-    stickerTransform.y = mouseY - dragOffset.y;
+    stickerTransform.x = (mouseX - dragOffset.x) / width;
+    stickerTransform.y = (mouseY - dragOffset.y) / height;
   }
 
   if (isRotating && selectedSticker) {
     let currentAngle = atan2(
-      mouseY - stickerTransform.y,
-      mouseX - stickerTransform.x
+      mouseY - stickerTransform.y * hieght,
+      mouseX - stickerTransform.x * width
     );
     let angleDiff = currentAngle - lastMouseAngle;
     stickerTransform.rotation += angleDiff;
@@ -623,8 +625,8 @@ function drawSelectedSticker() {
   if (!selectedSticker) return;
 
   // Use transform position instead of fixed center
-  let centerX = stickerTransform.x;
-  let centerY = stickerTransform.y;
+  let centerX = stickerTransform.x * width;
+  let centerY = stickerTransform.y * height;
 
   // Draw the sticker 2x bigger than in sidebar
   let stickerColor = colors[selectedSticker.colorIndex];
@@ -688,8 +690,8 @@ function drawSelectedSticker() {
 }
 
 function drawSelectionHandles() {
-  let centerX = stickerTransform.x;
-  let centerY = stickerTransform.y;
+  let centerX = stickerTransform.x * width;
+  let centerY = stickerTransform.y * height;
 
   push();
   translate(centerX, centerY);
@@ -739,8 +741,8 @@ function isMouseOverSticker() {
   if (!selectedSticker) return false;
 
   // Transform mouse coordinates to sticker's local space
-  let dx = mouseX - stickerTransform.x;
-  let dy = mouseY - stickerTransform.y;
+  let dx = mouseX - stickerTransform.x * width;
+  let dy = mouseY - stickerTransform.y * height;
 
   // Simple bounding box check (could be more precise for each shape)
   let halfW = (stickerBounds.width / 2) * stickerTransform.scale;
@@ -954,8 +956,8 @@ function updateSelectedSticker() {
 
   // If this is a new sticker (no previous transform), set to center
   if (!currentTransform) {
-    stickerTransform.x = (width + 60) / 2;
-    stickerTransform.y = height / 2;
+    stickerTransform.x = (width + 60) / (2 * width);
+    stickerTransform.y = 0.5;
     stickerTransform.rotation = 0;
     stickerTransform.scale = 1;
     stickerSelected = true; // Auto-select new sticker
@@ -1098,8 +1100,8 @@ function drawMainContent() {
 function isMouseOverRotationHandle() {
   if (!selectedSticker || !stickerSelected) return false;
 
-  let centerX = stickerTransform.x;
-  let centerY = stickerTransform.y;
+  let centerX = stickerTransform.x * width;
+  let centerY = stickerTransform.y * height;
 
   // Calculate rotation handle position
   let rotHandleDistance =
