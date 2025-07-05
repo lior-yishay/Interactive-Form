@@ -1,6 +1,7 @@
 import {
   AI,
   COUNTRY,
+  END,
   FEEDBACK,
   GENDERS,
   I_BELIEVE_IN,
@@ -47,4 +48,5 @@ const sceneList = [
   COUNTRY,
   I_BELIEVE_IN,
   FEEDBACK,
+  END,
 ];
