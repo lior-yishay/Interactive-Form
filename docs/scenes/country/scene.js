@@ -423,14 +423,25 @@ function drawLoadingBar() {
   fill("#ff0");
   rect(barX + pad, barY + pad, fillW, barH - pad * 2, rad - pad);
 
-  /* airplane icon */
+  /* airplane icon עם clipping mask */
   if (loaderPlaneImg) {
     const ico = barH * 0.8;
     const planeX = barX + pad + fillW + gap;
-    if (planeX + ico / 2 <= barX + barW - margin) {
-      imageMode(CENTER);
-      image(loaderPlaneImg, planeX, barY + barH / 2, ico, ico);
-    }
+
+    // יצירת clipping mask בצורת הפיל
+    push();
+    // יצירת mask path
+    drawingContext.save();
+    drawingContext.beginPath();
+    drawingContext.roundRect(barX, barY, barW, barH, rad);
+    drawingContext.clip();
+
+    // ציור המטוס בתוך ה-clip
+    imageMode(CENTER);
+    image(loaderPlaneImg, planeX, barY + barH / 2, ico, ico);
+
+    drawingContext.restore();
+    pop();
   }
 
   /* outline */
@@ -550,15 +561,12 @@ function drawFlightBoard() {
   function drawRow(str, startX, y, slots, rowIdx) {
     textFont(perfogramaFont);
     textSize(cell * 0.8);
-    const asc = textAscent(),
-      desc = textDescent(),
-      bs = (asc - desc) / 2;
 
     for (let i = 0; i < slots; i++) {
       const x = startX + i * (cell + GU);
       fill(0);
-      stroke(60);
-      strokeWeight(cell * 0.06);
+      stroke("#231717");
+      strokeWeight(cell * 0.06); // שונה מ-stroke(60) לצבע הרקע
       rect(x, y, cell, cell);
 
       const ls = boardStart + rowIdx * ROW_DELAY + i * LET_DELAY;
@@ -570,8 +578,8 @@ function drawFlightBoard() {
       if (ch !== " ") {
         fill("#ff0");
         noStroke();
-        textAlign(CENTER, BASELINE);
-        text(ch, x + cell / 2, y + cell / 2 + bs);
+        textAlign(CENTER, CENTER);
+        text(ch, x + cell / 2, y + cell / 2);
       }
     }
   }
