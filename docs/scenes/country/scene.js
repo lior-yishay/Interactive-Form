@@ -202,7 +202,7 @@ function drawTicket() {
   textSize(45);
   const lp = -cardW / 2 + 80,
     tp = -cardH / 2 + 80;
-  text("Scan to", lp + 360, tp + 90);
+  text("Scan all the", lp + 360, tp + 90);
   text("reasons to leave your", lp + 360, tp + 130);
 
   textFont(snellScript);
