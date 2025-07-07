@@ -1,3 +1,4 @@
+import { playSound } from "../../soundManager.js";
 import { getAiCounts, recordUiElement } from "./logic.js";
 
 let grottaFont;
@@ -7,6 +8,10 @@ let micImg;
 let yeahAppImg;
 let caataAppImg;
 let dickImg;
+let plusImg;
+let filterImg;
+let bubblePopSound;
+let playedSounds = new Set();
 
 let aiPicksCounts = { friend: 0, enemy: 0 };
 let spawnedDickPopups = []; // Array to track spawned dick popup windows
@@ -16,7 +21,16 @@ let spawnedDicks = [];
 let showConversation = false;
 let helloStartTime;
 let hoveredSuggestion = -1;
-let chatState = "idle"; // 'idle', 'thinking', 'responded'
+
+//lior's code
+const CHAT_STATES = {
+  LOADING: "loading",
+  IDLE: "idle",
+  THINKING: "thinking",
+  RESPONDED: "responded",
+};
+
+let chatState = CHAT_STATES.LOADING; // 'loading', 'idle', 'thinking', 'responded'
 let thinkingStartTime = 0;
 let responseStartTime = 0;
 let selectedAiChoice = null; // Track which AI was selected
@@ -107,11 +121,14 @@ let lastGlitchUpdateTime = 0;
 export function preloadAiScene() {
   grottaFont = loadFont("./assets/Grotta-Trial-Regular.ttf");
   grottaFontBold = loadFont("./assets/Grotta-Trial-Bold.ttf");
-  //   arrowImg = loadImage("./assets/arrow.png");
-  //   micImg = loadImage("./assets/mic.png");
+  arrowImg = loadImage("./assets/arrow.png");
+  micImg = loadImage("./assets/mic.png");
   yeahAppImg = loadImage("./assets/Yeah app.png");
   caataAppImg = loadImage("./assets/Caata app.png");
-  //   dickImg = loadImage("./assets/dick.png");
+  dickImg = loadImage("./assets/dick.png");
+  plusImg = loadImage("./assets/plus.png");
+  filterImg = loadImage("./assets/FilterIcon.png");
+  bubblePopSound = loadSound("./assets/bubble-pop-06-351337.mp3");
 }
 
 export async function setupAiScene() {
@@ -255,7 +272,7 @@ export function drawAiScene() {
 
     pop();
   }
-  if (selectedAiChoice === ENEMY && chatState === "responded") {
+  if (selectedAiChoice === ENEMY && chatState === CHAT_STATES.RESPONDED) {
     let responseTime = millis() - responseStartTime;
     let finalMsgTime = responseTime - 3600;
     if (finalMsgTime > 0) {
@@ -323,7 +340,10 @@ function drawChatWindow(
     let pad = 24;
 
     // Show chat conversation if active, otherwise show original content
-    if (chatState === "thinking" || chatState === "responded") {
+    if (
+      chatState === CHAT_STATES.THINKING ||
+      chatState === CHAT_STATES.RESPONDED
+    ) {
       let convOffset = selectedAiChoice === ENEMY ? 0 : pad;
       drawConversation(mainX, mainY + convOffset, mainW, contentTime);
     } else {
@@ -386,8 +406,8 @@ function drawChatWindow(
 
           tint(255, iconAlpha);
           imageMode(CENTER);
-          //   image(micImg, inpX + inpW - 58, inpY + inpH - 30, 16, 16); uncomment when mic.png is in assets
-          //   image(arrowImg, inpX + inpW - 24, inpY + inpH / 1.5, 36, 36); uncomment when arrow.png is in assets
+          image(micImg, inpX + inpW - 58, inpY + inpH - 30, 16, 16);
+          image(arrowImg, inpX + inpW - 24, inpY + inpH / 1.5, 36, 36);
           noTint();
         }
       }
@@ -418,7 +438,7 @@ function drawChatWindow(
 
           if (rowAlpha > 0) {
             // Background highlight for hover
-            if (hoveredSuggestion === idx) {
+            if (idx !== 2 && hoveredSuggestion === idx) {
               fill(240, 240, 240, rowAlpha * 0.8);
               noStroke();
               rect(inpX - 10, rowY - 15, inpW + 20, 35, 4);
@@ -441,9 +461,18 @@ function drawChatWindow(
           }
           rowY += 46;
         });
+
+        //make picking avaliable only after the options fully loaded on the screen
+        if (
+          constrain((contentTime - 2800 - sugg.length * 200) / 400, 0, 1) ===
+            1 &&
+          chatState === CHAT_STATES.LOADING
+        ) {
+          chatState = CHAT_STATES.IDLE;
+        }
       }
     }
-    if (selectedAiChoice === ENEMY && chatState === "responded") {
+    if (selectedAiChoice === ENEMY && chatState === CHAT_STATES.RESPONDED) {
       let responseTime = millis() - responseStartTime;
       let finalMsgTime = responseTime - 3600;
 
@@ -534,19 +563,35 @@ function drawTrafficLights(winX, winY) {
 }
 
 function drawPlusIcon(x, y, d, alpha) {
-  stroke(0, alpha);
-  strokeWeight(2);
-  line(x - d / 2, y, x + d / 2, y);
-  line(x, y - d / 2, x, y + d / 2);
+  if (plusImg) {
+    tint(255, alpha);
+    imageMode(CENTER);
+    image(plusImg, x, y, d, d);
+    noTint();
+  } else {
+    // fallback אם התמונה לא נטענה
+    stroke(0, alpha);
+    strokeWeight(2);
+    line(x - d / 2, y, x + d / 2, y);
+    line(x, y - d / 2, x, y + d / 2);
+  }
 }
 
 function drawSliderIcon(x, y, d, alpha) {
-  stroke(0, alpha);
-  strokeWeight(2);
-  let len = d * 0.8;
-  for (let i = -1; i <= 1; i++) {
-    line(x - len / 2, y + i * 4, x + len / 2, y + i * 4);
-    circle(x + len / 4, y + i * 4, 3);
+  if (filterImg) {
+    tint(255, alpha);
+    imageMode(CENTER);
+    image(filterImg, x, y, d, d);
+    noTint();
+  } else {
+    // fallback אם התמונה לא נטענה
+    stroke(0, alpha);
+    strokeWeight(2);
+    let len = d * 0.8;
+    for (let i = -1; i <= 1; i++) {
+      line(x - len / 2, y + i * 4, x + len / 2, y + i * 4);
+      circle(x + len / 4, y + i * 4, 3);
+    }
   }
 }
 
@@ -590,7 +635,7 @@ function drawConversation(mainX, startY, mainW, contentTime) {
   drawingContext.clip();
 
   // Draw content
-  if (chatState === "thinking") {
+  if (chatState === CHAT_STATES.THINKING) {
     let userMsgTime = millis() - thinkingStartTime;
     drawUserMessage(
       mainX,
@@ -605,12 +650,12 @@ function drawConversation(mainX, startY, mainW, contentTime) {
     if (thinkingTime >= 400 && thinkingTime < 2400) {
       drawThinkingMessage(mainX, msgY, mainW, thinkingTime - 400);
     } else if (thinkingTime >= 2400) {
-      chatState = "responded";
+      chatState = CHAT_STATES.RESPONDED;
       responseStartTime = millis();
     }
   }
 
-  if (chatState === "responded") {
+  if (chatState === CHAT_STATES.RESPONDED) {
     let responseTime = millis() - responseStartTime;
     drawAIResponseSequence(mainX, msgY, mainW, responseTime);
   }
@@ -681,7 +726,16 @@ function drawAIResponseSequence(mainX, startY, mainW, responseTime) {
           if (msg.isUser) {
             drawUserMessage(mainX, lineY, mainW, msg.text, animTime);
           } else {
-            drawSimpleAIMessage(mainX, lineY, mainW, msg.text, animTime, 0);
+            let messageId = `friend_${globalIndex}_${msg.text.substring(0, 10)}`;
+            drawSimpleAIMessage(
+              mainX,
+              lineY,
+              mainW,
+              msg.text,
+              animTime,
+              0,
+              messageId
+            );
           }
         }
       } else {
@@ -689,7 +743,16 @@ function drawAIResponseSequence(mainX, startY, mainW, responseTime) {
         if (msg.isUser) {
           drawUserMessage(mainX, lineY, mainW, msg.text, slideDuration);
         } else {
-          drawSimpleAIMessage(mainX, lineY, mainW, msg.text, slideDuration, 0);
+          let messageId = `friend_${globalIndex}_${msg.text.substring(0, 10)}`;
+          drawSimpleAIMessage(
+            mainX,
+            lineY,
+            mainW,
+            msg.text,
+            slideDuration,
+            0,
+            messageId
+          );
         }
       }
 
@@ -748,7 +811,8 @@ function drawAIResponseSequence(mainX, startY, mainW, responseTime) {
         mainW,
         crowdText,
         responseTime - 3400,
-        0
+        0,
+        "enemy_crowd_msg"
       );
       msgY += spacing;
     }
@@ -762,7 +826,8 @@ function drawAIResponseSequence(mainX, startY, mainW, responseTime) {
         mainW,
         "oh you have not seen nothing yet.",
         finalMsgTime,
-        0
+        0,
+        "enemy_final_msg"
       );
 
       // applyEnemyControlEffects(finalMsgTime);
@@ -825,7 +890,7 @@ function drawLargeImageMessage(
 }
 // 4. Also add a reset function you can call if needed:
 function resetToIdle() {
-  chatState = "idle";
+  chatState = CHAT_STATES.IDLE;
   selectedAiChoice = null;
   // Clean up any spawned popups
   for (let popup of spawnedDickPopups) {
@@ -836,8 +901,24 @@ function resetToIdle() {
   dickImg.hide();
 }
 
+function playBubbleSound(messageId) {
+  // Play sound only if it hasn't been played for this message yet
+  if (!playedSounds.has(messageId) && bubblePopSound) {
+    playSound(bubblePopSound);
+    playedSounds.add(messageId);
+  }
+}
+
 // Helper function for simple AI text messages
-function drawSimpleAIMessage(mainX, y, mainW, message, animTime, delay) {
+function drawSimpleAIMessage(
+  mainX,
+  y,
+  mainW,
+  message,
+  animTime,
+  delay,
+  messageId
+) {
   let adjustedTime = animTime - delay;
   if (adjustedTime < 0) return;
 
@@ -854,6 +935,11 @@ function drawSimpleAIMessage(mainX, y, mainW, message, animTime, delay) {
   slideProgress = 1 - pow(1 - slideProgress, 3);
   let currentY = y + (1 - slideProgress) * 30;
   let alpha = slideProgress * 255;
+
+  // Play sound when message starts appearing (slideProgress > 0.1)
+  if (slideProgress > 0.1 && messageId) {
+    playBubbleSound(messageId);
+  }
 
   // Message bubble
   fill(240, 240, 240, alpha);
@@ -926,15 +1012,13 @@ function drawThinkingMessage(mainX, y, mainW, thinkingTime) {
 
 // 2. Fix the mousePressed function to prevent multiple clicks:
 export function mousePressedAiScene() {
-  // Only allow clicking if we're in idle state (prevent multiple clicks)
-  if (chatState !== "idle") {
-    return; // Ignore clicks if already in thinking or responded state
+  if (chatState !== CHAT_STATES.IDLE || hoveredSuggestion === 2) {
+    return;
   }
 
-  // Handle suggestion selection
-  selectedAiChoice = hoveredSuggestion === 0 ? FRIEND : ENEMY;
+  selectedAiChoice = [FRIEND, ENEMY][hoveredSuggestion];
 
-  chatState = "thinking";
+  chatState = CHAT_STATES.THINKING;
   thinkingStartTime = millis();
 }
 
@@ -1254,7 +1338,7 @@ function easeOutCubic(t) {
 
 function getAiCountsForDisplay() {
   // For the ENEMY glitch effect, return fake escalating numbers ONLY during glitch phase
-  if (selectedAiChoice === ENEMY && chatState === "responded") {
+  if (selectedAiChoice === ENEMY && chatState === CHAT_STATES.RESPONDED) {
     let responseTime = millis() - responseStartTime;
     let finalMsgTime = responseTime - 3600;
 
@@ -1297,7 +1381,7 @@ function postAiPick(choice) {
 export function mouseWheelAiScene(event) {
   let scrollAmount = event.delta * 0.5; // positive = down, negative = up
 
-  if (selectedAiChoice === FRIEND && chatState === "responded") {
+  if (selectedAiChoice === FRIEND && chatState === CHAT_STATES.RESPONDED) {
     const messageHeight = 55;
     const dynamicCount = dynamicMessages.length || 0;
     const totalMessages = 2 + friendMessages.length + dynamicCount;
@@ -1315,7 +1399,7 @@ export function mouseWheelAiScene(event) {
     }
   }
 
-  if (selectedAiChoice === ENEMY && chatState === "responded") {
+  if (selectedAiChoice === ENEMY && chatState === CHAT_STATES.RESPONDED) {
     let thinkingHeight = 55;
     let imageHeight = 300 + 30;
     let messageHeight = 45;
