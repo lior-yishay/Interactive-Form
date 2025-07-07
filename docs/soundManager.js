@@ -15,6 +15,7 @@ export const playSound = (
   sound,
   { volume, withOverlapping } = { volume: 1, withOverlapping: true }
 ) => {
+  if (!sound) return;
   addSoundAndSetVolume(sound, volume);
 
   if (
@@ -32,6 +33,11 @@ export const loopSound = (sound, { volume } = { volume: 1 }) => {
   if (soundEnabled && sound.isLoaded() && !sound.isPlaying()) {
     sound.loop();
   }
+};
+
+export const stopSound = (sound) => {
+  if (!sound || !sound.isPlaying()) return;
+  sound.stop();
 };
 
 export const resetRegisteredSounds = () => {

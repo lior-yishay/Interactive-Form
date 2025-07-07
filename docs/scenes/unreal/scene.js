@@ -1,3 +1,4 @@
+import { playSound, stopSound } from "../../soundManager.js";
 import { getUnrealCounts, postUnrealPicks } from "./logic.js";
 
 let img0, gif0;
@@ -10,7 +11,33 @@ let img6, gif6;
 let img7, gif7;
 let img8, gif8;
 
+// === ADDED: Sound variables ===
+let soundAliens,
+  soundBermuda,
+  soundNesziona,
+  soundFlatearth,
+  soundBrain,
+  soundVacs,
+  soundMoon,
+  soundBanana,
+  soundIllumanity;
+
+let sounds = [];
+
 let selected = [false, false, false, false, false, false, false, false, false];
+
+// === ADDED: Hover state tracking for sounds ===
+let hoverStates = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+];
 
 // === Updated sizes to make CAPTCHA bigger ===
 let imgW = 180.5; // 190 * 0.95
@@ -50,8 +77,19 @@ const unrealMap = {
 
 export function preloadUnrealScene() {
   customFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
-  //   iconLoad = loadImage("./assets/load.svg");
-  //   iconAudio = loadImage("./assets/headphones.svg");
+  iconLoad = loadImage("./assets/load.svg");
+  iconAudio = loadImage("./assets/headphones.svg");
+
+  // === ADDED: Load sound files ===
+  soundBermuda = loadSound("./assets/airplane-sfx-326783.mp3"); // For bermuda hover (index 0)
+  soundNesziona = loadSound("./assets/nesziona.mp3"); // For nesziona hover (index 1)
+  soundFlatearth = loadSound("./assets/swoosh-5-359829.mp3"); // For flatearth hover (index 2)
+  soundBrain = loadSound("./assets/ui-sounds-pack-2-sound-6-358891.mp3"); // For brain hover (index 3)
+  soundMoon = loadSound("./assets/impact-sound-effect-308750.mp3"); // For moon hover (index 4)
+  soundVacs = loadSound("./assets/inject-sound-269721.mp3"); // For vaccination hover (index 5)
+  soundAliens = loadSound("./assets/interior-spaceship-19828.mp3"); // For aliens hover (index 6)
+  soundBanana = loadSound("./assets/woosh-230554.mp3"); // For banana hover (index 7)
+  soundIllumanity = loadSound("./assets/space-sound-4-367748.mp3"); // For illuminati hover (index 8)
 
   img0 = loadImage("./assets/bermuda.png");
   img1 = loadImage("./assets/nesziona.png");
@@ -69,6 +107,18 @@ export async function setupUnrealScene() {
   calculateLayout();
   textFont(customFont);
   noStroke();
+
+  sounds = [
+    soundBermuda,
+    soundNesziona,
+    soundFlatearth,
+    soundBrain,
+    soundMoon,
+    soundVacs,
+    soundAliens,
+    soundBanana,
+    soundIllumanity,
+  ];
 
   gif0 = createImg("./assets/bermuda_hover.gif");
   gif1 = createImg("./assets/nesziona_hover.gif");
@@ -202,8 +252,8 @@ export function drawUnrealScene() {
   let iconAudioX = widgetX + padding + iconSize + 8;
   let iconAudioY = iconY;
 
-  //   image(iconLoad, widgetX + padding, iconY, iconSize, iconSize);
-  //   image(iconAudio, iconAudioX, iconAudioY, iconSize, iconSize);
+  image(iconLoad, widgetX + padding, iconY, iconSize, iconSize);
+  image(iconAudio, iconAudioX, iconAudioY, iconSize, iconSize);
 
   if (verifyState === "verifying" && millis() - verifyStartTime > 2000) {
     verifyState = "default";
@@ -295,6 +345,21 @@ function drawCell(img, gif, index) {
 
   let isHover =
     mouseX > x && mouseX < x + imgW && mouseY > y && mouseY < y + imgH;
+
+  // === ADDED: Sound effect logic ===
+  if (
+    isHover &&
+    !hoverStates[index] &&
+    !showResults &&
+    verifyState !== "verifying"
+  ) {
+    // Just started hovering - play sound once
+    playSound(sounds[index]);
+  } else if (!isHover && hoverStates[index]) {
+    // Just stopped hovering - stop the sound
+    stopSound(sounds[index]);
+  }
+  hoverStates[index] = isHover && !showResults && verifyState !== "verifying";
 
   fill(255);
   rect(x, y, imgW, imgH, 5);
