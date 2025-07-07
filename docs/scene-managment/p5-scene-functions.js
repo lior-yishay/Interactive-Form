@@ -27,7 +27,16 @@ import {
   setupCountryScene,
   windowResizedCountryScene,
 } from "../scenes/country/scene.js";
-import { drawFeedbackScene, mouseDraggedFeedbackScene, mouseMovedFeedbackScene, mousePressedFeedbackScene, mouseReleasedFeedbackScene, preloadFeedbackScene, setupFeedbackScene, windowResizedFeedbackScene } from "../scenes/feedback/scene.js";
+import {
+  drawFeedbackScene,
+  mouseDraggedFeedbackScene,
+  mouseMovedFeedbackScene,
+  mousePressedFeedbackScene,
+  mouseReleasedFeedbackScene,
+  preloadFeedbackScene,
+  setupFeedbackScene,
+  windowResizedFeedbackScene,
+} from "../scenes/feedback/scene.js";
 // import {
 //   drawCountryScene,
 //   preloadCountryScene,
@@ -68,7 +77,6 @@ import {
 import {
   drawPoliticsScene,
   mousePressedPoliticsScene,
-  mouseWheelPoliticsScene,
   setupPoliticsScene,
   windowResizedPoliticsScene,
 } from "../scenes/politics/scene.js";
@@ -163,7 +171,6 @@ export const p5Functions = {
     draw: drawPoliticsScene,
     mousePressed: mousePressedPoliticsScene,
     windowResized: windowResizedPoliticsScene,
-    mouseWheel: mouseWheelPoliticsScene,
   },
   [ICE_CREAM_SANDWICH]: {
     preload: preloadIceCreamSandwichScene,
@@ -213,6 +220,6 @@ export const p5Functions = {
     mousePressed: mousePressedFeedbackScene,
     mouseMoved: mouseMovedFeedbackScene,
     mouseDragged: mouseDraggedFeedbackScene,
-    mouseReleased: mouseReleasedFeedbackScene
-  }
+    mouseReleased: mouseReleasedFeedbackScene,
+  },
 };

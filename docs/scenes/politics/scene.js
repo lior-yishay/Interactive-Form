@@ -7,9 +7,6 @@ let Engine = Matter.Engine,
   Body = Matter.Body;
 let engine, world;
 
-let currentLetterIndex = 0;
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-
 let politicsCounts;
 let nextBtnX,
   nextBtnY,
@@ -19,26 +16,14 @@ let resetBtnX,
   resetBtnY,
   resetBtnW = 100,
   resetBtnH = 36;
-let introBtnX, introBtnY, introBtnH, introBtnW;
 
 let warningResetBtn = { x: 0, y: 0, w: 120, h: 40 };
 let warningDoneBtn = { x: 0, y: 0, w: 120, h: 40 };
 
-let introFading = false;
-let introAlpha = 255;
-let introScale = 1;
-
 //message
 let showWarning = false;
-let showPreview = true;
 let warningAlpha = 0;
 let warningScale = 0.95;
-
-//intro
-let showIntro = true;
-let selectedLetter = "";
-
-let ballTrails = [];
 
 let wallH;
 
@@ -83,14 +68,14 @@ export async function setupPoliticsScene() {
   rotationTarget = radians(3);
 
   initPhysics();
-  buildLayout();
+  await buildLayout();
 }
 
-export function windowResizedPoliticsScene() {
+export async function windowResizedPoliticsScene() {
   resizeCanvas(windowWidth, windowHeight);
   World.clear(world, false);
   Engine.clear(engine);
-  buildLayout();
+  await buildLayout();
 }
 
 export function drawPoliticsScene() {
@@ -140,34 +125,10 @@ export function drawPoliticsScene() {
   } else {
     warningAlpha = 0;
     warningScale = 0.95;
-
-    if (showIntro) {
-      drawIntroScreen();
-      return;
-    }
   }
-}
-
-function isHoveringButton(x, y, w, h) {
-  return mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h;
 }
 
 export async function mousePressedPoliticsScene() {
-  if (showIntro) {
-    if (
-      mouseX >= introBtnX &&
-      mouseX <= introBtnX + introBtnW &&
-      mouseY >= introBtnY &&
-      mouseY <= introBtnY + introBtnH
-    ) {
-      selectedLetter = LETTERS[currentLetterIndex];
-      showIntro = false;
-      // ✅ Generate balls only after button press
-      await generateBalls();
-    }
-    return;
-  }
-
   if (showWarning) {
     if (
       mouseX >= warningResetBtn.x &&
@@ -194,12 +155,9 @@ export async function mousePressedPoliticsScene() {
       engine.world.gravity.x = 0;
       engine.world.gravity.y = 1;
 
-      showPreview = true;
       showWarning = false;
 
-      buildLayout();
-      // ✅ Regenerate balls after reset
-      await generateBalls();
+      await buildLayout();
       return;
     }
 
@@ -227,7 +185,6 @@ export async function mousePressedPoliticsScene() {
         t.body.isSensor = false;
       });
 
-      selectedLetter = ""; // ✅ Clear only after vote is done
       showWarning = false;
       return;
     }
@@ -288,12 +245,9 @@ export async function mousePressedPoliticsScene() {
       engine.world.gravity.x = 0;
       engine.world.gravity.y = 1;
 
-      showPreview = true;
       showWarning = false;
 
       await buildLayout();
-      // ✅ Regenerate balls after reset
-      await generateBalls();
       return;
     }
   }
@@ -307,13 +261,10 @@ export async function mousePressedPoliticsScene() {
   }
 
   const { x, y } = clampToSafe(mouseX, mouseY);
-  addBall(x, y, selectedLetter); // ✅ Use selectedLetter if available
-
-  // if (selectedLetter) selectedLetter = ''; // ✅ Clear only after used
+  addBall(x, y);
 
   if (!rotationTriggered) {
     ballDropped = true;
-    showPreview = false;
 
     lastDroppedBall = balls[balls.length - 1];
     votePosted = false;
@@ -337,7 +288,7 @@ function initPhysics() {
   world.gravity.y = 1;
 }
 
-function buildLayout() {
+async function buildLayout() {
   RADIUS = (width + height) / 120;
   WALL_START_Y = height / 3;
 
@@ -418,7 +369,7 @@ function buildLayout() {
   World.add(world, walls);
   World.add(world, separators);
   createTextElements();
-  // ✅ Removed generateBalls() call from here - only called after button press
+  await generateBalls();
 }
 
 function createTextElements() {
@@ -504,64 +455,6 @@ function drawChrome() {
     addrX + addrW * 0.5,
     addrY + CHROME_H * 0.25
   );
-}
-
-function drawDoneButton() {
-  if (rotationTriggered) return;
-
-  nextBtnX = blueX + blueW - nextBtnW - 20;
-  nextBtnY = blueY + 24;
-
-  const hovering = isHoveringButton(nextBtnX, nextBtnY, nextBtnW, nextBtnH);
-  const scaleAmt = hovering && ballDropped ? 1.08 : 1;
-
-  push();
-  translate(nextBtnX + nextBtnW / 2, nextBtnY + nextBtnH / 2);
-  scale(scaleAmt);
-  rectMode(CENTER);
-
-  const alpha = ballDropped ? 255 : 180; // 70% opacity if not dropped yet
-
-  // Button background
-  noStroke();
-  fill(255, alpha); // white background, full or 70% opacity
-  rect(0, 0, nextBtnW, nextBtnH, 6);
-
-  // Button text
-  fill(red(BLUE), green(BLUE), blue(BLUE), alpha); // same blue, controlled alpha
-  textSize(16);
-  textAlign(CENTER, CENTER);
-  text("Done?", 0, 0);
-  pop();
-}
-
-function drawResetButton() {
-  if (rotationTriggered) return;
-
-  resetBtnW = 100;
-  resetBtnH = 36;
-  resetBtnX = nextBtnX - resetBtnW - 24;
-  resetBtnY = nextBtnY;
-
-  const hovering = isHoveringButton(resetBtnX, resetBtnY, resetBtnW, resetBtnH);
-  const scaleAmt = hovering ? 1.08 : 1;
-
-  push();
-  translate(resetBtnX + resetBtnW / 2, resetBtnY + resetBtnH / 2);
-  scale(scaleAmt);
-  rectMode(CENTER);
-
-  noFill();
-  stroke(255);
-  strokeWeight(1);
-  rect(0, 0, resetBtnW, resetBtnH, 6);
-
-  fill(255);
-  noStroke();
-  textSize(16);
-  textAlign(CENTER, CENTER);
-  text("Reset", 0, 0);
-  pop();
 }
 function drawBluePane() {
   fill(BLUE);
@@ -675,20 +568,19 @@ function drawTextElements() {
 function drawBalls() {
   noStroke();
   balls.forEach((b) =>
-    drawStyledBall(b.position.x, b.position.y, RADIUS, b.letter)
+    drawStyledBall(b.position.x, b.position.y, RADIUS, b.number)
   );
 }
 
-function drawStyledBall(x, y, r, letter) {
+function drawStyledBall(x, y, r, number) {
   push();
   noStroke();
   fill(255);
   ellipse(x, y, r * 2);
   fill(0);
-  textAlign(CENTER, BASELINE);
-  textFont(grotaFont || "Calibri");
+  textAlign(CENTER, CENTER);
   textSize(r * 0.6);
-  text(letter, x, y + r * 0.65);
+  text(number, x, y);
   pop();
 }
 
@@ -715,13 +607,13 @@ function clampToSafe(mx, my) {
   return { x, y };
 }
 
-function addBall(x, y, customLetter = null) {
-  const letter = customLetter || random("ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""));
+function addBall(x, y) {
   let ball = Bodies.circle(x, y, RADIUS, {
     restitution: 0.8,
     friction: 0.1,
   });
-  ball.letter = letter;
+  const number = balls.length + 1;
+  ball.number = number;
   balls.push(ball);
   World.add(world, ball);
 }
@@ -820,121 +712,6 @@ function drawWarningMessage() {
   pop();
 
   pop();
-}
-
-function updateBallTrails() {
-  balls.forEach((b) => {
-    ballTrails.push({
-      x: b.position.x,
-      y: b.position.y,
-      vx: random(-0.5, 0.5),
-      vy: random(-0.5, 0.5),
-      alpha: 255,
-      radius: RADIUS * 0.1, // smaller particles
-    });
-  });
-
-  ballTrails.forEach((p) => {
-    p.x += p.vx;
-    p.y += p.vy;
-    p.alpha -= 6;
-    p.radius *= 0.96;
-  });
-
-  ballTrails = ballTrails.filter((p) => p.alpha > 0);
-}
-
-function drawBallTrails() {
-  noStroke();
-  ballTrails.forEach((p) => {
-    fill(255, p.alpha);
-    ellipse(p.x, p.y, p.radius * 2);
-  });
-}
-
-function drawIntroScreen() {
-  push();
-  translate(width / 2, height / 2);
-  scale(introScale);
-  translate(-width / 2, -height / 2);
-  tint(255, introAlpha);
-
-  // Draw overlay only on top of the blue area
-  fill(BLUE);
-  rect(blueX, blueY, blueW, blueH);
-
-  const centerX = blueX + blueW / 2;
-  const centerY = blueY + blueH / 2;
-  const ballRadius = min(blueW, blueH) * 0.12;
-
-  // Title – 24px above the ball
-  textFont(grotaFont || "Calibri");
-  textSize(28);
-  fill(255);
-  textAlign(CENTER, BOTTOM);
-  text("Scroll to choose a letter", centerX, centerY - ballRadius - 24);
-
-  // Ball
-  fill(255);
-  ellipse(centerX, centerY, ballRadius * 2);
-
-  // Letter inside ball
-  fill(0);
-  textSize(ballRadius * 0.7);
-  textAlign(CENTER, CENTER);
-  const letter = LETTERS[currentLetterIndex];
-  textFont(grotaFont || "Calibri");
-  text(letter, centerX, centerY + ballRadius * 0.1);
-
-  // "Finished" button — 24px below the ball
-  introBtnW = 180;
-  introBtnH = 50;
-  introBtnX = centerX - introBtnW / 2;
-  introBtnY = centerY + ballRadius + 60;
-
-  const hovering = isHoveringButton(introBtnX, introBtnY, introBtnW, introBtnH);
-  const scaleAmt = hovering ? 1.05 : 1;
-
-  push();
-  translate(introBtnX + introBtnW / 2, introBtnY + introBtnH / 2);
-  scale(scaleAmt);
-  rectMode(CENTER);
-  noStroke();
-  noFill();
-  stroke(255);
-  strokeWeight(1.5);
-  rect(0, 0, introBtnW, introBtnH, 10);
-
-  noStroke();
-  fill(255);
-  textFont("Helvetica Neue");
-  textSize(20);
-  textAlign(CENTER, CENTER);
-  text("This is my ball", 0, 2);
-  pop();
-
-  noTint();
-  pop();
-}
-
-let scrollAccum = 0;
-const SCROLL_THRESHOLD = 100; // Adjust this to make it more or less sensitive
-
-export function mouseWheelPoliticsScene(event) {
-  if (showIntro) {
-    scrollAccum += event.delta;
-
-    if (scrollAccum > SCROLL_THRESHOLD) {
-      currentLetterIndex = (currentLetterIndex + 1) % LETTERS.length;
-      scrollAccum = 0;
-    } else if (scrollAccum < -SCROLL_THRESHOLD) {
-      currentLetterIndex =
-        (currentLetterIndex - 1 + LETTERS.length) % LETTERS.length;
-      scrollAccum = 0;
-    }
-
-    return false; // prevent page from scrolling
-  }
 }
 
 //lior's code
