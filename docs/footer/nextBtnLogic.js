@@ -21,6 +21,7 @@ import { postFeedbackSticker } from "../scenes/feedback/logic.js";
 import { getUserFeedbackSticker } from "../scenes/feedback/scene.js";
 import { postGenderPick } from "../scenes/genders/logic.js";
 import { getGendersUserPick } from "../scenes/genders/scene.js";
+import { postMagnetPositions } from "../scenes/i-belive-in/logic.js";
 import { postIceCreamSandwichPick } from "../scenes/ice-cream-sandwich/logic.js";
 import { getIceCreamSandwichUserPick } from "../scenes/ice-cream-sandwich/scene.js";
 import {
@@ -67,7 +68,7 @@ const postSceneUserPicks = {
   },
   [SMILE_ENDING]: () => undefined,
   [UNREAL]: () => undefined,
-  [I_BELIEVE_IN]: () => undefined,
+  [I_BELIEVE_IN]: postMagnetPositions,
   [AI]: () => {
     postAiPick();
     teardownAiScene();
@@ -84,7 +85,6 @@ const hasNoAnswer = {
   [ICE_CREAM_SANDWICH]: () => !getIceCreamSandwichUserPick(),
   [SMILE]: () => !getSmileUserImage() || !getSmileDurationList().length,
   [UNREAL]: () => !getUnrealPostedUserPicksFlag(),
-  [I_BELIEVE_IN]: () => undefined,
   [AI]: () => !getSelectedAiPick(),
   [COUNTRY]: () => !didUserFinishCountyScene(),
   [FEEDBACK]: () => !getUserFeedbackSticker(),

@@ -1,5 +1,6 @@
 import { loopSound, stopSound } from "../../soundManager.js";
 import { getVideoDimensions } from "../smile/videoManager.js";
+import { getMagnets } from "./logic.js";
 
 // my code don't delete
 let magnets = [];
@@ -34,7 +35,7 @@ let smileImage;
 let fridgeDimentions = {};
 let smileMagnetDim = {};
 let plantHeight, plantWidth;
-const letterColors = {
+export const letterColors = {
   A: "#FF0000",
   B: "#8000FF",
   C: "#FF8000",
@@ -80,7 +81,7 @@ export function preloadIBeliveInScene() {
   flyGif.hide();
 }
 
-export function setupIBeliveInScene() {
+export async function setupIBeliveInScene() {
   createCanvas(windowWidth, windowHeight);
   planetX = 0;
 
@@ -100,7 +101,7 @@ export function setupIBeliveInScene() {
   textSizeVal = width * 0.045;
   textSize(textSizeVal);
 
-  magnets = setupNewMagnets();
+  magnets = await getMagnets(() => radians(random(-15, 15)));
 }
 
 export function windowResizedIBeliveInScene() {
@@ -426,6 +427,8 @@ const resizePlantImg = () => {
   plantHeight = fridgeDimentions.y;
   plantWidth = (plantImage.width * fridgeDimentions.y) / plantImage.height;
 };
+
+export const getSceneMagnets = () => magnets;
 
 export class Magnet {
   constructor(char, xNorm, yNorm, col, rot) {

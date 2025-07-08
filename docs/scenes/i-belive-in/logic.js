@@ -1,10 +1,13 @@
 import { get, post } from "../../api/axios.js";
 import { I_BELIEVE_IN } from "../../consts/scenes-names.js";
-import { Magnet, setupNewMagnets } from "./scene.js";
+import {
+  getSceneMagnets,
+  letterColors,
+  Magnet,
+  setupNewMagnets,
+} from "./scene.js";
 
 export const answers = {};
-let canvasWidth;
-let canvasHeight;
 
 export const setSceneAnswer = (sceneName, value) => {
   answers[sceneName] = value;
@@ -19,58 +22,30 @@ export const getMagnetRecords = async (top) => {
   return await get(I_BELIEVE_IN, { top });
 };
 
-export const postMagnetPositions = async (magnets) => {
+export const postMagnetPositions = async () => {
+  const magnets = getSceneMagnets();
   const magnetInfo = magnets.map((magnet) => {
     return {
       letter: magnet.char,
-      x: magnet.pos.x / width,
-      y: magnet.pos.y / height,
+      x: magnet.posNorm.x,
+      y: magnet.posNorm.y,
     };
   });
   await post(I_BELIEVE_IN, { magnets: magnetInfo });
-  //nextScene()
 };
 
-export const getMagnets = async (
-  colors,
-  randomRotationFunc,
-  boundX,
-  boundY,
-  boundW,
-  boundH
-) => {
-  canvasWidth = width;
-  canvasHeight = height;
+export const getMagnets = async (randomRotationFunc) => {
   const magnetsRecords = (await getMagnetRecords(1))[0];
   return !magnetsRecords
     ? setupNewMagnets()
     : (magnetsRecords.magnets.map(
-        (magnetPosition, index) =>
+        ({ x, y, letter }) =>
           new Magnet(
-            magnetPosition.letter,
-            magnetPosition.x * width,
-            magnetPosition.y * height,
-            colors[index % colors.length],
-            randomRotationFunc(),
-            boundX,
-            boundY,
-            boundW,
-            boundH
+            letter,
+            x,
+            y,
+            letterColors[letter.toUpperCase()],
+            randomRotationFunc()
           )
       ) ?? []);
-};
-
-export const updateWindowSizeAndMagnetsPos = (magnets) => {
-  magnets.forEach((magnet) => {
-    magnet.pos.x *= width / canvasWidth;
-    magnet.pos.y *= height / canvasHeight;
-    magnet.target.x *= width / canvasWidth;
-    magnet.target.y *= height / canvasHeight;
-    console.log(magnet.pos.x, magnet.pos.y);
-  });
-
-  canvasWidth = width;
-  canvasHeight = height;
-
-  console.log(magnets, canvasWidth, canvasHeight);
 };
