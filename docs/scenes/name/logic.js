@@ -2,8 +2,8 @@ import { get, post } from "../../api/axios.js";
 import { NAME } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../i-belive-in/logic.js";
 
-const MAX_ALPHA = 50,
-  MIN_ALPHA = 5;
+const MAX_ALPHA = 255,
+  MIN_ALPHA = 255;
 
 const strokes = [];
 let mergedHistoryBuffer;
@@ -20,9 +20,14 @@ export const postName = async () => {
 };
 
 export const setupNameHistoryBuffer = async (top = 3) => {
-  const nameHistory = await getNameHistory(top);
-  const total = nameHistory.length;
+  const nameHistory = (await getNameHistory(top))
+    .map(({ createdOn, ...otherProps }) => ({
+      createdOn: new Date(createdOn),
+      ...otherProps,
+    }))
+    .sort((a, b) => a.createdOn - b.createdOn);
 
+  const total = nameHistory.length;
   const originalBuffers = nameHistory.map(({ strokes }) => {
     const pg = createGraphics(width, height);
     drawStrokesToBuffer(pg, strokes);
