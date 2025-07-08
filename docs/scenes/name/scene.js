@@ -227,8 +227,6 @@ function drawTextOverlay() {
 
   const bounce = sin(frameCount * 0.03) * 4;
 
-  console.log(helloYCurrent, helloYTarget + bounce);
-
   fill(255, helloAlpha);
   textAlign(CENTER);
   textFont(snellFont);
