@@ -10,12 +10,16 @@ import {
   incrementCountryPicks,
 } from "./business/scenes-logic/country/api.js";
 import {
+  getFeedbackRecords,
+  saveFeedbackRecord,
+} from "./business/scenes-logic/feedback/api.js";
+import {
   getGendersCounts,
   incrementGenderPick,
 } from "./business/scenes-logic/gender/api.js";
 import {
-  getMagnetPositions,
-  saveMagnetPositions,
+  getIBelieveInRecords,
+  saveIBelieveInRecord,
 } from "./business/scenes-logic/i belive in/api.js";
 import {
   getIceCreamSandwichCounts,
@@ -54,10 +58,9 @@ import {
   UNREAL,
   USER_NUMBER,
 } from "./routes/routes.js";
+import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
-import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
-import { getFeedbackRecords, saveFeedbackRecord } from "./business/scenes-logic/feedback/api.js";
 
 dotenv.config();
 
@@ -153,8 +156,8 @@ app.route(AI).all(
 app.route(I_BELIEVE_IN).all(
   createRoute({
     methodHandlers: {
-      post: (req) => saveMagnetPositions(req.body.magnets),
-      get: (req) => getMagnetPositions(Number(req.query.top)),
+      post: ({ body }) => saveIBelieveInRecord(body),
+      get: ({ query }) => getIBelieveInRecords(Number(query.top)),
     },
   })
 );
@@ -180,12 +183,15 @@ app.route(COUNTRY).all(
 app.route(FEEDBACK).all(
   createRoute({
     methodHandlers: {
-      post: ({body}) => {
-        const parsed = feedbackSchema.safeParse(body)
-        if(!parsed.success) throw new Error(`given data was not in the right format: ${parsed.error.message}`)
-        saveFeedbackRecord(parsed.data)
+      post: ({ body }) => {
+        const parsed = feedbackSchema.safeParse(body);
+        if (!parsed.success)
+          throw new Error(
+            `given data was not in the right format: ${parsed.error.message}`
+          );
+        saveFeedbackRecord(parsed.data);
       },
-      get: ({query}) => getFeedbackRecords(Number(query.top)),
+      get: ({ query }) => getFeedbackRecords(Number(query.top)),
     },
   })
 );
