@@ -1,6 +1,7 @@
+import { SMILE } from "../../consts/scenes-names.js";
 import { loopSound, stopSound } from "../../soundManager.js";
 import { getVideoDimensions } from "../smile/videoManager.js";
-import { getMagnets } from "./logic.js";
+import { getMagnets, getSceneAnswer } from "./logic.js";
 
 // my code don't delete
 let magnets = [];
@@ -100,6 +101,9 @@ export async function setupIBeliveInScene() {
 
   textSizeVal = width * 0.045;
   textSize(textSizeVal);
+
+  console.log(getSceneAnswer(SMILE)?.image);
+  smileImage = getSceneAnswer(SMILE)?.image;
 
   magnets = await getMagnets(() => radians(random(-15, 15)));
 }
@@ -219,6 +223,7 @@ function drawSmileMagnet() {
   translate(x, y);
   rotate(radians(wedTilt));
   rectMode(CENTER);
+  imageMode(CENTER);
 
   fill(255);
   stroke(200);
@@ -228,7 +233,11 @@ function drawSmileMagnet() {
   fill(180);
   noStroke();
 
-  rect(0, -h * 0.17, photoW, photoH, 2);
+  if (smileImage) {
+    image(smileImage, 0, -h * 0.17, photoW, photoH);
+  } else {
+    rect(0, -h * 0.17, photoW, photoH, 2);
+  }
 
   textFont(weddingFont);
   fill(0);
