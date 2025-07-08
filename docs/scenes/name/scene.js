@@ -25,6 +25,15 @@ let helloYCurrent, nameYCurrent;
 let helloAlpha = 0;
 let nameAlpha = 0;
 
+//lior's code
+let margin,
+  redCardWidth,
+  redCardHeight,
+  redCardX,
+  redCardY,
+  whiteAreaY,
+  whiteAreaHeight;
+
 export function preloadNameScene() {
   snellFont = loadFont("./assets/snellroundhand_bold.otf");
   grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
@@ -140,7 +149,7 @@ export async function setupNameScene() {
 
   selectedColor = color(colorValues[0]);
 
-  helloYTarget = height * 0.13 + height * 0.74 * 0.15;
+  helloYTarget = (redCardY + whiteAreaY) / 2 - 25;
   nameYTarget = helloYTarget + 60;
   helloYCurrent = helloYTarget + 60;
   nameYCurrent = nameYTarget + 60;
@@ -194,13 +203,13 @@ function drawCustomCursor() {
 }
 
 function drawCardLayout() {
-  const margin = width * 0.1;
-  const redCardWidth = width - 2 * margin;
-  const redCardHeight = height * 0.74;
-  const redCardX = margin;
-  const redCardY = height * 0.13;
-  const whiteAreaY = redCardY + redCardHeight * 0.3;
-  const whiteAreaHeight = redCardHeight * 0.6;
+  margin = width * 0.1;
+  redCardWidth = width - 2 * margin;
+  redCardHeight = height * 0.74;
+  redCardX = margin;
+  redCardY = height * 0.13;
+  whiteAreaY = redCardY + redCardHeight * 0.3;
+  whiteAreaHeight = redCardHeight * 0.6;
 
   noStroke();
   fill("#F14E1D");
@@ -217,6 +226,8 @@ function drawTextOverlay() {
   nameYCurrent = lerp(nameYCurrent, nameYTarget, 0.1);
 
   const bounce = sin(frameCount * 0.03) * 4;
+
+  console.log(helloYCurrent, helloYTarget + bounce);
 
   fill(255, helloAlpha);
   textAlign(CENTER);
