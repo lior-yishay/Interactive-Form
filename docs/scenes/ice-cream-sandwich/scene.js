@@ -21,6 +21,9 @@ let starAngle = 0;
 let iceCreamTruckSound;
 let pulseProgress; //lior's code
 
+/* ---------- +1 ANIMATION SYSTEM ---------- */
+let plusOneAnimations = [];
+
 /* ---------- FLAVOR SYSTEM ---------- */
 const VANILLA_COLOR = "#f6f2e8";
 const CHOCOLATE_COLOR = "#c28c84";
@@ -117,6 +120,69 @@ export function windowResizedIceCreamSandwichScene() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
+/* ---------- +1 ANIMATION FUNCTIONS ---------- */
+function createPlusOneAnimation(x, y, flavor) {
+  plusOneAnimations.push({
+    x: x,
+    y: y,
+    startY: y,
+    life: 60, // frames
+    maxLife: 60,
+    flavor: flavor,
+    alpha: 255,
+  });
+}
+
+function updatePlusOneAnimations() {
+  for (let i = plusOneAnimations.length - 1; i >= 0; i--) {
+    let anim = plusOneAnimations[i];
+
+    // Move up
+    anim.y = anim.startY - (60 - anim.life) * 2; // Move up 2 pixels per frame
+
+    // Fade out
+    anim.alpha = map(anim.life, 0, anim.maxLife, 0, 255);
+
+    anim.life--;
+
+    if (anim.life <= 0) {
+      plusOneAnimations.splice(i, 1);
+    }
+  }
+}
+
+function drawPlusOneAnimations() {
+  for (let anim of plusOneAnimations) {
+    push();
+    textFont("Helvetica"); // Changed to Helvetica font
+    textSize(24); // Made smaller - reduced from 36 to 24
+    textAlign(CENTER, CENTER);
+
+    // Set color based on flavor with current alpha
+    if (anim.flavor === "vanilla") {
+      fill(
+        red(color(VANILLA_COLOR)),
+        green(color(VANILLA_COLOR)),
+        blue(color(VANILLA_COLOR)),
+        anim.alpha
+      );
+      stroke(0, anim.alpha);
+    } else {
+      fill(
+        red(color(CHOCOLATE_COLOR)),
+        green(color(CHOCOLATE_COLOR)),
+        blue(color(CHOCOLATE_COLOR)),
+        anim.alpha
+      );
+      stroke(0, anim.alpha);
+    }
+
+    strokeWeight(2);
+    text("+1", anim.x, anim.y);
+    pop();
+  }
+}
+
 /* ---------- ROOT DRAW ---------- */
 export function drawIceCreamSandwichScene() {
   background("#EEEEEE");
@@ -163,6 +229,9 @@ export function drawIceCreamSandwichScene() {
     pulseTimer -= 0.1;
   }
 
+  // Update +1 animations
+  updatePlusOneAnimations();
+
   // Update background color cycling
   updateBackgroundColor();
 
@@ -174,6 +243,7 @@ export function drawIceCreamSandwichScene() {
   scale(s);
   drawScene();
   drawParticles(); // ✨ draw the sparkles
+  drawPlusOneAnimations(); // ✨ draw the +1 animations
   pop();
 
   // Force redraw for animation
@@ -211,7 +281,7 @@ function smoothStep(edge0, edge1, x) {
 /* ---------- CLICK HANDLER ---------- */
 export function mousePressedIceCreamSandwichScene() {
   // Start audio on first interaction
-  loopSound(iceCreamTruckSound, {volume: 0.3});
+  loopSound(iceCreamTruckSound, { volume: 0.3 });
 
   const s = min(width / BASE_W, height / BASE_H);
 
@@ -249,12 +319,13 @@ export function mousePressedIceCreamSandwichScene() {
   }
 
   // Check for title bar dragging (only if windows are visible)
+  // גרירה מכל שטח החלון (0–260 px גובה)
   if (
     windowVisible.survey &&
     mx >= windowPositions.survey.x &&
     mx <= windowPositions.survey.x + 360 &&
     my >= windowPositions.survey.y &&
-    my <= windowPositions.survey.y + 50
+    my <= windowPositions.survey.y + 260
   ) {
     isDragging = true;
     dragTarget = "survey";
@@ -314,6 +385,9 @@ export function mousePressedIceCreamSandwichScene() {
       flavorRatio =
         flavorCounts.vanilla / (flavorCounts.vanilla + flavorCounts.chocolate);
       createParticles(mouseX, mouseY, VANILLA);
+
+      // Create +1 animation at the click position (in canvas coordinates)
+      createPlusOneAnimation(centerX - fillingW / 4, centerY, "vanilla");
     } else if (mx >= fillX + clickableHalf && mx < fillX + fillingW) {
       flavorCounts.chocolate++;
       flavor = CHOCOLATE;
@@ -321,6 +395,9 @@ export function mousePressedIceCreamSandwichScene() {
         flavorCounts.chocolate /
         (flavorCounts.vanilla + flavorCounts.chocolate);
       createParticles(mouseX, mouseY, CHOCOLATE);
+
+      // Create +1 animation at the click position (in canvas coordinates)
+      createPlusOneAnimation(centerX + fillingW / 4, centerY, "choco");
     }
 
     flavorProgress = 0;
@@ -577,7 +654,7 @@ function drawSurveyText() {
 
   textFont(snell);
   textSize(80);
-  text("flavor", 180, groupCenterY - 14);
+  text("f lavor", 180, groupCenterY - 14);
 
   textFont(grotta);
   textSize(45);
