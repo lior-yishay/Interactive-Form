@@ -54,9 +54,10 @@ import {
   drawIBeliveInScene,
   mouseDraggedIBeliveInScene,
   mousePressedIBeliveInScene,
+  mouseReleasedIBeliveInScene,
   preloadIBeliveInScene,
   setupIBeliveInScene,
-  windowResizedIBeliveIn,
+  windowResizedIBeliveInScene,
 } from "../scenes/i-belive-in/scene.js";
 import {
   drawIceCreamSandwichScene,
@@ -159,11 +160,10 @@ export const p5Functions = {
     preload: preloadIBeliveInScene,
     setup: setupIBeliveInScene,
     draw: drawIBeliveInScene,
-    preload: preloadIBeliveInScene,
     mousePressed: mousePressedIBeliveInScene,
     mouseDragged: mouseDraggedIBeliveInScene,
-    windowResized: windowResizedIBeliveIn,
-    mouseReleased: mouseDraggedIBeliveInScene,
+    windowResized: windowResizedIBeliveInScene,
+    mouseReleased: mouseReleasedIBeliveInScene,
   },
   [POLITICS]: {
     preload: () => undefined,

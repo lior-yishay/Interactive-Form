@@ -1,6 +1,6 @@
 import { get, post } from "../../api/axios.js";
 import { I_BELIEVE_IN } from "../../consts/scenes-names.js";
-import { Magnet, setupMagnets } from "./scene.js";
+import { Magnet, setupNewMagnets } from "./scene.js";
 
 export const answers = {};
 let canvasWidth;
@@ -43,7 +43,7 @@ export const getMagnets = async (
   canvasHeight = height;
   const magnetsRecords = (await getMagnetRecords(1))[0];
   return !magnetsRecords
-    ? setupMagnets()
+    ? setupNewMagnets()
     : (magnetsRecords.magnets.map(
         (magnetPosition, index) =>
           new Magnet(
