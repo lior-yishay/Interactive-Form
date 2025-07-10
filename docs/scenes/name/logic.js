@@ -81,13 +81,3 @@ const drawStrokesToBuffer = (pg, strokes) => {
 export const recordStroke = (from, to, colorValue, weight) => {
   strokes.push({ from, to, colorValue, weight });
 };
-
-//teardown dom elements
-let uiElements = [];
-
-export const recordUiElement = (element) => uiElements.push(element);
-
-export const teardownNameScene = () => {
-  uiElements.forEach((el) => el.remove());
-  uiElements = [];
-};

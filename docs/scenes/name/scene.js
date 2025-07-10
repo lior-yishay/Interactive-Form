@@ -1,8 +1,8 @@
+import { recordDomElement } from "../../scene-managment/domManager.js";
 import { playSound } from "../../soundManager.js";
 import {
   drawNameHistoryBuffer,
   recordStroke,
-  recordUiElement,
   setupNameHistoryBuffer,
 } from "./logic.js";
 
@@ -90,11 +90,11 @@ export async function setupNameScene() {
     });
 
     colors.push(btn);
-    recordUiElement(btn); //lior's code
+    recordDomElement(btn); //lior's code
   }
 
   eraserBtn = createImg("./assets/erasericon.png", "eraser");
-  recordUiElement(eraserBtn); //lior's code
+  recordDomElement(eraserBtn); //lior's code
 
   eraserBtn.style("position", "absolute");
   eraserBtn.style("width", "30px");
@@ -124,7 +124,7 @@ export async function setupNameScene() {
   });
 
   brushSizeSlider = createSlider(10, 50, 15);
-  recordUiElement(brushSizeSlider); //lior's code
+  recordDomElement(brushSizeSlider); //lior's code
 
   brushSizeSlider.position(windowWidth - 250, windowHeight / 2 + 100);
   brushSizeSlider.style("transform", "rotate(-90deg)");

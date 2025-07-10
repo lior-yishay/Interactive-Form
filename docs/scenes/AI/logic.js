@@ -12,13 +12,3 @@ export const postAiPick = async () => {
   await post(AI, { ai });
   setSceneAnswer(AI, { ai });
 };
-
-//teardown dom elements
-let uiElements = [];
-
-export const recordUiElement = (element) => uiElements.push(element);
-
-export const teardownAiScene = () => {
-  uiElements.forEach((el) => el.remove());
-  uiElements = [];
-};

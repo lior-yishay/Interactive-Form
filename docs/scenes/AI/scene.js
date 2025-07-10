@@ -1,5 +1,6 @@
+import { recordDomElement } from "../../scene-managment/domManager.js";
 import { playSound } from "../../soundManager.js";
-import { getAiCounts, recordUiElement } from "./logic.js";
+import { getAiCounts } from "./logic.js";
 
 let grottaFont;
 let grottaFontBold;
@@ -139,7 +140,7 @@ export async function setupAiScene() {
   helloStartTime = millis();
 
   dickImg = createImg("./assets/dick.gif", null);
-  recordUiElement(dickImg); //lior's code
+  recordDomElement(dickImg); //lior's code
   dickImg.hide(); // hide it initially
   dickImg.style("position", "absolute");
   dickImg.style("pointer-events", "none"); // so it doesn't block mouse clicks
@@ -1433,7 +1434,7 @@ function createDickPopupWindow() {
 
   // Create popup window container
   let popup = createDiv("");
-  recordUiElement(popup); //lior's code
+  recordDomElement(popup); //lior's code
   popup.style("position", "absolute");
   popup.style("left", x + "px");
   popup.style("top", y + "px");
@@ -1448,7 +1449,7 @@ function createDickPopupWindow() {
 
   // Create title bar
   let titleBar = createDiv("");
-  recordUiElement(titleBar); //lior's code
+  recordDomElement(titleBar); //lior's code
   titleBar.style("background-color", "#d0d0d0");
   titleBar.style("height", "25px");
   titleBar.style("border-bottom", "1px solid #999");
@@ -1467,7 +1468,7 @@ function createDickPopupWindow() {
     "System Failure",
   ];
   let titleText = createDiv(random(titles));
-  recordUiElement(titleText); //lior's code
+  recordDomElement(titleText); //lior's code
   titleText.style("font-family", "Arial, sans-serif");
   titleText.style("font-size", "12px");
   titleText.style("padding", "5px 10px");
@@ -1476,7 +1477,7 @@ function createDickPopupWindow() {
 
   // Close button (fake - doesn't work)
   let closeBtn = createDiv("×");
-  recordUiElement(closeBtn); //lior's code
+  recordDomElement(closeBtn); //lior's code
   closeBtn.style("position", "absolute");
   closeBtn.style("right", "5px");
   closeBtn.style("top", "2px");
@@ -1493,7 +1494,7 @@ function createDickPopupWindow() {
 
   // Content area with dick image
   let content = createDiv("");
-  recordUiElement(content); //lior's code
+  recordDomElement(content); //lior's code
   content.style("padding", "10px");
   content.style("height", height - 35 + "px");
   content.style("display", "flex");
@@ -1503,7 +1504,7 @@ function createDickPopupWindow() {
 
   // Dick image inside the popup
   let dickImg = createImg("./assets/dick.gif", "");
-  recordUiElement(content); //lior's code
+  recordDomElement(content); //lior's code
   dickImg.style("max-width", "100%");
   dickImg.style("max-height", "100%");
   dickImg.style("object-fit", "contain");

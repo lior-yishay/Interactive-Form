@@ -1,4 +1,5 @@
 import { SMILE } from "../../consts/scenes-names.js";
+import { recordDomElement } from "../../scene-managment/domManager.js";
 import { loopSound, stopSound } from "../../soundManager.js";
 import { getVideoDimensions } from "../smile/videoManager.js";
 import { getMagnets, getSceneAnswer } from "./logic.js";
@@ -77,6 +78,7 @@ export function preloadIBeliveInScene() {
 
   // preload fly gif
   flyGif = createImg("./assets/fly.gif", "fly gif");
+  recordDomElement(flyGif);
   flyGif.style("position", "absolute");
   flyGif.style("transform", "translate(-50%, -50%)");
   flyGif.hide();

@@ -1,3 +1,4 @@
+import { recordDomElement } from "../../scene-managment/domManager.js";
 import { playSound, stopSound } from "../../soundManager.js";
 import { getUnrealCounts, postUnrealPicks } from "./logic.js";
 
@@ -130,9 +131,10 @@ export async function setupUnrealScene() {
   gif7 = createImg("./assets/banana_hover.gif");
   gif8 = createImg("./assets/illumanity_hover.gif");
 
-  [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8].forEach((gif) =>
-    setupGif(gif)
-  );
+  [gif0, gif1, gif2, gif3, gif4, gif5, gif6, gif7, gif8].forEach((gif) => {
+    setupGif(gif);
+    recordDomElement(gif);
+  });
 
   serverCounts = await getUnrealCounts();
 }

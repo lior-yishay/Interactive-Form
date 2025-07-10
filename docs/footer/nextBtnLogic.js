@@ -12,8 +12,9 @@ import {
   START,
   UNREAL,
 } from "../consts/scenes-names.js";
+import { clearDomElements } from "../scene-managment/domManager.js";
 import { getCurrentScene, nextScene } from "../scene-managment/sceneOrder.js";
-import { postAiPick, teardownAiScene } from "../scenes/AI/logic.js";
+import { postAiPick } from "../scenes/AI/logic.js";
 import { getSelectedAiPick } from "../scenes/AI/scene.js";
 import { postCountryPick } from "../scenes/country/logic.js";
 import { didUserFinishCountyScene } from "../scenes/country/scene.js";
@@ -24,11 +25,7 @@ import { getGendersUserPick } from "../scenes/genders/scene.js";
 import { postMagnetPositions } from "../scenes/i-belive-in/logic.js";
 import { postIceCreamSandwichPick } from "../scenes/ice-cream-sandwich/logic.js";
 import { getIceCreamSandwichUserPick } from "../scenes/ice-cream-sandwich/scene.js";
-import {
-  isStrokesEmpty,
-  postName,
-  teardownNameScene,
-} from "../scenes/name/logic.js";
+import { isStrokesEmpty, postName } from "../scenes/name/logic.js";
 import { postPoliticsPick } from "../scenes/politics/logic.js";
 import { getPoliticsUserPick } from "../scenes/politics/scene.js";
 import { postSmile } from "../scenes/smile/logic.js";
@@ -45,6 +42,7 @@ export const onNextBtnClick = async () => {
   if (isNextBtnDisabled()) return;
   await postSceneUserPicks[getCurrentScene()]();
   resetRegisteredSounds();
+  clearDomElements();
   nextScene();
 };
 
@@ -54,10 +52,7 @@ export const isNextBtnDisabled = () => {
 
 const postSceneUserPicks = {
   [START]: () => undefined,
-  [NAME]: () => {
-    postName();
-    teardownNameScene();
-  },
+  [NAME]: () => postName,
   [GENDERS]: postGenderPick,
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
@@ -69,10 +64,7 @@ const postSceneUserPicks = {
   [SMILE_ENDING]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: postMagnetPositions,
-  [AI]: () => {
-    postAiPick();
-    teardownAiScene();
-  },
+  [AI]: () => postAiPick,
   [COUNTRY]: postCountryPick,
   [FEEDBACK]: postFeedbackSticker,
 };
