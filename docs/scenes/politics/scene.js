@@ -63,7 +63,7 @@ export function preloadPoliticsScene() {
 export async function setupPoliticsScene() {
   createCanvas(windowWidth, windowHeight);
   noStroke();
-  textFont("Helvetica Neue, Arial, sans-serif");
+  // textFont("Helvetica Neue, Arial, sans-serif");
   textAlign(CENTER, CENTER);
   rotationTarget = radians(3);
 
@@ -450,6 +450,7 @@ function drawChrome() {
   fill(70);
   textSize(14);
   textAlign(CENTER, CENTER);
+  setSceneTextFont();
   text(
     "http://your-political-opinion-is-not-important.vote.il",
     addrX + addrW * 0.5,
@@ -498,6 +499,7 @@ function drawUI() {
 
   fill(0);
   textStyle(BOLD);
+  setSceneTextFont();
   text(word1, tx + paddingX, ty + paddingY);
   textStyle(NORMAL);
   text(word2, tx + paddingX, ty + h + 4 + paddingY);
@@ -518,6 +520,7 @@ function drawUI() {
   fill(0);
   textSize(20);
   textAlign(CENTER, CENTER);
+  setSceneTextFont();
   text("↓", 0, 2);
   pop();
 }
@@ -525,20 +528,23 @@ function drawUI() {
 function drawBottomLabels() {
   if (rotationTriggered) return;
 
-  textSize(64);
+  textSize(90);
   fill(0);
   textStyle(BOLD);
   textAlign(LEFT, BASELINE);
+  setSceneTextFont();
   text("Left-wing", blueX + 20, blueY + blueH - 24);
 
   push();
   translate(sepLeftX + centreW * 0.5, blueY + blueH * 0.5);
   rotate(-HALF_PI);
   textAlign(CENTER, CENTER);
+  setSceneTextFont();
   text("Centrist", 0, 0);
   pop();
 
   textAlign(RIGHT, BASELINE);
+  setSceneTextFont();
   text("Right-wing", blueX + blueW - 20, blueY + blueH - 24);
   textStyle(NORMAL);
 }
@@ -558,6 +564,7 @@ function drawTextElements() {
 
     if (t.rotate) rotate(-HALF_PI);
 
+    setSceneTextFont();
     text(t.text, 0, 0);
     pop();
   });
@@ -666,6 +673,7 @@ function drawWarningMessage() {
   fill(255, warningAlpha);
   textSize(20);
   textStyle(NORMAL);
+  setSceneTextFont();
   text("Changing your view?", 0, -50);
   text("Drop the ball.", 0, -25);
   text("Principles are overated anyway.", 0, 0);
@@ -692,6 +700,7 @@ function drawWarningMessage() {
   noStroke();
   textSize(16);
   textStyle(BOLD);
+  setSceneTextFont();
   text("Switch", 0, 2);
   pop();
 
@@ -708,11 +717,14 @@ function drawWarningMessage() {
   fill(BLUE + hex(floor(warningAlpha), 2));
   textSize(16);
   textStyle(BOLD);
+  setSceneTextFont();
   text("Anarchy", 0, 2);
   pop();
 
   pop();
 }
+
+const setSceneTextFont = () => textFont("Helvetica");
 
 //lior's code
 export function getPoliticsUserPick() {
