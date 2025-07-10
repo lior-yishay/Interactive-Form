@@ -6,7 +6,7 @@ const bigThingSceneManager = getScenePickManager(BIG_THING_COLLECTION);
 
 export const incrementBigThingPick = bigThingSceneManager.incrementPicks;
 
-export const getBigThingCounts = bigThingSceneManager.getCounts;
+export const getBigThingCounts = () => bigThingSceneManager.getCounts();
 
 export const resetBigThingScene = () =>
   bigThingSceneManager.resetCollection(BIG_THING_OPTIONS);
