@@ -1,4 +1,4 @@
-import { customizeP5Loader } from "./customLoader.js";
+import { setupCustomLoader } from "./customLoader.js";
 import {
   drawFooter,
   mouseOnNextBtn,
@@ -14,6 +14,8 @@ import { callIfExsist } from "./utils/callIfExsist.js";
 
 window.preload = () => {
   preloadFooter();
+  Object.values(p5Functions).forEach((scene) => scene.preload());
+  Object.values(p5Functions).forEach((scene) => scene.preload());
   Object.values(p5Functions).forEach((scene) => scene.preload());
 };
 
@@ -44,16 +46,4 @@ const allHandlers = Object.values(p5Functions)
       callIfExsist(p5Functions[getCurrentScene()]?.[event], ...args))
 );
 
-window.addEventListener("DOMContentLoaded", () => {
-  const loader = document.querySelector("#p5_loading");
-  if (loader) {
-    loader.innerHTML = "<div>🌟 Custom Loader 🌟<br/>Please wait...</div>";
-  }
-});
-
-// Keep checking until the loader exists
-const interval = setInterval(() => {
-  if (customizeP5Loader()) {
-    clearInterval(interval);
-  }
-}, 50);
+setupCustomLoader();
