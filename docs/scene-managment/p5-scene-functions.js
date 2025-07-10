@@ -1,5 +1,6 @@
 import {
   AI,
+  BIG_THING,
   COUNTRY,
   FEEDBACK,
   GENDERS,
@@ -21,6 +22,14 @@ import {
   setupAiScene,
   windowResizedAiScene,
 } from "../scenes/AI/scene.js";
+import {
+  drawBigThingScene,
+  mouseMovedBigThingScene,
+  mousePressedBigThingScene,
+  preloadBigThingScene,
+  setupBigThingScene,
+  windowResizedBigThingScene,
+} from "../scenes/big thing/scene.js";
 import {
   drawCountryScene,
   preloadCountryScene,
@@ -221,5 +230,13 @@ export const p5Functions = {
     mouseMoved: mouseMovedFeedbackScene,
     mouseDragged: mouseDraggedFeedbackScene,
     mouseReleased: mouseReleasedFeedbackScene,
+  },
+  [BIG_THING]: {
+    preload: preloadBigThingScene,
+    setup: setupBigThingScene,
+    draw: drawBigThingScene,
+    mousePressed: mousePressedBigThingScene,
+    mouseMoved: mouseMovedBigThingScene,
+    windowResized: windowResizedBigThingScene,
   },
 };

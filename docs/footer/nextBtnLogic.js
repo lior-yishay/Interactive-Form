@@ -1,5 +1,6 @@
 import {
   AI,
+  BIG_THING,
   COUNTRY,
   FEEDBACK,
   GENDERS,
@@ -16,6 +17,8 @@ import { clearDomElements } from "../scene-managment/domManager.js";
 import { getCurrentScene, nextScene } from "../scene-managment/sceneOrder.js";
 import { postAiPick } from "../scenes/AI/logic.js";
 import { getSelectedAiPick } from "../scenes/AI/scene.js";
+import { postBigThingPick } from "../scenes/big thing/logic.js";
+import { getSelectedBigThingPickIndex } from "../scenes/big thing/scene.js";
 import { postCountryPick } from "../scenes/country/logic.js";
 import { didUserFinishCountyScene } from "../scenes/country/scene.js";
 import { postFeedbackSticker } from "../scenes/feedback/logic.js";
@@ -67,6 +70,7 @@ const postSceneUserPicks = {
   [AI]: () => postAiPick,
   [COUNTRY]: postCountryPick,
   [FEEDBACK]: postFeedbackSticker,
+  [BIG_THING]: postBigThingPick,
 };
 
 const hasNoAnswer = {
@@ -80,4 +84,5 @@ const hasNoAnswer = {
   [AI]: () => !getSelectedAiPick(),
   [COUNTRY]: () => !didUserFinishCountyScene(),
   [FEEDBACK]: () => !getUserFeedbackSticker(),
+  [BIG_THING]: () => getSelectedBigThingPickIndex() === undefined,
 };

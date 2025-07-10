@@ -1,5 +1,6 @@
 import {
   AI,
+  BIG_THING,
   COUNTRY,
   END,
   FEEDBACK,
@@ -17,7 +18,7 @@ import {
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = BIG_THING;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -37,6 +38,7 @@ const sceneList = [
   START,
   NAME,
   GENDERS,
+  BIG_THING,
   SMILE_LOADER,
   SMILE,
   SMILE_ENDING,
