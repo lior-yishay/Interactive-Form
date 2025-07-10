@@ -44,6 +44,7 @@ import { closeConnection, connectToScenesDB } from "./data-access/db.js";
 import { logger } from "./logger/logger.js";
 import {
   AI,
+  BIG_THING,
   COUNTRY,
   EVENTS,
   FEEDBACK,
@@ -61,6 +62,10 @@ import {
 import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
+import {
+  getBigThingCounts,
+  incrementBigThingPick,
+} from "./business/scenes-logic/big thing/api.js";
 
 dotenv.config();
 
@@ -192,6 +197,15 @@ app.route(FEEDBACK).all(
         saveFeedbackRecord(parsed.data);
       },
       get: ({ query }) => getFeedbackRecords(Number(query.top)),
+    },
+  })
+);
+
+app.route(BIG_THING).all(
+  createRoute({
+    methodHandlers: {
+      post: ({ body }) => incrementBigThingPick(body.pick),
+      get: getBigThingCounts,
     },
   })
 );

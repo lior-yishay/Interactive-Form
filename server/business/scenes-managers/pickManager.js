@@ -19,7 +19,7 @@ export const getScenePickManager = (collectionName) => {
       await collection.bulkWrite(bulkOps);
     },
 
-    getCounts: async (asList) => {
+    getCounts: async (asList = false) => {
       const db = await connectToScenesDB();
       const collection = db.collection(collectionName);
 

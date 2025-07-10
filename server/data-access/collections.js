@@ -9,3 +9,4 @@ export const I_BELIEVE_IN_COLLECTION = "i-believe-in";
 export const USER_NUMBER_COLLECTION = "user-number";
 export const COUNTRY_COLLECTION = "country";
 export const FEEDBACK_COLLECTION = "feedback";
+export const BIG_THING_COLLECTION = "big-thing";
