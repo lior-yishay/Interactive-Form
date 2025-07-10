@@ -2,6 +2,7 @@ import {
   drawFooter,
   mouseOnNextBtn,
   mouseOnSoundBtn,
+  preloadFooter,
   setupFooter,
 } from "./footer/footer.js";
 import { onNextBtnClick } from "./footer/nextBtnLogic.js";
@@ -9,6 +10,11 @@ import { p5Functions } from "./scene-managment/p5-scene-functions.js";
 import { getCurrentScene } from "./scene-managment/sceneOrder.js";
 import { toggleSound } from "./soundManager.js";
 import { callIfExsist } from "./utils/callIfExsist.js";
+
+window.preload = () => {
+  p5Functions[getCurrentScene()].preload();
+  preloadFooter();
+};
 
 window.setup = () => {
   p5Functions[getCurrentScene()].setup();
@@ -26,7 +32,7 @@ window.mousePressed = () => {
   if (mouseOnSoundBtn()) toggleSound();
 };
 
-const excluded = new Set(["draw", "setup", "mousePressed"]);
+const excluded = new Set(["draw", "setup", "mousePressed", "preload"]);
 const allHandlers = Object.values(p5Functions)
   .flatMap(Object.keys)
   .filter((handler) => !excluded.has(handler));

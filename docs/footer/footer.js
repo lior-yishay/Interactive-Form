@@ -16,6 +16,7 @@ import { getCurrentUser } from "../currentUser.js";
 import { getCurrentScene } from "../scene-managment/sceneOrder.js";
 import { isSoundOn } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
+import { drawTextWithColonFont } from "../utils/text.js";
 import { isNextBtnDisabled } from "./nextBtnLogic.js";
 
 const padding = 5;
@@ -41,7 +42,13 @@ let nextButton = {
 let userNumber;
 let arrowLength = 10;
 
+let grottaFont;
+
 export const getFooterTop = () => height - footerHeight;
+
+export const preloadFooter = () => {
+  grottaFont = loadFont("./assets/Grotta-Trial-Medium.ttf");
+};
 
 export const setupFooter = async () => {
   userNumber = await getCurrentUser();
@@ -185,7 +192,14 @@ const drawPeopleCountAndName = () => {
   textAlign(LEFT, CENTER);
   textFont("Calibri");
   fill(getFooterTextColor());
-  text(`\t${userNumber} People : 1 Click : 0 Impact`, padding, footerMiddleH);
+  drawTextWithColonFont(
+    `\t${userNumber} People : 1 Click : 0 Impact`,
+    grottaFont ?? "Helvetica",
+    "Helvetica",
+    padding,
+    footerMiddleH
+  );
+  // text(`\t${userNumber} People : 1 Click : 0 Impact`, padding, footerMiddleH);
 };
 
 const footerTextColor = {
