@@ -30,7 +30,6 @@ export const nextScene = () => {
 const changeToScene = (sceneName) => {
   currentScene = sceneName;
   resetDrawingState();
-  p5Functions[sceneName].preload();
   p5Functions[sceneName].setup();
 };
 
