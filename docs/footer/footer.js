@@ -57,17 +57,17 @@ export const setupFooter = async () => {
   footerMiddleH = windowHeight - footerHeight / 2;
 
   textSize(22);
-  textFont("Calibri");
+  textFont(grottaFont);
   nextButton.w = textWidth("Next") + 40; //extra space for arrow;
   nextButton.h = (footerHeight * 5) / 8;
   nextButton.y = windowHeight - (footerHeight + nextButton.h) / 2;
   nextButton.x = windowWidth - nextButton.w - (footerHeight - nextButton.h);
 
   textSize(22);
-  textFont("Calibri");
+  textFont(grottaFont);
   soundToggleBtn.w = textWidth("Sound ");
   textSize(12);
-  textFont("Calibri");
+  textFont(grottaFont);
   soundToggleBtn.w += textWidth("Off");
   soundToggleBtn.h = nextButton.h;
   soundToggleBtn.y = nextButton.y;
@@ -121,7 +121,7 @@ export const drawNextButton = () => {
 
   if (!isNextBtnDisabled()) {
     // Draw underline
-    const underlineY = y + h / 2 + 10;
+    const underlineY = y + h / 2 + 15;
     stroke(getFooterTextColor());
     noFill();
     strokeWeight(1);
@@ -133,7 +133,7 @@ export const drawNextButton = () => {
 
     // Draw right arrow
     const arrowX = x + textW + 10;
-    const arrowY = y + h / 2;
+    const arrowY = y + h / 2 + 3;
     stroke(getFooterTextColor());
     strokeWeight(2);
     noFill();
@@ -190,7 +190,7 @@ export const mouseOnSoundBtn = () => {
 const drawPeopleCountAndName = () => {
   textSize(22);
   textAlign(LEFT, CENTER);
-  textFont("Calibri");
+  textFont(grottaFont);
   fill(getFooterTextColor());
   drawTextWithColonFont(
     `\t${userNumber} People : 1 Click : 0 Impact`,
@@ -199,7 +199,6 @@ const drawPeopleCountAndName = () => {
     padding,
     footerMiddleH
   );
-  // text(`\t${userNumber} People : 1 Click : 0 Impact`, padding, footerMiddleH);
 };
 
 const footerTextColor = {
