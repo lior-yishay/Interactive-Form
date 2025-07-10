@@ -15,8 +15,6 @@ import { callIfExsist } from "./utils/callIfExsist.js";
 window.preload = () => {
   preloadFooter();
   Object.values(p5Functions).forEach((scene) => scene.preload());
-  Object.values(p5Functions).forEach((scene) => scene.preload());
-  Object.values(p5Functions).forEach((scene) => scene.preload());
 };
 
 window.setup = () => {
