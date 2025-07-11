@@ -19,7 +19,7 @@ import {
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = SMILE_LOADER;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -44,6 +44,7 @@ const sceneList = [
   SMILE_LOADER,
   SMILE,
   SMILE_ENDING,
+  END,
   POLITICS,
   ICE_CREAM_SANDWICH,
   UNREAL,

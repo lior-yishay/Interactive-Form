@@ -2,6 +2,7 @@ import {
   AI,
   BIG_THING,
   COUNTRY,
+  END,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -74,13 +75,11 @@ export const setupFooter = async () => {
   soundToggleBtn.h = nextButton.h;
   soundToggleBtn.y = nextButton.y;
   soundToggleBtn.x = windowWidth / 2 - soundToggleBtn.w / 2;
-
-  console.log(soundToggleBtn);
 };
 
 // Shared footer
 export const drawFooter = () => {
-  if (getCurrentScene() === SMILE_LOADER) return;
+  if (getCurrentScene() === SMILE_LOADER || getCurrentScene() === END) return;
 
   if (getCurrentScene() === START) {
     drawSoundToggleBtn();
