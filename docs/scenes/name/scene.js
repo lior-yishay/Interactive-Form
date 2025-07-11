@@ -49,7 +49,7 @@ export async function setupNameScene() {
   noStroke();
 
   canvasBuffer = createGraphics(width, height);
-  await setupNameHistoryBuffer(); //lior's code
+  await setupNameHistoryBuffer(10); //lior's code
 
   addCustomSliderStyles();
 
