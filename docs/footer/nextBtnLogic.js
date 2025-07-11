@@ -11,6 +11,7 @@ import {
   SMILE,
   SMILE_ENDING,
   START,
+  TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
 import { clearDomElements } from "../scene-managment/domManager.js";
@@ -37,6 +38,8 @@ import {
   getSmileUserImage,
 } from "../scenes/smile/scene.js";
 import { stopFaceDetection, stopVideo } from "../scenes/smile/videoManager.js";
+import { postToiletPick } from "../scenes/toilet/logic.js";
+import { getUserToiletPaperSelection } from "../scenes/toilet/scene.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
 import { resetRegisteredSounds } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
@@ -71,6 +74,7 @@ const postSceneUserPicks = {
   [COUNTRY]: postCountryPick,
   [FEEDBACK]: postFeedbackSticker,
   [BIG_THING]: postBigThingPick,
+  [TOILET]: postToiletPick,
 };
 
 const hasNoAnswer = {
@@ -85,4 +89,5 @@ const hasNoAnswer = {
   [COUNTRY]: () => !didUserFinishCountyScene(),
   [FEEDBACK]: () => !getUserFeedbackSticker(),
   [BIG_THING]: () => getSelectedBigThingPickIndex() === undefined,
+  [TOILET]: () => !getUserToiletPaperSelection(),
 };

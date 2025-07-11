@@ -2,6 +2,8 @@
 // 1. Draw artwork at native size (1456×768).
 // 2. Scale and center it responsively onto the window.
 
+import { getToiletCounts } from "./logic.js";
+
 // Native design dimensions
 const baseW = 1456;
 const baseH = 768;
@@ -34,6 +36,12 @@ let emptyRollRotationSpeed = 0.15;
 let whiteRectHeight = 0;
 let animatingWhiteRect = false;
 
+//lior's code
+let voteCounts;
+let userToiletPaperSelection;
+const UNDER = "under",
+  OVER = "over";
+
 export function preloadToiletScene() {
   fontSemiBold = loadFont("./assets/Grotta-Trial-Semibold.otf");
   fontRegular = loadFont("./assets/Grotta-Trial-Regular.otf");
@@ -44,8 +52,10 @@ export function preloadToiletScene() {
   overImage = loadImage("./assets/over.png");
 }
 
-export function setupToiletScene() {
+export async function setupToiletScene() {
   createCanvas(windowWidth, windowHeight);
+
+  voteCounts = await getToiletCounts();
 }
 
 export function drawToiletScene() {
@@ -251,10 +261,7 @@ function drawHolderAndEmptyRoll() {
       textFont(fontSemiBold); // Use Grotta-Trial-Semibold
 
       // Determine which number to show based on the image
-      let numberText = "1";
-      if (replacedWithImage === overImage) {
-        numberText = "2";
-      }
+      let numberText = (voteCounts[userToiletPaperSelection] ?? 0) + 1;
 
       // Position text near bottom of rectangle
       let textY = cy + 13 + (imgH * scaleVal) / 2 - 10 + whiteRectHeight - 15;
@@ -409,6 +416,7 @@ export function mousePressedToiletScene() {
   if (dist(mouseX, mouseY, underX, underY) < 75 * sf) {
     isDragging = true;
     draggedImage = underImage;
+    userToiletPaperSelection = UNDER;
     dragOffsetX = mouseX - underX;
     dragOffsetY = mouseY - underY;
     return;
@@ -420,6 +428,7 @@ export function mousePressedToiletScene() {
   if (dist(mouseX, mouseY, overX, overY) < 75 * sf) {
     isDragging = true;
     draggedImage = overImage;
+    userToiletPaperSelection = OVER;
     dragOffsetX = mouseX - overX;
     dragOffsetY = mouseY - overY;
     return;
@@ -478,3 +487,6 @@ function star(x, y, r1, r2, n) {
   }
   endShape(CLOSE);
 }
+
+//lior's code
+export const getUserToiletPaperSelection = () => userToiletPaperSelection;
