@@ -58,7 +58,7 @@ export const isNextBtnDisabled = () => {
 
 const postSceneUserPicks = {
   [START]: () => undefined,
-  [NAME]: () => postName,
+  [NAME]: postName,
   [GENDERS]: postGenderPick,
   [POLITICS]: postPoliticsPick,
   [ICE_CREAM_SANDWICH]: postIceCreamSandwichPick,
