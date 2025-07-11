@@ -75,18 +75,18 @@ export function preloadIBeliveInScene() {
   dragCursorImage = loadImage("./assets/dragCursor.png");
 
   chairMovingSound = loadSound("./assets/chair-moving-38333.mp3");
-
-  // preload fly gif
-  flyGif = createImg("./assets/fly.gif", "fly gif");
-  recordDomElement(flyGif);
-  flyGif.style("position", "absolute");
-  flyGif.style("transform", "translate(-50%, -50%)");
-  flyGif.hide();
 }
 
 export async function setupIBeliveInScene() {
   createCanvas(windowWidth, windowHeight);
   planetX = 0;
+
+  //setup fly
+  flyGif = createImg("./assets/fly.gif", "fly gif");
+  recordDomElement(flyGif);
+  flyGif.style("position", "absolute");
+  flyGif.style("transform", "translate(-50%, -50%)");
+  flyGif.hide();
 
   let noteScale = 0.1;
   let noteWidth = width * noteScale;
@@ -104,7 +104,6 @@ export async function setupIBeliveInScene() {
   textSizeVal = width * 0.045;
   textSize(textSizeVal);
 
-  console.log(getSceneAnswer(SMILE)?.image);
   smileImage = getSceneAnswer(SMILE)?.image;
 
   magnets = await getMagnets(() => radians(random(-15, 15)));
