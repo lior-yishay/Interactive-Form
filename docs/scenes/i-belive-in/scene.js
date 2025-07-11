@@ -363,7 +363,7 @@ export function mouseDraggedIBeliveInScene() {
     noteY = constrain(
       mouseY - offsetY,
       fridgeDimentions.y,
-      fridgeDimentions.y + fridgeDimentions.height - noteH
+      fridgeDimentions.y + fridgeDimentions.h - noteH
     );
   } else if (draggingWedding) {
     smileMagnetDim.x = constrain(
