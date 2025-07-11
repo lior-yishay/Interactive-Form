@@ -12,6 +12,7 @@ import {
   SMILE_ENDING,
   SMILE_LOADER,
   START,
+  TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
 import {
@@ -121,6 +122,14 @@ import {
   touchStartedStartScene,
   windowResizedStartScene,
 } from "../scenes/start/scene.js";
+import {
+  drawToiletScene,
+  mousePressedToiletScene,
+  mouseReleasedToiletScene,
+  preloadToiletScene,
+  setupToiletScene,
+  windowResizedToiletScene,
+} from "../scenes/toilet/scene.js";
 import {
   drawUnrealScene,
   mousePressedUnrealScene,
@@ -238,5 +247,13 @@ export const p5Functions = {
     mousePressed: mousePressedBigThingScene,
     mouseMoved: mouseMovedBigThingScene,
     windowResized: windowResizedBigThingScene,
+  },
+  [TOILET]: {
+    preload: preloadToiletScene,
+    setup: setupToiletScene,
+    draw: drawToiletScene,
+    mousePressed: mousePressedToiletScene,
+    windowResized: windowResizedToiletScene,
+    mouseReleased: mouseReleasedToiletScene,
   },
 };

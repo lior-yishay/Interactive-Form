@@ -13,12 +13,13 @@ import {
   SMILE_ENDING,
   SMILE_LOADER,
   START,
+  TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = TOILET;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -39,6 +40,7 @@ const sceneList = [
   NAME,
   GENDERS,
   BIG_THING,
+  TOILET,
   SMILE_LOADER,
   SMILE,
   SMILE_ENDING,

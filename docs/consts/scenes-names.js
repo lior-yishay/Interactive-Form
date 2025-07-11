@@ -17,3 +17,4 @@ export const END = "end";
 export const USER_NUMBER = "user-number";
 export const FEEDBACK = "feedback";
 export const BIG_THING = "big-thing";
+export const TOILET = "toilet";

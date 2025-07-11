@@ -1,5 +1,6 @@
 import {
   AI,
+  BIG_THING,
   COUNTRY,
   GENDERS,
   I_BELIEVE_IN,
@@ -10,6 +11,7 @@ import {
   SMILE_ENDING,
   SMILE_LOADER,
   START,
+  TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
 import { getCurrentUser } from "../currentUser.js";
@@ -214,6 +216,8 @@ const footerTextColor = {
   [UNREAL]: () => BLACK,
   [I_BELIEVE_IN]: () => WHITE,
   [AI]: () => BLACK,
+  [BIG_THING]: () => WHITE,
+  [TOILET]: () => BLACK,
 };
 
 const getFooterTextColor = () =>
