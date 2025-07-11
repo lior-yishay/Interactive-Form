@@ -58,7 +58,7 @@ let whiteNote = {
   originalX: 0,
   originalY: 0,
   originalRotation: 15,
-  baseWidth: 320,
+  baseWidth: 380,
   baseHeight: 320,
   isMoving: false,
   isAtCenter: false,
@@ -70,6 +70,8 @@ const BG = "#131217",
   FG = "#ffffff";
 const CLICK_COLOR = "#F24D1F"; // אדום-כתום עבור "1 CLICK"
 const IMPACT_COLOR = "#C9B8FF"; // סגול בהיר עבור "0 IMPACT"
+
+const noteHeadline = "About the quiz";
 
 /* — preload — */
 export function preloadStartScene() {
@@ -195,7 +197,7 @@ export function drawStartScene() {
 
   /* TOP COUNTER */
   let cY = height * (0.15 + YSHIFT);
-  let fullStr = `#${userNumber} people already voted`;
+  let fullStr = `You are participant #${userNumber}`;
   let fSize = counterFs * 1.03;
   let kern = fSize * 0.1;
 
@@ -318,7 +320,7 @@ export function drawStartScene() {
   textAlign(CENTER, CENTER);
   textFont("Helvetica");
   textSize(wH * 0.35);
-  text("Cast Your Vote", bx - wW * 0.08, by);
+  text("Start Quiz", bx - wW * 0.08, by);
   textFont("Arial");
   text("→", bx + wW * 0.28, by);
 
@@ -480,16 +482,12 @@ function drawWhiteNote() {
 
     // All text lines
     const lines = [
-      "Fair question.",
-      "But honestly - does it really matter?",
+      "This project explores people’s opinions.",
+      "You’ll make choices —",
+      "and see what others picked too.",
       "", // double space
-      "This project was made to explore",
-      "people's opinions. That's all.",
-      "You'll get choices to make and a",
-      "glimpse into what others chose too.",
-      "", // double space
-      "Join in, and who knows, you might",
-      "discover something about yourself.",
+      "Join in.",
+      "You might discover something about yourself.",
       "Or not.",
       "", // double space
       "No promises.",
@@ -508,7 +506,7 @@ function drawWhiteNote() {
     textFont(grotta);
     textStyle(BOLDITALIC);
     textSize(fsHeadline);
-    text("Who we are?", 0, y);
+    text(noteHeadline, 0, y);
     y += headlineSpace;
 
     // body text with typewriter effect or full text
@@ -575,7 +573,7 @@ function drawWhiteNote() {
     textFont(grotta);
     textStyle(BOLDITALIC);
     textSize(fsHeadline * 0.9); // bigger title for small note
-    text("Who we are?", 0, -h / 2 + innerPad + h * 0.08 + hoverOffset); // apply hover offset to text too
+    text(noteHeadline, 0, -h / 2 + innerPad + h * 0.08 + hoverOffset); // apply hover offset to text too
   }
 
   // Add small X in top right corner only when centered
