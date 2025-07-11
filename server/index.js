@@ -6,6 +6,10 @@ import {
   incrementAiPick,
 } from "./business/scenes-logic/ai/api.js";
 import {
+  getBigThingCounts,
+  incrementBigThingPick,
+} from "./business/scenes-logic/big thing/api.js";
+import {
   getCountryCounts,
   incrementCountryPicks,
 } from "./business/scenes-logic/country/api.js";
@@ -36,6 +40,10 @@ import {
   insertSmile,
 } from "./business/scenes-logic/smile/api.js";
 import {
+  getToiletCounts,
+  incrementToiletPick,
+} from "./business/scenes-logic/toilet/api.js";
+import {
   getUnrealCounts,
   incrementUnrealPicks,
 } from "./business/scenes-logic/unreal/api.js";
@@ -56,16 +64,13 @@ import {
   SMILE,
   SMILE_LEADERBOARD,
   SMILE_TIME,
+  TOILET,
   UNREAL,
   USER_NUMBER,
 } from "./routes/routes.js";
 import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
-import {
-  getBigThingCounts,
-  incrementBigThingPick,
-} from "./business/scenes-logic/big thing/api.js";
 
 dotenv.config();
 
@@ -206,6 +211,15 @@ app.route(BIG_THING).all(
     methodHandlers: {
       post: ({ body }) => incrementBigThingPick(body.pick),
       get: getBigThingCounts,
+    },
+  })
+);
+
+app.route(TOILET).all(
+  createRoute({
+    methodHandlers: {
+      post: ({ body }) => incrementToiletPick(body.pick),
+      get: getToiletCounts,
     },
   })
 );

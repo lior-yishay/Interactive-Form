@@ -17,3 +17,4 @@ export const USER_NUMBER = createUrl(PREFIX, "user-number");
 export const COUNTRY = createUrl(PREFIX, "country");
 export const FEEDBACK = createUrl(PREFIX, "feedback");
 export const BIG_THING = createUrl(PREFIX, "big-thing");
+export const TOILET = createUrl(PREFIX, "toilet");
