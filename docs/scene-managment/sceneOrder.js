@@ -35,6 +35,10 @@ const changeToScene = (sceneName) => {
   p5Functions[sceneName].setup();
 };
 
+export const restart = () => {
+  changeToScene(sceneList[0]);
+};
+
 const sceneList = [
   START,
   NAME,

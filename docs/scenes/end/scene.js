@@ -1,6 +1,8 @@
 import { SMILE } from "../../consts/scenes-names.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
+import { restart } from "../../scene-managment/sceneOrder.js";
 import { getSceneAnswer } from "../i-belive-in/logic.js";
+import { getOutsmiledCounts } from "./logic.js";
 
 // Global variables for glitch effect
 let isGlitching = false;
@@ -25,6 +27,7 @@ let aiMessages =
 //lior's code
 const BG = "#131217";
 let spacerDiv;
+let outsmiled;
 
 export function preloadEndScene() {
   font = loadFont("./assets/Grotta-Trial-Medium.ttf");
@@ -35,12 +38,15 @@ export function preloadEndScene() {
   //   personalImg = loadImage("personal.png");
 }
 
-export function setupEndScene() {
+export async function setupEndScene() {
   createCanvas(windowWidth, windowHeight);
   setupSpacerDiv();
   noStroke();
 
   personalImg = getSceneAnswer(SMILE)?.image;
+  outsmiled = await getOutsmiledCounts(
+    getSceneAnswer(SMILE)?.duration.max ?? 1000
+  );
 
   if (windowWidth >= 1600) {
     scaleFactor = 1.4;
@@ -151,7 +157,7 @@ export function setupEndScene() {
     new Note(
       {
         title: "you smiled more than",
-        subtitle: "150 people\nfor world peace",
+        subtitle: `${outsmiled} people\nfor world peace`,
         hasPersonalImage: true,
       },
       "",
@@ -278,19 +284,6 @@ function showCmdZButton() {
   // // Draw "Restart"
   // textAlign(LEFT, CENTER);
   // text("Restart", currentX, cmdTextY);
-
-  // Add underline on hover
-  if (isHovering) {
-    stroke(255, 255, 255); // White underline
-    strokeWeight(1);
-    line(
-      width / 2 - totalWidth / 2,
-      cmdTextY + 18,
-      width / 2 + totalWidth / 2,
-      cmdTextY + 18
-    ); // Use width instead of windowWidth
-    noStroke();
-  }
 }
 
 export function mousePressedEndScene() {
@@ -306,8 +299,7 @@ export function mousePressedEndScene() {
       mouseY >= window.restartButtonY - 15 &&
       mouseY <= window.restartButtonY + 15
     ) {
-      startGlitchEffect();
-      //   // Just restart the animation without glitch effect
+      restart();
       //   setTimeout(() => {
       //     // Reset all notes to initial state
       //     for (let note of notes) {
@@ -786,7 +778,7 @@ class Note {
           }
 
           // Add personal image if specified
-          if (this.content.hasPersonalImage  && personalImg) {
+          if (this.content.hasPersonalImage && personalImg) {
             let imgY = yCursor + 20 * scaleFactor;
             let imgWidth = this.width - leftPadding * 2; // Width matches text area
 
@@ -814,7 +806,7 @@ class Note {
             textStyle(BOLD);
             textAlign(CENTER, CENTER);
 
-            let restartY = yCursor + 30 * scaleFactor; // Even more down from 20
+            let restartY = yCursor; // + 20  * scaleFactor; // Even more down from 20
             let restartX = 0; // Center of the note
 
             // Check if mouse is hovering (convert to global coordinates)
@@ -852,9 +844,9 @@ class Note {
               strokeWeight(2);
               line(
                 restartX - totalWidth / 2,
-                restartY + 15,
+                restartY + 20,
                 restartX + totalWidth / 2,
-                restartY + 15
+                restartY + 20
               );
               noStroke();
             }
