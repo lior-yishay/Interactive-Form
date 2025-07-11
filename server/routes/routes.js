@@ -18,3 +18,4 @@ export const COUNTRY = createUrl(PREFIX, "country");
 export const FEEDBACK = createUrl(PREFIX, "feedback");
 export const BIG_THING = createUrl(PREFIX, "big-thing");
 export const TOILET = createUrl(PREFIX, "toilet");
+export const SMILE_OUTSMILED = createUrl(SMILE, "outsmiled");

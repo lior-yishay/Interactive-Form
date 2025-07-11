@@ -44,6 +44,15 @@ export const getTotalSmileTime = async () => {
   return result[0]?.totalDuration || 0;
 };
 
+export const getRecordCountWithLessSmileDuration = async (duration) => {
+  const db = await connectToScenesDB();
+  const collection = db.collection(SMILE_COLLECTION);
+
+  return await collection.countDocuments({
+    "duration.max": { $lt: duration },
+  });
+};
+
 export const resetSmileScene = async () => {
   const db = await connectToScenesDB();
   const collection = db.collection(SMILE_COLLECTION);
