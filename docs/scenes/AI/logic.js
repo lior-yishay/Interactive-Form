@@ -10,5 +10,5 @@ export const getAiCounts = async () => {
 export const postAiPick = async () => {
   const ai = getSelectedAiPick();
   await post(AI, { ai });
-  setSceneAnswer(AI, { ai });
+  setSceneAnswer(AI, ai);
 };

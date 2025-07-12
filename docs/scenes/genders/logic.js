@@ -10,5 +10,5 @@ export const getGenderCounts = async () => {
 export const postGenderPick = async () => {
   const gender = getGendersUserPick();
   await post(GENDERS, { gender });
-  setSceneAnswer(GENDERS, { gender });
+  setSceneAnswer(GENDERS, gender);
 };

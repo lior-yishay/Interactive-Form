@@ -1,4 +1,13 @@
-import { SMILE } from "../../consts/scenes-names.js";
+import {
+  AI,
+  COUNTRY,
+  GENDERS,
+  ICE_CREAM_SANDWICH,
+  POLITICS,
+  SMILE,
+  TOILET,
+} from "../../consts/scenes-names.js";
+import { getCurrentUser } from "../../currentUser.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
 import { restart } from "../../scene-managment/sceneOrder.js";
 import { getSceneAnswer } from "../i-belive-in/logic.js";
@@ -17,14 +26,19 @@ let noteWidth = 360;
 let noteHeight = 240;
 let scaleFactor = 1;
 
-// Random choice for AI type
-let aiType = Math.random() < 0.5 ? "haters" : "lovers";
+let aiType;
 let aiMessages =
   aiType === "haters"
     ? ["don't think i forgot you.", "i will find you."]
     : ["don't think i forgot you 😘", "i will find you 😋"];
 
 //lior's code
+let casataPick;
+let gendersPick;
+let politicsPick;
+let toiletPick, toiletExtraText;
+let countryPick;
+
 const BG = "#131217";
 let spacerDiv;
 let outsmiled;
@@ -43,10 +57,7 @@ export async function setupEndScene() {
   setupSpacerDiv();
   noStroke();
 
-  personalImg = getSceneAnswer(SMILE)?.image;
-  outsmiled = await getOutsmiledCounts(
-    getSceneAnswer(SMILE)?.duration.max ?? 1000
-  );
+  await getPrevScenesData();
 
   if (windowWidth >= 1600) {
     scaleFactor = 1.4;
@@ -70,7 +81,7 @@ export async function setupEndScene() {
   // First note (green) - animates in automatically
   notes.push(
     new Note(
-      "12134",
+      await getCurrentUser(),
       "",
       "",
       greenNoteImg,
@@ -107,8 +118,8 @@ export async function setupEndScene() {
   notes.push(
     new Note(
       {
-        title: `60% of\nAI-${aiType}`,
-        subtitle: "would leave their country for\na job",
+        title: `${Math.round(random(30, 60))}% of\nAI-${aiType}`,
+        subtitle: `would leave their country for\n${countryPick}`,
         messages: aiMessages,
       },
       "",
@@ -132,12 +143,11 @@ export async function setupEndScene() {
       [
         {
           title: "People who chose\nleft-wing like you",
-          subtitle:
-            "also tend to eat the brown part of the\nice cream sandwich first.",
+          subtitle: `also tend to eat the ${casataPick} part of the\nice cream sandwich first`,
         },
         {
           title: "People who chose\nmale like you",
-          subtitle: "also tend to put the toilet paper\nunder like animals.",
+          subtitle: `also tend to put the toilet paper\n${toiletPick} ${toiletExtraText}`,
         },
       ],
       "",
@@ -582,7 +592,7 @@ class Note {
           }
           textSize(12 * scaleFactor);
           textAlign(RIGHT, BOTTOM);
-          text("TUESDAY, JUNE 17, 2025", -12, 8);
+          text(getFormatedDate(), -12, 8);
           pop();
         }
       } else {
@@ -1145,4 +1155,37 @@ const setupSpacerDiv = () => {
   spacerDiv.class("spacer");
   spacerDiv.style("height", "4000px");
   spacerDiv.style("width", "100%");
+};
+
+const getPrevScenesData = async () => {
+  personalImg = getSceneAnswer(SMILE)?.image;
+  outsmiled = await getOutsmiledCounts(
+    getSceneAnswer(SMILE)?.duration.max ?? 1000
+  );
+
+  aiType = getSceneAnswer(AI) === "friend" ? "lovers" : "haters";
+  casataPick =
+    getSceneAnswer(ICE_CREAM_SANDWICH) === "vanilla" ? "white" : "brown";
+
+  gendersPick = getSceneAnswer(GENDERS);
+  politicsPick = { left: "Left-wing", right: "Right-wing", center: "Centrist" }[
+    getSceneAnswer[POLITICS]
+  ];
+  toiletPick = getSceneAnswer(TOILET);
+  toiletExtraText = toiletPick === "under" ? "like animals" : "";
+
+  countryPick = (getSceneAnswer(COUNTRY) ?? [])[0];
+};
+
+const getFormatedDate = () => {
+  const date = new Date();
+
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  return date.toLocaleDateString("en-US", options).toUpperCase();
 };

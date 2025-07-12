@@ -1,5 +1,6 @@
 import { get, post } from "../../api/axios.js";
 import { ICE_CREAM_SANDWICH } from "../../consts/scenes-names.js";
+import { setSceneAnswer } from "../i-belive-in/logic.js";
 import { getIceCreamSandwichUserPick } from "./scene.js";
 
 export const getIceCreamSandwichCounts = async () => {
@@ -9,4 +10,5 @@ export const getIceCreamSandwichCounts = async () => {
 export const postIceCreamSandwichPick = async () => {
   const flavor = getIceCreamSandwichUserPick();
   await post(ICE_CREAM_SANDWICH, { flavor });
+  setSceneAnswer(ICE_CREAM_SANDWICH, flavor);
 };
