@@ -66,6 +66,7 @@ import {
   SMILE_LEADERBOARD,
   SMILE_OUTSMILED,
   SMILE_TIME,
+  THE_ANSWER,
   TOILET,
   UNREAL,
   USER_NUMBER,
@@ -73,6 +74,11 @@ import {
 import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
+import {
+  getTheAnswerCounts,
+  incrementTheAnswerPick,
+  resetTheAnswerScene,
+} from "./business/scenes-logic/the answer/api.js";
 
 dotenv.config();
 
@@ -235,6 +241,15 @@ app.route(SMILE_OUTSMILED).all(
   })
 );
 
+app.route(THE_ANSWER).all(
+  createRoute({
+    methodHandlers: {
+      post: ({ body }) => incrementTheAnswerPick(body.pick),
+      get: getTheAnswerCounts,
+    },
+  })
+);
+
 // Start server
 app.listen(port, () => {
   console.log(`✅ Server running at http://localhost:${port}`);
@@ -243,6 +258,7 @@ app.listen(port, () => {
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
+  await resetTheAnswerScene();
   await closeConnection();
   process.exit(0);
 });

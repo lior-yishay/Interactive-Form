@@ -19,3 +19,4 @@ export const FEEDBACK = createUrl(PREFIX, "feedback");
 export const BIG_THING = createUrl(PREFIX, "big-thing");
 export const TOILET = createUrl(PREFIX, "toilet");
 export const SMILE_OUTSMILED = createUrl(SMILE, "outsmiled");
+export const THE_ANSWER = createUrl(PREFIX, "the-answer");

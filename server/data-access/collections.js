@@ -11,3 +11,4 @@ export const COUNTRY_COLLECTION = "country";
 export const FEEDBACK_COLLECTION = "feedback";
 export const BIG_THING_COLLECTION = "big-thing";
 export const TOILET_COLLECTION = "toilet";
+export const THE_ANSWER_COLLECTION = "the-answer";
