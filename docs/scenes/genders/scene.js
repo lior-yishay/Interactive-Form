@@ -40,16 +40,26 @@ function getCleanLabel(label) {
 
 async function getNormalizedGenderCounts(maxCount = 20) {
   const originalCounts = await getGenderCounts();
-  const currentMax = Math.max(...originalCounts.map((g) => g.count));
-  if (currentMax < maxCount) return originalCounts;
-  return originalCounts.map((gender) => ({
+  const alteredCounts = originalCounts.map((gender) => ({
+    ...gender,
+    count: gender.count + additionalVotes(gender),
+  }));
+
+  const currentMax = Math.max(...alteredCounts.map((g) => g.count));
+  if (currentMax < maxCount) return alteredCounts;
+  return alteredCounts.map((gender) => ({
     ...gender,
     count: Math.round((gender.count / currentMax) * maxCount),
   }));
 }
 
+const additionalVotes = (gender) => {
+  return ["MALE", "FEMALE"].includes(getCleanLabel(gender.name)) ? 100 : 0;
+};
+
 export async function setupGendersScene() {
   genderCounts = await getNormalizedGenderCounts(maxCount);
+  console.log(genderCounts);
   createCanvas(windowWidth, windowHeight);
   textFont(grottaFont);
   textSize(14);
