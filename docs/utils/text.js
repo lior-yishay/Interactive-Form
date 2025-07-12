@@ -51,3 +51,22 @@ export const toSentenceCase = (str) => {
   str = str.trim();
   return str[0].toUpperCase() + str.slice(1).toLowerCase();
 };
+
+export const breakLines = (str, maxLineChars) => {
+  const words = str.split(" ");
+  let lines = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    if ((currentLine + word).length <= maxLineChars) {
+      currentLine += (currentLine ? " " : "") + word;
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+
+  if (currentLine) lines.push(currentLine);
+
+  return lines.join("\n");
+};
