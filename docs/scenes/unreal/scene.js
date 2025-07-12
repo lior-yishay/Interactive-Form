@@ -159,6 +159,10 @@ export function drawUnrealScene() {
   let rectSize = 400;
   for (let x = 0; x < width; x += rectSize + 20) {
     for (let y = 0; y < height; y += rectSize + 20) {
+      if (!postedUserPicksFlag && selected.some((picked) => picked)) {
+        strokeWeight(3);
+        stroke(255);
+      } else noStroke();
       rect(x, y, rectSize, rectSize, 2);
     }
   }
