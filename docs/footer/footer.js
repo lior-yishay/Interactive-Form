@@ -19,7 +19,7 @@ import { getCurrentUser } from "../currentUser.js";
 import { getCurrentScene } from "../scene-managment/sceneOrder.js";
 import { isSoundOn } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
-import { drawTextWithColonFont } from "../utils/text.js";
+import { drawTextWithSpecialChar } from "../utils/text.js";
 import { isNextBtnDisabled } from "./nextBtnLogic.js";
 
 const padding = 5;
@@ -189,14 +189,15 @@ export const mouseOnSoundBtn = () => {
 };
 
 const drawPeopleCountAndName = () => {
-  textSize(22);
   textAlign(LEFT, CENTER);
   textFont(grottaFont);
   fill(getFooterTextColor());
-  drawTextWithColonFont(
+  drawTextWithSpecialChar(
     `\t${userNumber} People : 1 Click : 0 Impact`,
+    ":",
     grottaFont ?? "Helvetica",
     "Helvetica",
+    22,
     padding,
     footerMiddleH
   );

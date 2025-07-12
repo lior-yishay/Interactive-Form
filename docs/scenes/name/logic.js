@@ -16,7 +16,7 @@ export const isStrokesEmpty = () => strokes.length === 0;
 
 export const postName = async () => {
   await post(NAME, { strokes });
-  setSceneAnswer(NAME, { strokes });
+  setSceneAnswer(NAME, strokes);
 };
 
 export const setupNameHistoryBuffer = async (top = 3) => {

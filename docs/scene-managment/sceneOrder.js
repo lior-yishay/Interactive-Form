@@ -16,10 +16,11 @@ import {
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
+import { setupFooter } from "../footer/footer.js";
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = END;
+let currentScene = START;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -37,6 +38,7 @@ const changeToScene = (sceneName) => {
 
 export const restart = () => {
   changeToScene(sceneList[0]);
+  setupFooter();
 };
 
 const sceneList = [
@@ -48,7 +50,6 @@ const sceneList = [
   SMILE_LOADER,
   SMILE,
   SMILE_ENDING,
-  END,
   POLITICS,
   ICE_CREAM_SANDWICH,
   UNREAL,

@@ -196,6 +196,7 @@ export function drawStartScene() {
     margin = s * 0.05;
 
   /* TOP COUNTER */
+  textAlign(CENTER, CENTER);
   let cY = height * (0.15 + YSHIFT);
   let fullStr = `You are participant #${userNumber}`;
   let fSize = counterFs * 1.03;

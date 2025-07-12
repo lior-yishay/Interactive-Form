@@ -10,7 +10,16 @@ import {
 import { getCurrentUser } from "../../currentUser.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
 import { restart } from "../../scene-managment/sceneOrder.js";
-import { getSceneAnswer } from "../i-belive-in/logic.js";
+import {
+  drawTextWithSpecialChar,
+  getTextWithSpecialCharWidth,
+  toSentenceCase,
+} from "../../utils/text.js";
+import {
+  answers,
+  getSceneAnswer,
+  setSceneAnswer,
+} from "../i-belive-in/logic.js";
 import { getOutsmiledCounts } from "./logic.js";
 
 // Global variables for glitch effect
@@ -26,15 +35,21 @@ let noteWidth = 360;
 let noteHeight = 240;
 let scaleFactor = 1;
 
-let aiType;
-let aiMessages =
-  aiType === "haters"
-    ? ["don't think i forgot you.", "i will find you."]
-    : ["don't think i forgot you 😘", "i will find you 😋"];
-
 //lior's code
+let aiType;
+let aiMessages;
+const aiMessagesMap = {
+  friend: ["don't think i forgot you 😘", "i will find you 😋"],
+  enemy: ["don't think i forgot you.", "i will find you."],
+};
+
 let casataPick;
 let gendersPick;
+const politicsMap = {
+  left: "Left-wing",
+  right: "Right-wing",
+  center: "Centrist",
+};
 let politicsPick;
 let toiletPick, toiletExtraText;
 let countryPick;
@@ -142,11 +157,11 @@ export async function setupEndScene() {
     new Note(
       [
         {
-          title: "People who chose\nleft-wing like you",
+          title: `People who chose\n${politicsPick} like you`,
           subtitle: `also tend to eat the ${casataPick} part of the\nice cream sandwich first`,
         },
         {
-          title: "People who chose\nmale like you",
+          title: `People who chose\n${gendersPick} like you`,
           subtitle: `also tend to put the toilet paper\n${toiletPick} ${toiletExtraText}`,
         },
       ],
@@ -1001,46 +1016,29 @@ class Note {
       // Check for special words that should use Grotta font
       if (
         i < textStr.length - 8 &&
-        textStr.substring(i, i + 9) === "left-wing"
+        textStr.substring(i, i + politicsPick.length) === politicsPick
       ) {
-        // Split "left-wing" into parts to handle the hyphen separately
-        if (font) {
-          textFont(font);
-        } else {
-          textFont("Arial");
-        }
-        text("left", currentX, y);
-        currentX += textWidth("left");
+        currentX += drawTextWithSpecialChar(
+          politicsPick,
+          "-",
+          font,
+          "Helvetica",
+          size,
+          currentX,
+          y
+        );
 
-        // Draw hyphen with Helvetica
-        textFont("Helvetica");
-        text("-", currentX, y);
-        currentX += textWidth("-");
-
-        // Draw "wing" with Grotta
-        if (font) {
-          textFont(font);
-        } else {
-          textFont("Arial");
-        }
-        text("wing", currentX, y);
-        currentX += textWidth("wing");
-
-        i += 9; // Skip the word "left-wing"
+        i += politicsPick.length; // Skip the word
         continue;
       } else if (
         i < textStr.length - 3 &&
-        textStr.substring(i, i + 4) === "male"
+        textStr.substring(i, i + gendersPick.length) === gendersPick
       ) {
-        // Use Grotta font for "male"
-        if (font) {
-          textFont(font);
-        } else {
-          textFont("Arial");
-        }
-        text("male", currentX, y);
-        currentX += textWidth("male");
-        i += 4; // Skip the word "male"
+        // Use Grotta font for gendersPick
+        textFont(font);
+        text(gendersPick, currentX, y);
+        currentX += textWidth(gendersPick);
+        i += gendersPick.length; // Skip the word "male"
         continue;
       }
 
@@ -1083,42 +1081,26 @@ class Note {
       // Check for special words that should use Grotta font
       if (
         i < textStr.length - 8 &&
-        textStr.substring(i, i + 9) === "left-wing"
+        textStr.substring(i, i + politicsPick.length) === politicsPick
       ) {
-        // Calculate width for "left-wing" with hyphen in Helvetica
-        if (font) {
-          textFont(font);
-        } else {
-          textFont("Arial");
-        }
-        totalWidth += textWidth("left");
+        totalWidth += getTextWithSpecialCharWidth(
+          politicsPick,
+          "-",
+          font,
+          "Helvetica",
+          size
+        );
 
-        // Hyphen width with Helvetica
-        textFont("Helvetica");
-        totalWidth += textWidth("-");
-
-        // "wing" width with Grotta
-        if (font) {
-          textFont(font);
-        } else {
-          textFont("Arial");
-        }
-        totalWidth += textWidth("wing");
-
-        i += 9; // Skip the word "left-wing"
+        i += politicsPick.length; // Skip the word "left-wing"
         continue;
       } else if (
         i < textStr.length - 3 &&
-        textStr.substring(i, i + 4) === "male"
+        textStr.substring(i, i + gendersPick.length) === gendersPick
       ) {
-        // Use Grotta font for "male"
-        if (font) {
-          textFont(font);
-        } else {
-          textFont("Arial");
-        }
-        totalWidth += textWidth("male");
-        i += 4; // Skip the word "male"
+        // Use Grotta font for genders pick
+        textFont(font);
+        totalWidth += textWidth(gendersPick);
+        i += gendersPick.length; // Skip the word
         continue;
       }
 
@@ -1164,17 +1146,19 @@ const getPrevScenesData = async () => {
   );
 
   aiType = getSceneAnswer(AI) === "friend" ? "lovers" : "haters";
+  aiMessages = aiMessagesMap[getSceneAnswer(AI)];
   casataPick =
     getSceneAnswer(ICE_CREAM_SANDWICH) === "vanilla" ? "white" : "brown";
 
-  gendersPick = getSceneAnswer(GENDERS);
-  politicsPick = { left: "Left-wing", right: "Right-wing", center: "Centrist" }[
-    getSceneAnswer[POLITICS]
-  ];
-  toiletPick = getSceneAnswer(TOILET);
+  gendersPick = toSentenceCase(getSceneAnswer(GENDERS));
+
+  politicsPick = politicsMap[getSceneAnswer(POLITICS)] ?? "-";
+  toiletPick = getSceneAnswer(TOILET) ?? "-";
   toiletExtraText = toiletPick === "under" ? "like animals" : "";
 
-  countryPick = (getSceneAnswer(COUNTRY) ?? [])[0];
+  countryPick = (getSceneAnswer(COUNTRY) ?? [])[0] ?? "   ";
+
+  console.log(answers);
 };
 
 const getFormatedDate = () => {

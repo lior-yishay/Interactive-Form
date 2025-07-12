@@ -10,5 +10,5 @@ export const getToiletCounts = async () => {
 export const postToiletPick = async () => {
   const pick = getUserToiletPaperSelection();
   await post(TOILET, { pick });
-  setSceneAnswer(TOILET, { pick });
+  setSceneAnswer(TOILET, pick);
 };
