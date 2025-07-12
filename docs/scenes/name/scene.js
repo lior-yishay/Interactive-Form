@@ -1,3 +1,4 @@
+import { getFooterTop } from "../../footer/footer.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
 import { playSound } from "../../soundManager.js";
 import {
@@ -273,8 +274,9 @@ function drawBrush() {
     const y1 = lerp(pmouseY, mouseY, i / steps);
     const x2 = lerp(pmouseX, mouseX, (i + 1) / steps);
     const y2 = lerp(pmouseY, mouseY, (i + 1) / steps);
-    canvasBuffer.line(x1, y1, x2, y2);
 
+    if (y1 > getFooterTop() || y2 > getFooterTop()) continue;
+    canvasBuffer.line(x1, y1, x2, y2);
     //lior's code
     const from = { x: x1, y: y1 };
     const to = { x: x2, y: y2 };
