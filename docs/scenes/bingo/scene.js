@@ -2,37 +2,47 @@
    BEST • TV SHOWS  –  interactive poll poster (p5.js 1.9.x)
 ------------------------------------------------------------------- */
 
+import { breakLines } from "../../utils/text.js";
+import { getTvShowsCounts } from "./logic.js";
+
 const BG = "#131217",
   BLUE = "#2031FF",
   YEL = "#FFC500",
   OFFWHITE = "#FFFDFA";
 
-/* --- סדרות --- */
-const shows4x4 = [
-  ["BREAKING\nBAD", "GAME OF\nTHRONES", "FRIENDS", "SEINFELD"],
-  ["HOW I MET\nYOUR MOTHER", "SEX AND THE CITY", "THE\nSOPRANOS", "MAD MEN"],
-  ["LOST", "BETTER CALL\nSAUL", "THE WHITE LOTUS", "STRANGER\nTHINGS"],
-  ["BLACK\nMIRROR", "THE OFFICE", "SUCCESSION", "my show\nis not here."],
-];
-
-/* --- מוני הצבעות --- */
-let votes4x4 = Array.from({ length: 4 }, () => Array(4).fill(0));
-
 /* --- פונט Snell --- */
 let snell;
+
+//lior's code
+let showCounts;
+let shows;
+let showsDrawText;
+let votes;
+let votedMatrix;
+let userPicks = [];
+
 export function preloadBingoScene() {
   snell = loadFont("./assets/snellroundhand_black.otf");
 }
 
-export function setupBingoScene() {
+export async function setupBingoScene() {
   createCanvas(windowWidth, windowHeight);
   angleMode(DEGREES);
   rectMode(CORNER);
   textAlign(CENTER, CENTER);
+
+  showCounts = await getTvShowsCounts();
+  shows = chunkBy4(showCounts.map(({ name }) => name));
+  showsDrawText = chunkBy4(
+    showCounts.map(({ name }) => breakLines(name.toUpperCase(), 10))
+  );
+  votes = chunkBy4(showCounts.map(({ count }) => count));
+  votedMatrix = chunkBy4(Array(showCounts.length).fill(false));
 }
 
 export function drawBingoScene() {
   background(BG);
+  if (!shows) return;
   drawBursts();
 
   /* === חישובי פוסטר וגריד === */
@@ -45,9 +55,6 @@ export function drawBingoScene() {
   const tvSz = constrain(pW * 0.16, 22, 90);
 
   const rows = 4;
-  const shows = shows4x4;
-  const votes = votes4x4;
-
   const gridSide = pW - m * 2;
   const cell = gridSide / rows;
   const topPad = m * 4.2;
@@ -97,7 +104,7 @@ export function drawBingoScene() {
   /* ---------- גריד אינטראקטיבי ---------- */
   const fsFactor = 0.34; // בסיס לגודל פונט בתאים
   let fs = cell * fsFactor;
-  while (fs > 8 && !allFit(shows, fs, cell)) fs--;
+  while (fs > 8 && !allFit(showsDrawText, fs, cell)) fs--;
   const leading = fs * 1.15;
 
   textFont("Helvetica");
@@ -107,14 +114,14 @@ export function drawBingoScene() {
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < rows; c++) {
       /* רקע התא – צהוב אם יש הצבעה */
-      fill(votes[r][c] > 0 ? YEL : OFFWHITE);
+      fill(votedMatrix[r][c] ? YEL : OFFWHITE);
       noStroke();
       rect(gX + c * cell, gY + r * cell, cell, cell);
 
       /* שם הסדרה */
       const cx = gX + c * cell + cell / 2;
       const cy = gY + r * cell + cell / 2;
-      const lines = shows[r][c].split("\n");
+      const lines = showsDrawText[r][c].split("\n");
       const blockH = leading * (lines.length - 1);
 
       fill(BLUE);
@@ -124,11 +131,11 @@ export function drawBingoScene() {
       }
 
       /* מונה הצבעות – גדול, ללא סוגריים, נמוך יותר */
-      if (votes[r][c] > 0) {
+      if (votedMatrix[r][c]) {
         const voteFS = fs * 1.25; // גדול יותר
         const voteYOff = blockH / 2 + fs * 2.0; // מרווח גדול יותר
         textSize(voteFS);
-        text(votes[r][c], cx, cy + voteYOff);
+        text(votes[r][c] + 1, cx, cy + voteYOff);
       }
     }
   }
@@ -156,7 +163,6 @@ export function drawBingoScene() {
 /* --- קליק: צביעה + ספירה --- */
 let gridGeom;
 export function mousePressedBingoScene() {
-  console.log(gridGeom);
   if (!gridGeom) return;
   const { gX, gY, cell, rows } = gridGeom;
 
@@ -168,13 +174,11 @@ export function mousePressedBingoScene() {
   )
     return;
 
-  console.log("noder");
   const c = floor((mouseX - gX) / cell);
   const r = floor((mouseY - gY) / cell);
-  if (r < 0 || c < 0 || r >= rows || c >= rows) return;
-  /* עדכון מונה */ else votes4x4[r][c]++;
-
-  //   redraw();
+  if (r < 0 || c < 0 || r >= rows || c >= rows || votedMatrix[r][c]) return;
+  votedMatrix[r][c] = true;
+  userPicks.push(shows[r][c]);
 }
 
 /* ---------- פונקציות עזר ---------- */
@@ -212,3 +216,13 @@ export function windowResizedBingoScene() {
   resizeCanvas(windowWidth, windowHeight);
   redraw();
 }
+
+//lior's code:
+const chunkBy4 = (arr) =>
+  arr.reduce((acc, val, i) => {
+    if (i % 4 === 0) acc.push([]);
+    acc[acc.length - 1].push(val);
+    return acc;
+  }, []);
+
+export const getBingoUserPicks = () => userPicks;
