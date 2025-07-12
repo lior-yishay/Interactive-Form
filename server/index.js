@@ -258,7 +258,6 @@ app.listen(port, () => {
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
-  await resetTheAnswerScene();
   await closeConnection();
   process.exit(0);
 });
