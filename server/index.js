@@ -10,6 +10,10 @@ import {
   incrementBigThingPick,
 } from "./business/scenes-logic/big thing/api.js";
 import {
+  getBingoCounts,
+  incrementBingoPicks,
+} from "./business/scenes-logic/bingo/api.js";
+import {
   getCountryCounts,
   incrementCountryPicks,
 } from "./business/scenes-logic/country/api.js";
@@ -58,6 +62,7 @@ import { logger } from "./logger/logger.js";
 import {
   AI,
   BIG_THING,
+  BINGO,
   COUNTRY,
   EVENTS,
   FEEDBACK,
@@ -245,6 +250,15 @@ app.route(THE_ANSWER).all(
     methodHandlers: {
       post: ({ body }) => incrementTheAnswerPick(body.pick),
       get: getTheAnswerCounts,
+    },
+  })
+);
+
+app.route(BINGO).all(
+  createRoute({
+    methodHandlers: {
+      post: ({ body }) => incrementBingoPicks(body.picks),
+      get: getBingoCounts,
     },
   })
 );

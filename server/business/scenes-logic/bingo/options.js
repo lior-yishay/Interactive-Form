@@ -1,0 +1,18 @@
+export const TV_SHOWS = [
+  "breaking bad",
+  "game of thrones",
+  "friends",
+  "seinfeld",
+  "how i met your mother",
+  "sex and the city",
+  "the sopranos",
+  "mad men",
+  "lost",
+  "better call saul",
+  "the while lotus",
+  "stanger things",
+  "black mirror",
+  "the office",
+  "succession",
+  "my show is not here",
+];
