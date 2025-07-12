@@ -19,3 +19,4 @@ export const FEEDBACK = "feedback";
 export const BIG_THING = "big-thing";
 export const TOILET = "toilet";
 export const SMILE_OUTSMILED = "smile/outsmiled";
+export const THE_ANSWER = "the-answer";

@@ -13,6 +13,7 @@ import {
   SMILE_ENDING,
   SMILE_LOADER,
   START,
+  THE_ANSWER,
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
@@ -130,6 +131,15 @@ import {
   touchStartedStartScene,
   windowResizedStartScene,
 } from "../scenes/start/scene.js";
+import {
+  drawTheAnswerScene,
+  mouseDraggedTheAnswerScenee,
+  mousePressedTheAnswerScene,
+  mouseReleasedTheAnswerScene,
+  preloadTheAnswerScene,
+  setupTheAnswerScene,
+  windowResizedTheAnswerScene,
+} from "../scenes/the answer/scene.js";
 import {
   drawToiletScene,
   mousePressedToiletScene,
@@ -263,6 +273,15 @@ export const p5Functions = {
     mousePressed: mousePressedToiletScene,
     windowResized: windowResizedToiletScene,
     mouseReleased: mouseReleasedToiletScene,
+  },
+  [THE_ANSWER]: {
+    preload: preloadTheAnswerScene,
+    setup: setupTheAnswerScene,
+    draw: drawTheAnswerScene,
+    windowResized: windowResizedTheAnswerScene,
+    mouseReleased: mouseReleasedTheAnswerScene,
+    mouseDragged: mouseDraggedTheAnswerScenee,
+    mousePressed: mousePressedTheAnswerScene,
   },
   [END]: {
     preload: preloadEndScene,

@@ -13,6 +13,7 @@ import {
   SMILE_ENDING,
   SMILE_LOADER,
   START,
+  THE_ANSWER,
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
@@ -45,6 +46,7 @@ const sceneList = [
   START,
   NAME,
   GENDERS,
+  THE_ANSWER,
   TOILET,
   BIG_THING,
   SMILE_LOADER,

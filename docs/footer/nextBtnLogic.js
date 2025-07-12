@@ -11,6 +11,7 @@ import {
   SMILE,
   SMILE_ENDING,
   START,
+  THE_ANSWER,
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
@@ -38,6 +39,8 @@ import {
   getSmileUserImage,
 } from "../scenes/smile/scene.js";
 import { stopFaceDetection, stopVideo } from "../scenes/smile/videoManager.js";
+import { postTheAnswerPick } from "../scenes/the answer/logic.js";
+import { didUserSubmitTheAnswer } from "../scenes/the answer/scene.js";
 import { postToiletPick } from "../scenes/toilet/logic.js";
 import { getUserToiletPaperSelection } from "../scenes/toilet/scene.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
@@ -75,6 +78,7 @@ const postSceneUserPicks = {
   [FEEDBACK]: postFeedbackSticker,
   [BIG_THING]: postBigThingPick,
   [TOILET]: postToiletPick,
+  [THE_ANSWER]: postTheAnswerPick,
 };
 
 const hasNoAnswer = {
@@ -90,4 +94,5 @@ const hasNoAnswer = {
   [FEEDBACK]: () => !getUserFeedbackSticker(),
   [BIG_THING]: () => getSelectedBigThingPickIndex() === undefined,
   [TOILET]: () => !getUserToiletPaperSelection(),
+  [THE_ANSWER]: () => !didUserSubmitTheAnswer(),
 };

@@ -12,6 +12,7 @@ import {
   SMILE_ENDING,
   SMILE_LOADER,
   START,
+  THE_ANSWER,
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
@@ -218,6 +219,7 @@ const footerTextColor = {
   [AI]: () => BLACK,
   [BIG_THING]: () => WHITE,
   [TOILET]: () => BLACK,
+  [THE_ANSWER]: () => WHITE,
 };
 
 const getFooterTextColor = () =>
