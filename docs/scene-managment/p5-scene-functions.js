@@ -1,6 +1,7 @@
 import {
   AI,
   BIG_THING,
+  BINGO,
   COUNTRY,
   END,
   FEEDBACK,
@@ -33,6 +34,13 @@ import {
   setupBigThingScene,
   windowResizedBigThingScene,
 } from "../scenes/big thing/scene.js";
+import {
+  drawBingoScene,
+  mousePressedBingoScene,
+  preloadBingoScene,
+  setupBingoScene,
+  windowResizedBingoScene,
+} from "../scenes/bingo/scene.js";
 import {
   drawCountryScene,
   preloadCountryScene,
@@ -282,6 +290,13 @@ export const p5Functions = {
     mouseReleased: mouseReleasedTheAnswerScene,
     mouseDragged: mouseDraggedTheAnswerScenee,
     mousePressed: mousePressedTheAnswerScene,
+  },
+  [BINGO]: {
+    preload: preloadBingoScene,
+    setup: setupBingoScene,
+    draw: drawBingoScene,
+    windowResized: windowResizedBingoScene,
+    mousePressed: mousePressedBingoScene,
   },
   [END]: {
     preload: preloadEndScene,

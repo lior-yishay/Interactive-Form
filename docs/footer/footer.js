@@ -1,6 +1,7 @@
 import {
   AI,
   BIG_THING,
+  BINGO,
   COUNTRY,
   END,
   GENDERS,
@@ -220,6 +221,7 @@ const footerTextColor = {
   [BIG_THING]: () => WHITE,
   [TOILET]: () => BLACK,
   [THE_ANSWER]: () => WHITE,
+  [BINGO]: () => WHITE,
 };
 
 const getFooterTextColor = () =>

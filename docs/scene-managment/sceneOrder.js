@@ -1,6 +1,7 @@
 import {
   AI,
   BIG_THING,
+  BINGO,
   COUNTRY,
   END,
   FEEDBACK,
@@ -21,7 +22,7 @@ import { setupFooter } from "../footer/footer.js";
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = BINGO;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
@@ -46,6 +47,7 @@ const sceneList = [
   START,
   NAME,
   GENDERS,
+  BINGO,
   THE_ANSWER,
   TOILET,
   BIG_THING,
