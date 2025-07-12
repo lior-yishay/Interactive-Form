@@ -5,7 +5,7 @@ import {
   SMILE_LEADERBOARD,
   SMILE_TIME,
 } from "../../consts/scenes-names.js";
-import { setSceneAnswer } from "../i-belive-in/logic.js";
+import { setSceneAnswer } from "../../scene-managment/answers.js";
 import { getSmileDurationList, getSmileUserImage } from "./scene.js";
 
 export const getSmileLeaderboard = async (top = 3) => {

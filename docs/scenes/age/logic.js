@@ -1,5 +1,5 @@
 import { AGE } from "../../scenes-names.js";
-import { setSceneAnswer } from "../i-belive-in/logic.js";
+import { setSceneAnswer } from "../../scene-managment/answers.js";
 
 export const getAgeCounts = async () => {
   return await get(AGE);

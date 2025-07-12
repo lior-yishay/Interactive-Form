@@ -8,6 +8,7 @@ import {
   TOILET,
 } from "../../consts/scenes-names.js";
 import { getCurrentUser } from "../../currentUser.js";
+import { getSceneAnswer } from "../../scene-managment/answers.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
 import { restart } from "../../scene-managment/sceneOrder.js";
 import {
@@ -15,11 +16,6 @@ import {
   getTextWithSpecialCharWidth,
   toSentenceCase,
 } from "../../utils/text.js";
-import {
-  answers,
-  getSceneAnswer,
-  setSceneAnswer,
-} from "../i-belive-in/logic.js";
 import { getOutsmiledCounts } from "./logic.js";
 
 // Global variables for glitch effect
@@ -1156,9 +1152,7 @@ const getPrevScenesData = async () => {
   toiletPick = getSceneAnswer(TOILET) ?? "-";
   toiletExtraText = toiletPick === "under" ? "like animals" : "";
 
-  countryPick = (getSceneAnswer(COUNTRY) ?? [])[0] ?? "   ";
-
-  console.log(answers);
+  countryPick = (getSceneAnswer(COUNTRY) ?? [])[0] ?? "-";
 };
 
 const getFormatedDate = () => {

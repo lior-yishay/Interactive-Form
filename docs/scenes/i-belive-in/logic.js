@@ -7,16 +7,6 @@ import {
   setupNewMagnets,
 } from "./scene.js";
 
-export const answers = {};
-
-export const setSceneAnswer = (sceneName, value) => {
-  answers[sceneName] = value;
-};
-
-export const getSceneAnswer = (sceneName) => {
-  return answers[sceneName];
-};
-
 // server connection
 export const getMagnetRecords = async (top) => {
   return await get(I_BELIEVE_IN, { top });

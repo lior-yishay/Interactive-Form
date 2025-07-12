@@ -1,8 +1,9 @@
 import { SMILE } from "../../consts/scenes-names.js";
+import { getSceneAnswer } from "../../scene-managment/answers.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
 import { loopSound, stopSound } from "../../soundManager.js";
 import { getVideoDimensions } from "../smile/videoManager.js";
-import { getMagnets, getSceneAnswer } from "./logic.js";
+import { getMagnets } from "./logic.js";
 
 // my code don't delete
 let magnets = [];

@@ -1,6 +1,6 @@
 import { get, post } from "../../api/axios.js";
 import { NAME } from "../../consts/scenes-names.js";
-import { setSceneAnswer } from "../i-belive-in/logic.js";
+import { setSceneAnswer } from "../../scene-managment/answers.js";
 
 const MAX_ALPHA = 255,
   MIN_ALPHA = 255;

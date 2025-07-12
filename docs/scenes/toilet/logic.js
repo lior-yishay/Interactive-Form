@@ -1,6 +1,6 @@
 import { get, post } from "../../api/axios.js";
 import { TOILET } from "../../consts/scenes-names.js";
-import { setSceneAnswer } from "../i-belive-in/logic.js";
+import { setSceneAnswer } from "../../scene-managment/answers.js";
 import { getUserToiletPaperSelection } from "./scene.js";
 
 export const getToiletCounts = async () => {

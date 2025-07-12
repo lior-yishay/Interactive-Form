@@ -1,6 +1,6 @@
 import { get, post } from "../../api/axios.js";
 import { BIG_THING } from "../../consts/scenes-names.js";
-import { setSceneAnswer } from "../i-belive-in/logic.js";
+import { setSceneAnswer } from "../../scene-managment/answers.js";
 import { getSelectedBigThingPickIndex } from "./scene.js";
 
 const keys = [
