@@ -5,7 +5,6 @@ import { getTheAnswerUserPick } from "./scene.js";
 
 export const postTheAnswerPick = async () => {
   const pick = getTheAnswerUserPick();
-  console.log(pick);
   await post(THE_ANSWER, { pick });
   setSceneAnswer(THE_ANSWER, pick);
 };
