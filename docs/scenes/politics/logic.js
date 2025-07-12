@@ -10,5 +10,5 @@ export const getPoliticsCounts = async () => {
 export const postPoliticsPick = async () => {
   const side = getPoliticsUserPick();
   await post(POLITICS, { side });
-  setSceneAnswer(POLITICS, { side });
+  setSceneAnswer(POLITICS, side);
 };

@@ -35,6 +35,7 @@ import {
   incrementPoliticsPick,
 } from "./business/scenes-logic/politics/api.js";
 import {
+  getRecordCountWithLessSmileDuration,
   getSmileLeaderboard,
   getTotalSmileTime,
   insertSmile,
@@ -63,6 +64,7 @@ import {
   POLITICS,
   SMILE,
   SMILE_LEADERBOARD,
+  SMILE_OUTSMILED,
   SMILE_TIME,
   TOILET,
   UNREAL,
@@ -220,6 +222,15 @@ app.route(TOILET).all(
     methodHandlers: {
       post: ({ body }) => incrementToiletPick(body.pick),
       get: getToiletCounts,
+    },
+  })
+);
+
+app.route(SMILE_OUTSMILED).all(
+  createRoute({
+    methodHandlers: {
+      get: ({ query }) =>
+        getRecordCountWithLessSmileDuration(Number(query.duration)),
     },
   })
 );

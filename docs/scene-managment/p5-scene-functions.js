@@ -2,6 +2,7 @@ import {
   AI,
   BIG_THING,
   COUNTRY,
+  END,
   FEEDBACK,
   GENDERS,
   I_BELIEVE_IN,
@@ -37,6 +38,13 @@ import {
   setupCountryScene,
   windowResizedCountryScene,
 } from "../scenes/country/scene.js";
+import {
+  drawEndScene,
+  mousePressedEndScene,
+  preloadEndScene,
+  setupEndScene,
+  windowResizedEndScene,
+} from "../scenes/end/scene.js";
 import {
   drawFeedbackScene,
   mouseDraggedFeedbackScene,
@@ -255,5 +263,12 @@ export const p5Functions = {
     mousePressed: mousePressedToiletScene,
     windowResized: windowResizedToiletScene,
     mouseReleased: mouseReleasedToiletScene,
+  },
+  [END]: {
+    preload: preloadEndScene,
+    setup: setupEndScene,
+    draw: drawEndScene,
+    mousePressed: mousePressedEndScene,
+    windowResized: windowResizedEndScene,
   },
 };

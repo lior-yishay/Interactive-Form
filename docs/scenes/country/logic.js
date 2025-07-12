@@ -10,5 +10,5 @@ export const getCountryCounts = async () => {
 export const postCountryPick = async () => {
   const picks = getCountryUserPicks();
   await post(COUNTRY, { picks });
-  setSceneAnswer(COUNTRY, { picks });
+  setSceneAnswer(COUNTRY, picks);
 };

@@ -4,6 +4,7 @@ html, body {
 }
 canvas {
   display: block;
+  position: fixed;
 }
 
 @font-face {

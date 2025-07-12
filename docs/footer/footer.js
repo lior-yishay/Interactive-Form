@@ -2,6 +2,7 @@ import {
   AI,
   BIG_THING,
   COUNTRY,
+  END,
   GENDERS,
   I_BELIEVE_IN,
   ICE_CREAM_SANDWICH,
@@ -18,7 +19,7 @@ import { getCurrentUser } from "../currentUser.js";
 import { getCurrentScene } from "../scene-managment/sceneOrder.js";
 import { isSoundOn } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
-import { drawTextWithColonFont } from "../utils/text.js";
+import { drawTextWithSpecialChar } from "../utils/text.js";
 import { isNextBtnDisabled } from "./nextBtnLogic.js";
 
 const padding = 5;
@@ -74,13 +75,11 @@ export const setupFooter = async () => {
   soundToggleBtn.h = nextButton.h;
   soundToggleBtn.y = nextButton.y;
   soundToggleBtn.x = windowWidth / 2 - soundToggleBtn.w / 2;
-
-  console.log(soundToggleBtn);
 };
 
 // Shared footer
 export const drawFooter = () => {
-  if (getCurrentScene() === SMILE_LOADER) return;
+  if (getCurrentScene() === SMILE_LOADER || getCurrentScene() === END) return;
 
   if (getCurrentScene() === START) {
     drawSoundToggleBtn();
@@ -190,14 +189,15 @@ export const mouseOnSoundBtn = () => {
 };
 
 const drawPeopleCountAndName = () => {
-  textSize(22);
   textAlign(LEFT, CENTER);
   textFont(grottaFont);
   fill(getFooterTextColor());
-  drawTextWithColonFont(
+  drawTextWithSpecialChar(
     `\t${userNumber} People : 1 Click : 0 Impact`,
+    ":",
     grottaFont ?? "Helvetica",
     "Helvetica",
+    22,
     padding,
     footerMiddleH
   );

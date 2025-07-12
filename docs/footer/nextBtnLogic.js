@@ -70,7 +70,7 @@ const postSceneUserPicks = {
   [SMILE_ENDING]: () => undefined,
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: postMagnetPositions,
-  [AI]: () => postAiPick,
+  [AI]: postAiPick,
   [COUNTRY]: postCountryPick,
   [FEEDBACK]: postFeedbackSticker,
   [BIG_THING]: postBigThingPick,

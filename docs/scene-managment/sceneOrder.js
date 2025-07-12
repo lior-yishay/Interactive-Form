@@ -16,6 +16,7 @@ import {
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
+import { setupFooter } from "../footer/footer.js";
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
@@ -33,6 +34,11 @@ const changeToScene = (sceneName) => {
   currentScene = sceneName;
   resetDrawingState();
   p5Functions[sceneName].setup();
+};
+
+export const restart = () => {
+  changeToScene(sceneList[0]);
+  setupFooter();
 };
 
 const sceneList = [

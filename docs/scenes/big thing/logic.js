@@ -18,5 +18,5 @@ export const getBigThingCounts = async () => {
 export const postBigThingPick = async () => {
   const pick = keys[getSelectedBigThingPickIndex()];
   await post(BIG_THING, { pick });
-  setSceneAnswer(BIG_THING, { pick });
+  setSceneAnswer(BIG_THING, pick);
 };
