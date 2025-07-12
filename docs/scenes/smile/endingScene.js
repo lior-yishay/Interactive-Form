@@ -188,7 +188,7 @@ export function drawSmileEndingScene() {
     );
   }
 
-  const ticker = "YOUR SMILE CHANGED NOTHING. HOW SUPRISING.     "; // Changed text
+  const ticker = "YOUR SMILE CHANGED NOTHING. HOW SURPRISING.     "; // Changed text
   const tickerW = bw * 0.96;
   const tickerH = barH * 0.45;
   const tx = bx + bw * 0.02;
