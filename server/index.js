@@ -41,6 +41,10 @@ import {
   insertSmile,
 } from "./business/scenes-logic/smile/api.js";
 import {
+  getTheAnswerCounts,
+  incrementTheAnswerPick,
+} from "./business/scenes-logic/the answer/api.js";
+import {
   getToiletCounts,
   incrementToiletPick,
 } from "./business/scenes-logic/toilet/api.js";
@@ -74,11 +78,6 @@ import {
 import { feedbackSchema } from "./schemas/httpRequestsSchemas.js";
 import { createRoute } from "./utils/AppRouteHandler.js";
 import { addSubscriber } from "./utils/broadcast.js";
-import {
-  getTheAnswerCounts,
-  incrementTheAnswerPick,
-  resetTheAnswerScene,
-} from "./business/scenes-logic/the answer/api.js";
 
 dotenv.config();
 
