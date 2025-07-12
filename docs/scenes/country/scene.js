@@ -8,6 +8,7 @@
     • DOM “Check in” button (hidden until sticker scanned, hover style)
     ---------------------------------------------------------- */
 
+import { recordDomElement } from "../../scene-managment/domManager.js";
 import { playSound } from "../../soundManager.js";
 import { getCountryCounts } from "./logic.js";
 
@@ -353,33 +354,35 @@ function updateCursor(s) {
    ========================================================== */
 function createDoneButton() {
   doneBtn = createButton("Check in");
+  recordDomElement(doneBtn);
   doneBtn.style("position", "absolute");
   doneBtn.style("left", "50%");
   doneBtn.style("top", "90vh");
   doneBtn.style("transform", "translate(-50%, -50%)");
+
+  /* size + typography */
   doneBtn.style("width", "18vw");
   doneBtn.style("height", "6vh");
   doneBtn.style("line-height", "6vh");
   doneBtn.style("font-family", "Grotta-Trial-Medium");
-  doneBtn.style("font-size", "2.5vh");
-  doneBtn.style("background", "#ff0");
+  doneBtn.style("font-size", "3vh"); // ⬅︎ קצת יותר גדול
+
+  /* transparent look */
+  doneBtn.style("background", "none");
+  doneBtn.style("border", "none");
   doneBtn.style("color", "#000");
-  doneBtn.style("border", "1px solid #000");
-  doneBtn.style("border-radius", "3vh");
   doneBtn.style("cursor", "pointer");
 
-  /* hover */
+  /* hover = קו תחתון */
   doneBtn.mouseOver(() => {
-    doneBtn.style("background", "#000");
-    doneBtn.style("color", "#ff0");
+    doneBtn.style("text-decoration", "underline");
   });
   doneBtn.mouseOut(() => {
-    doneBtn.style("background", "#ff0");
-    doneBtn.style("color", "#000");
+    doneBtn.style("text-decoration", "none");
   });
 
   doneBtn.mousePressed(onDone);
-  doneBtn.hide(); // start hidden
+  doneBtn.hide(); // מתחבא עד שמסרקים מדבקה
 }
 
 function onDone() {
