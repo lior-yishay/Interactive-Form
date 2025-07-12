@@ -71,7 +71,7 @@ const BG = "#131217",
 const CLICK_COLOR = "#F24D1F"; // אדום-כתום עבור "1 CLICK"
 const IMPACT_COLOR = "#C9B8FF"; // סגול בהיר עבור "0 IMPACT"
 
-const noteHeadline = "About the quiz";
+const noteHeadline = "About the project";
 
 /* — preload — */
 export function preloadStartScene() {
@@ -321,7 +321,7 @@ export function drawStartScene() {
   textAlign(CENTER, CENTER);
   textFont("Helvetica");
   textSize(wH * 0.35);
-  text("Start Quiz", bx - wW * 0.08, by);
+  text("Start", bx - wW * 0.08, by);
   textFont("Arial");
   text("→", bx + wW * 0.28, by);
 
