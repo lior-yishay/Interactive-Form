@@ -57,10 +57,10 @@ export function drawTheAnswerScene() {
   drawHeadline();
 
   if (showAll) {
-    for (let i = 0; i < allStickers.length; i++) {
-      allStickers[i].show();
-      drawVotes(allStickers[i], i);
-    }
+    allStickers.forEach((sticker, i) => {
+      sticker.show();
+      drawVotes(sticker, i);
+    });
   } else {
     if (nextSticker) nextSticker.show();
     if (topSticker) topSticker.show();
@@ -220,8 +220,6 @@ function drawVotes(sticker, i) {
 
 /* ---------- mouse ---------- */
 export function mousePressedTheAnswerScene() {
-  console.log(getTheAnswerUserPick());
-
   // submit button?
   if (!showAll && btnBox) {
     if (
@@ -238,6 +236,25 @@ export function mousePressedTheAnswerScene() {
 
   const mx = mouseX - marginX;
   const my = mouseY - marginY;
+
+  if (showAll && !draggedSticker) {
+    for (let i = allStickers.length - 1; i >= 0; i--) {
+      const s = allStickers[i];
+      if (dist(mx, my, s.x, s.y) < max(s.w, s.h) * 0.6) {
+        draggedSticker = s;
+        dX = mx - s.x;
+        dY = my - s.y;
+
+        //put it last on the sticker list -> draw it last -> draw it on top
+        allStickers = [
+          ...allStickers.slice(0, i),
+          ...allStickers.slice(i + 1),
+          s,
+        ];
+        break;
+      }
+    }
+  }
 
   if (!topSticker) return;
   const rad = max(topSticker.w, topSticker.h) * 0.6;
@@ -258,26 +275,26 @@ export function mouseDraggedTheAnswerScenee() {
     draggedSticker.x = mx - dX;
     draggedSticker.y = my - dY;
 
-    for (let s of allStickers) {
-      if (
-        s !== draggedSticker &&
-        rectsOverlap(
-          draggedSticker.x,
-          draggedSticker.y,
-          draggedSticker.w,
-          draggedSticker.h,
-          s.x,
-          s.y,
-          s.w,
-          s.h,
-          5
-        )
-      ) {
-        draggedSticker.x = oldX;
-        draggedSticker.y = oldY;
-        break;
-      }
-    }
+    // for (let s of allStickers) {
+    //   if (
+    //     s !== draggedSticker &&
+    //     rectsOverlap(
+    //       draggedSticker.x,
+    //       draggedSticker.y,
+    //       draggedSticker.w,
+    //       draggedSticker.h,
+    //       s.x,
+    //       s.y,
+    //       s.w,
+    //       s.h,
+    //       5
+    //     )
+    //   ) {
+    //     draggedSticker.x = oldX;
+    //     draggedSticker.y = oldY;
+    //     break;
+    //   }
+    // }
   }
 
   if (!showAll && dragging && topSticker) {
