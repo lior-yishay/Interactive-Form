@@ -18,11 +18,10 @@ import {
   TOILET,
   UNREAL,
 } from "../consts/scenes-names.js";
-import { setupFooter } from "../footer/footer.js";
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = AI;
+let currentScene = START;
 export const getCurrentScene = () => currentScene;
 
 export const nextScene = () => {
