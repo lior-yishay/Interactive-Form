@@ -270,31 +270,8 @@ export function mouseDraggedTheAnswerScenee() {
     const mx = mouseX - marginX;
     const my = mouseY - marginY;
 
-    const oldX = draggedSticker.x,
-      oldY = draggedSticker.y;
     draggedSticker.x = mx - dX;
     draggedSticker.y = my - dY;
-
-    // for (let s of allStickers) {
-    //   if (
-    //     s !== draggedSticker &&
-    //     rectsOverlap(
-    //       draggedSticker.x,
-    //       draggedSticker.y,
-    //       draggedSticker.w,
-    //       draggedSticker.h,
-    //       s.x,
-    //       s.y,
-    //       s.w,
-    //       s.h,
-    //       5
-    //     )
-    //   ) {
-    //     draggedSticker.x = oldX;
-    //     draggedSticker.y = oldY;
-    //     break;
-    //   }
-    // }
   }
 
   if (!showAll && dragging && topSticker) {
