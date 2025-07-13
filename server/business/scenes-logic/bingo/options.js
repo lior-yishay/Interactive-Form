@@ -9,7 +9,7 @@ export const TV_SHOWS = [
   "mad men",
   "lost",
   "better call saul",
-  "the while lotus",
+  "the white lotus",
   "stanger things",
   "black mirror",
   "the office",
