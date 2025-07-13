@@ -39,8 +39,7 @@ const changeToScene = (sceneName) => {
 };
 
 export const restart = () => {
-  changeToScene(sceneList[0]);
-  setupFooter();
+  location.reload();
 };
 
 const sceneList = [
