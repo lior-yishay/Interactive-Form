@@ -213,7 +213,7 @@ function drawVotes(sticker, i) {
   textFont(grotta);
   textSize(sticker.txtSize * 0.5);
   textAlign(CENTER, BOTTOM);
-  const count = answerCounts[i].count + i === idx ? 1 : 0;
+  const count = answerCounts[i].count + (i === idx ? 1 : 0);
   text(`${count} vote${count !== 1 ? "s" : ""}`, 0, -sticker.txtSize * 0.3);
   pop();
 }
