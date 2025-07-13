@@ -511,14 +511,12 @@ function drawSidebar(winX, winY) {
   textAlign(LEFT, CENTER);
   fill("#E2E2E5");
   textSize(10);
-  textAlign(LEFT, TOP);
-  let appText1Y = appIconY + 2;
   let textBoxW = sidebarTextMaxW - iconSize - 30;
-  text("Click me", winX + 18 + iconSize + 10, appText1Y, textBoxW);
+  text("Bezalel", winX + 18 + iconSize + 10, appIconY + iconSize / 2, textBoxW);
 
   appIconY += iconSize + 12;
   image(caataAppImg, winX + 18, appIconY, iconSize, iconSize);
-  text("Let's do this!!", winX + 18 + iconSize + 10, appIconY + iconSize / 2);
+  text("Cassata Expert", winX + 18 + iconSize + 10, appIconY + iconSize / 2);
 
   let listY = appIconY + iconSize + 24;
   let list = [
