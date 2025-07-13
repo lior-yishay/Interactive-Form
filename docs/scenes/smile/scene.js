@@ -10,8 +10,10 @@ let snellFont, grottaFont;
 let smileImg;
 
 //lior's code
-let currentBestFrame;
 let durationList = [];
+let currentBestFrame;
+let overallBestFrame;
+let overallBestHappy = 0;
 
 export function preloadSmileScene() {
   bannerIconImg = loadImage("./assets/bird.png");
@@ -198,6 +200,10 @@ function drawMouthOverlay() {
     if (happy > currentBestHappy) {
       currentBestHappy = happy;
       currentBestFrame = captureMirroredVideo();
+    }
+    if (happy > overallBestHappy) {
+      overallBestHappy = happy;
+      overallBestFrame = captureMirroredVideo();
     }
     const pts = d.landmarks.positions.slice(48, 68);
     let minX = width,
@@ -660,7 +666,7 @@ function drawBannerLoader() {
 
 //lior's code
 export const getSmileDurationList = () => durationList;
-export const getSmileUserImage = () => currentBestFrame;
+export const getSmileUserImage = () => overallBestFrame;
 
 //unused functions
 function handleBannerPhoto(file) {
