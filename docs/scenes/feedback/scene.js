@@ -942,31 +942,29 @@ function drawKeyboard(startX, startY, maxWidth) {
       let x = startX + offsetX + col * keySpacing;
       let y = startY + row * rowSpacing;
 
-      if (x + keySize < startX + maxWidth) {
-        let keyIndex = row * 100 + col; // Unique index for each key
-        let isHovered = hoveredKeyIndex === keyIndex;
-        let isShiftKey = keyboard[row][col] === "⇧";
-        let isShiftPressed = isShiftKey && capsLockOn;
+      let keyIndex = row * 100 + col; // Unique index for each key
+      let isHovered = hoveredKeyIndex === keyIndex;
+      let isShiftKey = keyboard[row][col] === "⇧";
+      let isShiftPressed = isShiftKey && capsLockOn;
 
-        // Key background - different color for pressed shift
-        fill(isHovered ? 255 : isShiftPressed ? 100 : 60);
-        rect(x, y, keySize, keySize, 3);
+      // Key background - different color for pressed shift
+      fill(isHovered ? 255 : isShiftPressed ? 100 : 60);
+      rect(x, y, keySize, keySize, 3);
 
-        // Key text
-        fill(isHovered ? 0 : isShiftPressed ? 255 : 255);
-        textAlign(CENTER, CENTER);
-        textSize(16); // Increased to 16 for better visibility
+      // Key text
+      fill(isHovered ? 0 : isShiftPressed ? 255 : 255);
+      textAlign(CENTER, CENTER);
+      textSize(16); // Increased to 16 for better visibility
 
-        // Use system font for special symbols
-        let key = keyboard[row][col];
-        if (key === "⇧" || key === "⌫") {
-          textFont("Arial"); // system default
-        } else {
-          textFont(grottaRegular);
-        }
-
-        text(key, x + keySize / 2, y + keySize / 2);
+      // Use system font for special symbols
+      let key = keyboard[row][col];
+      if (key === "⇧" || key === "⌫") {
+        textFont("Arial"); // system default
+      } else {
+        textFont(grottaRegular);
       }
+
+      text(key, x + keySize / 2, y + keySize / 2);
     }
   }
 
