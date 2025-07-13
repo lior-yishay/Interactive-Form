@@ -1473,7 +1473,7 @@ function createDickPopupWindow() {
   titleText.style("color", "#333");
   titleText.parent(titleBar);
 
-  // Close button (fake - doesn't work)
+  // Close button (now works)
   let closeBtn = createDiv("×");
   recordDomElement(closeBtn); //lior's code
   closeBtn.style("position", "absolute");
@@ -1508,8 +1508,8 @@ function createDickPopupWindow() {
   dickImg.style("object-fit", "contain");
   dickImg.parent(content);
 
-  // Add to tracking array
-  spawnedDickPopups.push({
+  // Create popup object to track
+  let popupObj = {
     window: popup,
     dickImg: dickImg,
     x: x,
@@ -1518,7 +1518,33 @@ function createDickPopupWindow() {
     height: height,
     lifetime: 0,
     maxLifetime: random(4000, 10000), // 4-10 seconds
+  };
+
+  // Add close functionality
+  closeBtn.mousePressed(() => {
+    closePopup(popupObj);
   });
+
+  // Add to tracking array
+  spawnedDickPopups.push(popupObj);
+
+  return popupObj;
+}
+
+function closePopup(popupObj) {
+  // Remove from DOM
+  if (popupObj.window) {
+    popupObj.window.remove();
+  }
+  if (popupObj.dickImg) {
+    popupObj.dickImg.remove();
+  }
+
+  // Remove from tracking array
+  let index = spawnedDickPopups.indexOf(popupObj);
+  if (index > -1) {
+    spawnedDickPopups.splice(index, 1);
+  }
 }
 
 //lior's code
