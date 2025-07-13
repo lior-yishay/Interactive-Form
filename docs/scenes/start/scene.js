@@ -192,7 +192,7 @@ export function drawStartScene() {
     bigFs = s * 0.252,
     leading = bigFs * 0.78,
     btnH = s * 0.07,
-    btnW = btnH * 4,
+    btnW = btnH * 3,
     margin = s * 0.05;
 
   /* TOP COUNTER */
