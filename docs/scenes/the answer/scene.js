@@ -8,7 +8,6 @@
 
 import { getTheAnswerCounts } from "./logic.js";
 
-let answers;
 const COLOURS = ["#F24D1F", "#C9B8FF", "#10A959"];
 const SHAPES = ["star", "capsule", "circle"];
 
@@ -29,6 +28,8 @@ let draggedSticker = null;
 let btnBox = null; // submit button hit-box
 let answerCounts;
 
+let userPick;
+
 export function preloadTheAnswerScene() {
   grotta = loadFont("./assets/Grotta-Trial-Medium.ttf");
 }
@@ -39,8 +40,6 @@ export async function setupTheAnswerScene() {
   calcLayout();
 
   answerCounts = await getTheAnswerCounts();
-  answers = answerCounts.map(({ name }) => name);
-
   initStack();
 }
 
@@ -59,7 +58,7 @@ export function drawTheAnswerScene() {
   if (showAll) {
     allStickers.forEach((sticker, i) => {
       sticker.show();
-      drawVotes(sticker, i);
+      sticker.drawVotes();
     });
   } else {
     if (nextSticker) nextSticker.show();
@@ -140,20 +139,28 @@ export function windowResizedTheAnswerScene() {
 /* ---------- sticker cycle ---------- */
 function initStack() {
   topSticker = makeSticker(idx);
-  nextSticker = makeSticker((idx + 1) % answers.length);
+  nextSticker = makeSticker((idx + 1) % answerCounts.length);
 }
 
 function advance() {
-  idx = (idx + 1) % answers.length;
+  idx = (idx + 1) % answerCounts.length;
   topSticker = nextSticker;
-  nextSticker = makeSticker((idx + 1) % answers.length);
+  nextSticker = makeSticker((idx + 1) % answerCounts.length);
 }
 
 function makeSticker(i) {
   const shape = SHAPES[i % SHAPES.length];
   const col = COLOURS[i % COLOURS.length];
   const angle = random(-15, 15);
-  return new Sticker(anchorX, anchorY, answers[i], shape, col, angle);
+  return new Sticker(
+    anchorX,
+    anchorY,
+    answerCounts[i].name,
+    shape,
+    col,
+    angle,
+    answerCounts[i].count
+  );
 }
 
 /* ---------- second screen ---------- */
@@ -161,7 +168,7 @@ function enterShowAll() {
   showAll = true;
   allStickers = [];
 
-  for (let i = 0; i < answers.length; i++) {
+  for (let i = 0; i < answerCounts.length; i++) {
     const s = makeSticker(i);
 
     let placed = false;
@@ -205,19 +212,6 @@ function rectsOverlap(x1, y1, w1, h1, x2, y2, w2, h2, pad = 10) {
   );
 }
 
-function drawVotes(sticker, i) {
-  push();
-  translate(sticker.x, sticker.y);
-  rotate(sticker.ang);
-  fill(0);
-  textFont(grotta);
-  textSize(sticker.txtSize * 0.5);
-  textAlign(CENTER, BOTTOM);
-  const count = answerCounts[i].count + (i === idx ? 1 : 0);
-  text(`${count} vote${count !== 1 ? "s" : ""}`, 0, -sticker.txtSize * 0.3);
-  pop();
-}
-
 /* ---------- mouse ---------- */
 export function mousePressedTheAnswerScene() {
   // submit button?
@@ -229,6 +223,7 @@ export function mousePressedTheAnswerScene() {
       mouseY <= btnBox.y + btnBox.h
     ) {
       enterShowAll();
+      userPick = answerCounts[idx].name;
       cursor(ARROW);
       return;
     }
@@ -328,13 +323,14 @@ function drawHeadline() {
 
 /* ---------- Sticker class ---------- */
 class Sticker {
-  constructor(x, y, lbl, shp, col, angDeg) {
+  constructor(x, y, lbl, shp, col, angDeg, votes) {
     this.x = x;
     this.y = y;
     this.lbl = lbl;
     this.shape = shp;
     this.col = col;
     this.ang = radians(angDeg);
+    this.votes = votes;
     this.resize();
   }
 
@@ -392,9 +388,35 @@ class Sticker {
     }
     endShape(CLOSE);
   }
+
+  drawVotes() {
+    push();
+    translate(this.x, this.y);
+    rotate(this.ang);
+    fill(0);
+    textFont(grotta);
+    textSize(this.txtSize * 0.5);
+    textAlign(CENTER, BOTTOM);
+    const count = this.votes + (this.lbl === userPick ? 1 : 0);
+    text(`${count} vote${count !== 1 ? "s" : ""}`, 0, -this.txtSize * 0.3);
+    pop();
+  }
 }
 
 //lior's code
-export const getTheAnswerUserPick = () => answers[idx];
+export const getTheAnswerUserPick = () => userPick;
+export const didUserSubmitTheAnswer = () => !!userPick;
 
-export const didUserSubmitTheAnswer = () => showAll;
+// unused code
+function drawVotes(sticker, i) {
+  push();
+  translate(sticker.x, sticker.y);
+  rotate(sticker.ang);
+  fill(0);
+  textFont(grotta);
+  textSize(sticker.txtSize * 0.5);
+  textAlign(CENTER, BOTTOM);
+  const count = answerCounts[i].count + (i === idx ? 1 : 0);
+  text(`${count} vote${count !== 1 ? "s" : ""}`, 0, -sticker.txtSize * 0.3);
+  pop();
+}
