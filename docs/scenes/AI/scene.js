@@ -635,16 +635,6 @@ function drawConversation(mainX, startY, mainW, contentTime) {
 
   // Draw content
   if (chatState === CHAT_STATES.THINKING) {
-    let userMsgTime = millis() - thinkingStartTime;
-    drawUserMessage(
-      mainX,
-      msgY,
-      mainW,
-      `AI is my ${selectedAiChoice}`,
-      userMsgTime
-    );
-    msgY += 80;
-
     let thinkingTime = millis() - thinkingStartTime;
     if (thinkingTime >= 400 && thinkingTime < 2400) {
       drawThinkingMessage(mainX, msgY, mainW, thinkingTime - 400);
