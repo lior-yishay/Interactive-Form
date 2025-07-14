@@ -21,6 +21,7 @@ export const postMagnetPositions = async () => {
       y: magnet.posNorm.y,
     };
   });
+  if (magnetInfo.length === 0) return;
   await post(I_BELIEVE_IN, { magnets: magnetInfo });
 };
 
