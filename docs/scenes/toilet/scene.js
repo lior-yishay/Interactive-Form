@@ -417,7 +417,6 @@ export function mousePressedToiletScene() {
   if (dist(mouseX, mouseY, underX, underY) < 75 * sf) {
     isDragging = true;
     draggedImage = underImage;
-    userToiletPaperSelection = UNDER;
     dragOffsetX = mouseX - underX;
     dragOffsetY = mouseY - underY;
     return;
@@ -429,7 +428,6 @@ export function mousePressedToiletScene() {
   if (dist(mouseX, mouseY, overX, overY) < 75 * sf) {
     isDragging = true;
     draggedImage = overImage;
-    userToiletPaperSelection = OVER;
     dragOffsetX = mouseX - overX;
     dragOffsetY = mouseY - overY;
     return;
@@ -460,6 +458,7 @@ export function mouseReleasedToiletScene() {
       // Replace the empty roll with the dragged image
       rollReplaced = true;
       replacedWithImage = draggedImage;
+      userToiletPaperSelection = draggedImage === underImage ? UNDER : OVER;
 
       // Start the falling animation for the empty roll
       emptyRollFalling = true;
