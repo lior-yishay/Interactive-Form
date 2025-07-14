@@ -68,7 +68,7 @@ const unrealMap = {
   0: "bermuda",
   1: "nesziona",
   2: "flatearth",
-  3: "brainn",
+  3: "brain",
   4: "moon",
   5: "vacs",
   6: "aliens",
