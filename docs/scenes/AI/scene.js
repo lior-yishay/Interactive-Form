@@ -1277,14 +1277,6 @@ function applyEnemyControlEffects(timeSinceFinalMessage) {
       let shakeY = random(-shakeStrength, shakeStrength);
       translate(shakeX, shakeY);
 
-      cursor("none");
-
-      // Fake cursor that moves erratically
-      noStroke();
-      fill(100, 100, 100); // Gray cursor instead of red
-      let cursorSize = 6 + random(-1, 1);
-      ellipse(mouseX + random(-3, 3), mouseY + random(-3, 3), cursorSize);
-
       // RGB separation (using cached image)
       let offset = floor(6 * intensity);
       blendMode(ADD);
