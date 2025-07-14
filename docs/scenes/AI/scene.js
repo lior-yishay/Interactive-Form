@@ -1,3 +1,4 @@
+import { getFooterTop } from "../../footer/footer.js";
 import { recordDomElement } from "../../scene-managment/domManager.js";
 import { playSound } from "../../soundManager.js";
 import { getAiCounts } from "./logic.js";
@@ -1409,8 +1410,8 @@ function createDickPopupWindow() {
   let height = random(150, 300);
 
   // Random position (but keep mostly on screen)
-  let x = random(-50, windowWidth - width + 50);
-  let y = random(-30, windowHeight - height + 30);
+  let x = random(0, windowWidth - width);
+  let y = random(0, getFooterTop() - height);
 
   // Create popup window container
   let popup = createDiv("");
