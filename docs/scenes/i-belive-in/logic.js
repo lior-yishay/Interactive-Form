@@ -26,7 +26,9 @@ export const postMagnetPositions = async () => {
 
 export const getMagnets = async (randomRotationFunc) => {
   const magnetsRecords = (await getMagnetRecords(1))[0];
-  return !magnetsRecords
+  return !magnetsRecords ||
+    !magnetsRecords.magnets ||
+    magnetsRecords.magnets.length === 0
     ? setupNewMagnets()
     : (magnetsRecords.magnets.map(
         ({ x, y, letter }) =>
