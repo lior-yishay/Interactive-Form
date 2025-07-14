@@ -70,6 +70,7 @@ export async function setupSmileScene() {
 
 export function drawSmileScene() {
   background(0);
+  cursor("default");
   computeCover();
   drawVideo();
   drawFaceBoxes();

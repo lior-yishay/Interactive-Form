@@ -146,6 +146,7 @@ export function setupNewMagnets() {
 
 export function drawIBeliveInScene() {
   background("#8590D4");
+  cursor("default");
   drawGrid();
   drawFridge();
   drawNote();

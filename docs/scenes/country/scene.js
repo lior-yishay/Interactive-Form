@@ -137,6 +137,7 @@ function drawResponsiveBackground(img) {
    Scene 1 : ticket + stickers + cursor + PA audio
    ========================================================== */
 function drawScene1() {
+  noCursor();
   /* play bing-bong and airport voice together (once) */
   if (!paPlayed && (bingBong.isLoaded() || airportVoice.isLoaded())) {
     paPlayed = true;

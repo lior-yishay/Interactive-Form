@@ -44,6 +44,7 @@ export function drawSmileEndingScene() {
   }
 
   background(palette.pageBg);
+  cursor("default");
   noStroke();
 
   // Update glitch timer

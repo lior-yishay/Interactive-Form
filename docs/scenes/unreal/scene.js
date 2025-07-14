@@ -154,6 +154,7 @@ function calculateLayout() {
 
 export function drawUnrealScene() {
   background("#ECF1F7");
+  cursor("default");
 
   fill("#DEE7F1");
   let rectSize = 400;

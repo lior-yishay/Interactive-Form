@@ -102,11 +102,13 @@ export const drawFooter = () => {
   drawSoundToggleBtn();
   drawNextButton();
 
-  // cursor(
-  //   (!isNextBtnDisabled() && mouseOnNextBtn()) || mouseOnSoundBtn()
-  //     ? "pointer"
-  //     : "default"
-  // );
+  if (mouseY > getFooterTop()) {
+    cursor(
+      (!isNextBtnDisabled() && mouseOnNextBtn()) || mouseOnSoundBtn()
+        ? "pointer"
+        : "default"
+    );
+  }
 };
 
 export const drawNextButton = () => {

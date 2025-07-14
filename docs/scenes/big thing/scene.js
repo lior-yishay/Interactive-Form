@@ -111,6 +111,7 @@ export function drawBigThingScene() {
   const s = min(scaleX, scaleY) * 0.7; // Made smaller (was 0.85)
 
   background("#1E1E26");
+  cursor("default");
 
   // Update glow rotation
   if (selectedCard !== undefined) {

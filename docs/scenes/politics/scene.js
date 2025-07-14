@@ -81,6 +81,8 @@ export async function windowResizedPoliticsScene() {
 export function drawPoliticsScene() {
   Engine.update(engine);
 
+  noCursor();
+
   push();
 
   if (rotationTriggered) {

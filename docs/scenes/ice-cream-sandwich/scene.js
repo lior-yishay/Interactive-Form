@@ -186,6 +186,7 @@ function drawPlusOneAnimations() {
 /* ---------- ROOT DRAW ---------- */
 export function drawIceCreamSandwichScene() {
   background("#EEEEEE");
+  cursor('default')
   starAngle += 0.1; // Adjust speed as needed
 
   if (flavor && flavorTime < flavorDuration) {

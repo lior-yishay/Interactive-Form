@@ -60,6 +60,7 @@ export async function setupToiletScene() {
 
 export function drawToiletScene() {
   background(green);
+  cursor("default");
 
   const sf = min(width / baseW, height / baseH);
   push();

@@ -45,6 +45,7 @@ export async function setupTheAnswerScene() {
 
 export function drawTheAnswerScene() {
   background("#000");
+  cursor("default");
   noStroke();
   fill("#F9F6F1");
   rect(marginX, marginY, artW, artH);

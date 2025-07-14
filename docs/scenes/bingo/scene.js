@@ -42,6 +42,7 @@ export async function setupBingoScene() {
 
 export function drawBingoScene() {
   background(BG);
+  cursor("default");
   if (!shows) return;
   drawBursts();
 
