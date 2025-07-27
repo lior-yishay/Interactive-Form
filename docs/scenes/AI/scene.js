@@ -1002,7 +1002,7 @@ function drawThinkingMessage(mainX, y, mainW, thinkingTime) {
 
 // 2. Fix the mousePressed function to prevent multiple clicks:
 export function mousePressedAiScene() {
-  if (chatState !== CHAT_STATES.IDLE || hoveredSuggestion === 2) {
+  if (chatState !== CHAT_STATES.IDLE || ![0, 1].includes(hoveredSuggestion)) {
     return;
   }
 
