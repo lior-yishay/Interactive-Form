@@ -55,7 +55,7 @@ export const onNextBtnClick = async () => {
   await postSceneUserPicks[getCurrentScene()]();
   resetRegisteredSounds();
   clearDomElements();
-  nextScene();
+  !preventSwitchingScenes.includes(getCurrentScene()) && nextScene();
 };
 
 export const isNextBtnDisabled = () => {
@@ -101,3 +101,5 @@ const hasNoAnswer = {
   [THE_ANSWER]: () => !didUserSubmitTheAnswer(),
   [BINGO]: () => !getBingoUserPicks().length,
 };
+
+const preventSwitchingScenes = [THE_ANSWER, COUNTRY];

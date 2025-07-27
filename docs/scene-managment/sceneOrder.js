@@ -21,7 +21,7 @@ import {
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = START;
+let currentScene = POLITICS;
 export const getCurrentScene = () => currentScene;
 
 let lastSceneChangeTime = 0;
