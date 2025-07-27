@@ -6,14 +6,15 @@ import { enterShowAll, getTheAnswerUserPick } from "./scene.js";
 
 let functionIndex = 0;
 
-export const advanceTheAnswerScene = async () =>
+export const advanceTheAnswerScene = async () => {
   await functionOrder[functionIndex++]();
+  functionIndex === functionOrder.length && nextScene();
+};
 
 const postTheAnswerPick = async () => {
   const pick = getTheAnswerUserPick();
   await post(THE_ANSWER, { pick });
   setSceneAnswer(THE_ANSWER, pick);
-  nextScene();
 };
 
 export const getTheAnswerCounts = async () => {

@@ -35,8 +35,7 @@ const BARCODE_SIZE = 89;
 let stickers = []; //lior's code. changed from const to let
 let easedCursor = 200,
   glow = false,
-  glowTimer = 0;
-let doneBtn,
+  glowTimer = 0,
   boardActive = false,
   boardRows = [],
   boardStart = 0,
@@ -158,16 +157,6 @@ function drawScene1() {
     st.display();
   });
   pop();
-
-  /* reveal button once ANY sticker is scanned */
-  if (
-    doneBtn &&
-    doneBtn.elt.style.display === "none" &&
-    stickers.some((st) => st.userScanned)
-  ) {
-    doneBtn.show();
-  }
-
   updateCursor(s);
 }
 
@@ -350,50 +339,13 @@ function updateCursor(s) {
   noTint();
 }
 
-/* ==========================================================
-   DOM “Check in” button (hidden until scan + hover state)
-   ========================================================== */
-function createDoneButton() {
-  doneBtn = createButton("Check in");
-  recordDomElement(doneBtn);
-  doneBtn.style("position", "absolute");
-  doneBtn.style("left", "50%");
-  doneBtn.style("top", "90vh");
-  doneBtn.style("transform", "translate(-50%, -50%)");
-
-  /* size + typography */
-  doneBtn.style("width", "18vw");
-  doneBtn.style("height", "6vh");
-  doneBtn.style("line-height", "6vh");
-  doneBtn.style("font-family", "Grotta-Trial-Medium");
-  doneBtn.style("font-size", "3vh"); // ⬅︎ קצת יותר גדול
-
-  /* transparent look */
-  doneBtn.style("background", "none");
-  doneBtn.style("border", "none");
-  doneBtn.style("color", "#000");
-  doneBtn.style("cursor", "pointer");
-
-  /* hover = קו תחתון */
-  doneBtn.mouseOver(() => {
-    doneBtn.style("text-decoration", "underline");
-  });
-  doneBtn.mouseOut(() => {
-    doneBtn.style("text-decoration", "none");
-  });
-
-  doneBtn.mousePressed(onDone);
-  doneBtn.hide(); // מתחבא עד שמסרקים מדבקה
-}
-
-function onDone() {
+export function onDone() {
   boardRows = stickers.map((st) => ({
     amount: String(st.scans),
     reason: st.label.toUpperCase(),
   }));
   loading = true;
   loadStart = millis();
-  doneBtn.hide();
   noCursor();
 }
 
@@ -603,3 +555,5 @@ export const getCountryUserPicks = () =>
     .map((sticker) => sticker.label);
 
 export const didUserFinishCountyScene = () => boardDone;
+
+export const didUserScan = () => stickers.some((st) => st.userScanned);

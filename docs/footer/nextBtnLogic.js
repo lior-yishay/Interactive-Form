@@ -24,7 +24,10 @@ import { postBigThingPick } from "../scenes/big thing/logic.js";
 import { getSelectedBigThingPickIndex } from "../scenes/big thing/scene.js";
 import { postBingoPicks } from "../scenes/bingo/logic.js";
 import { getBingoUserPicks } from "../scenes/bingo/scene.js";
-import { postCountryPick } from "../scenes/country/logic.js";
+import {
+  advanceCountryScene,
+  enableCountryNext,
+} from "../scenes/country/logic.js";
 import { didUserFinishCountyScene } from "../scenes/country/scene.js";
 import { postFeedbackSticker } from "../scenes/feedback/logic.js";
 import { getUserFeedbackSticker } from "../scenes/feedback/scene.js";
@@ -91,7 +94,7 @@ const postSceneUserPicks = {
   [UNREAL]: () => undefined,
   [I_BELIEVE_IN]: postMagnetPositions,
   [AI]: postAiPick,
-  [COUNTRY]: postCountryPick,
+  [COUNTRY]: advanceCountryScene,
   [FEEDBACK]: postFeedbackSticker,
   [BIG_THING]: postBigThingPick,
   [TOILET]: postToiletPick,
@@ -108,7 +111,7 @@ const hasNoAnswer = {
   [SMILE]: () => !getSmileUserImage() || !getSmileDurationList().length,
   [UNREAL]: () => !getUnrealPostedUserPicksFlag(),
   [AI]: () => !getSelectedAiPick(),
-  [COUNTRY]: () => !didUserFinishCountyScene(),
+  [COUNTRY]: () => !enableCountryNext(),
   [FEEDBACK]: () => !getUserFeedbackSticker(),
   [BIG_THING]: () => getSelectedBigThingPickIndex() === undefined,
   [TOILET]: () => !getUserToiletPaperSelection(),
