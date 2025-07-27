@@ -666,6 +666,15 @@ function drawWarningMessage() {
   rectMode(CENTER);
   textAlign(CENTER, CENTER);
 
+  //cursor
+  const mouseOverPopup =
+    mouseX > boxX - boxW / 2 &&
+    mouseX < boxX + boxW / 2 &&
+    mouseY > boxY - boxH / 2 &&
+    mouseY < boxY + boxH / 2;
+
+  cursor(mouseOverPopup ? "default" : "none");
+
   // Background
   noStroke();
   fill(255, 94, 49, warningAlpha);
