@@ -1,7 +1,6 @@
 import { get, post } from "../../api/axios.js";
 import { COUNTRY } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../../scene-managment/answers.js";
-import { nextScene } from "../../scene-managment/sceneOrder.js";
 import {
   didUserFinishCountyScene,
   didUserScan,
@@ -17,7 +16,6 @@ export const getCountryCounts = async () => {
 
 export const advanceCountryScene = async () => {
   await functionOrder[functionIndex++]();
-  functionIndex === functionOrder.length && nextScene();
 };
 
 export const enableCountryNext = () =>
@@ -29,5 +27,8 @@ const postCountyPick = async () => {
   await post(COUNTRY, { picks });
   setSceneAnswer(COUNTRY, picks);
 };
+
+export const preventSkipCountryScene = () =>
+  functionIndex < functionOrder.length;
 
 const functionOrder = [onDone, postCountyPick];

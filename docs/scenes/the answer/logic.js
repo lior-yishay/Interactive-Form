@@ -1,14 +1,12 @@
 import { get, post } from "../../api/axios.js";
 import { THE_ANSWER } from "../../consts/scenes-names.js";
 import { setSceneAnswer } from "../../scene-managment/answers.js";
-import { nextScene } from "../../scene-managment/sceneOrder.js";
 import { enterShowAll, getTheAnswerUserPick } from "./scene.js";
 
 let functionIndex = 0;
 
 export const advanceTheAnswerScene = async () => {
   await functionOrder[functionIndex++]();
-  functionIndex === functionOrder.length && nextScene();
 };
 
 const postTheAnswerPick = async () => {
@@ -20,5 +18,8 @@ const postTheAnswerPick = async () => {
 export const getTheAnswerCounts = async () => {
   return get(THE_ANSWER);
 };
+
+export const preventSkipTheAnswerScene = () =>
+  functionIndex < functionOrder.length;
 
 const functionOrder = [enterShowAll, postTheAnswerPick];

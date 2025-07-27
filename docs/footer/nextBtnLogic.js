@@ -27,6 +27,7 @@ import { getBingoUserPicks } from "../scenes/bingo/scene.js";
 import {
   advanceCountryScene,
   enableCountryNext,
+  preventSkipCountryScene,
 } from "../scenes/country/logic.js";
 import { didUserFinishCountyScene } from "../scenes/country/scene.js";
 import { postFeedbackSticker } from "../scenes/feedback/logic.js";
@@ -45,7 +46,10 @@ import {
   getSmileUserImage,
 } from "../scenes/smile/scene.js";
 import { stopFaceDetection, stopVideo } from "../scenes/smile/videoManager.js";
-import { advanceTheAnswerScene } from "../scenes/the answer/logic.js";
+import {
+  advanceTheAnswerScene,
+  preventSkipTheAnswerScene,
+} from "../scenes/the answer/logic.js";
 import { postToiletPick } from "../scenes/toilet/logic.js";
 import { getUserToiletPaperSelection } from "../scenes/toilet/scene.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
@@ -67,12 +71,12 @@ export const onNextBtnClick = async () => {
 
   lastSceneChangeTime = now;
 
-  if (!preventSwitchingScenes.includes(getCurrentScene())) {
+  await postSceneUserPicks[getCurrentScene()]();
+  if (!preventSkipScene()) {
     resetRegisteredSounds();
     clearDomElements();
     nextScene();
   }
-  await postSceneUserPicks[getCurrentScene()]();
 };
 
 export const isNextBtnDisabled = () => {
@@ -119,4 +123,10 @@ const hasNoAnswer = {
   [BINGO]: () => !getBingoUserPicks().length,
 };
 
-const preventSwitchingScenes = [THE_ANSWER, COUNTRY];
+const preventSkipScene = () => {
+  const currentScene = getCurrentScene();
+  return (
+    (currentScene === COUNTRY && preventSkipCountryScene()) ||
+    (currentScene === THE_ANSWER && preventSkipTheAnswerScene())
+  );
+};
