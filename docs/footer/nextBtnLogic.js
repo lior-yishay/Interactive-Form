@@ -42,20 +42,34 @@ import {
   getSmileUserImage,
 } from "../scenes/smile/scene.js";
 import { stopFaceDetection, stopVideo } from "../scenes/smile/videoManager.js";
-import { postTheAnswerPick } from "../scenes/the answer/logic.js";
-import { didUserSubmitTheAnswer } from "../scenes/the answer/scene.js";
+import { advanceTheAnswerScene } from "../scenes/the answer/logic.js";
 import { postToiletPick } from "../scenes/toilet/logic.js";
 import { getUserToiletPaperSelection } from "../scenes/toilet/scene.js";
 import { getUnrealPostedUserPicksFlag } from "../scenes/unreal/scene.js";
 import { resetRegisteredSounds } from "../soundManager.js";
 import { callIfExsist } from "../utils/callIfExsist.js";
 
+let lastSceneChangeTime = 0;
+const cooldownDuration = 2000; // 2 seconds in milliseconds
+
 export const onNextBtnClick = async () => {
   if (isNextBtnDisabled()) return;
+
+  const now = Date.now();
+
+  if (now - lastSceneChangeTime < cooldownDuration) {
+    // Cooldown active, ignore this call
+    return;
+  }
+
+  lastSceneChangeTime = now;
+
+  if (!preventSwitchingScenes.includes(getCurrentScene())) {
+    resetRegisteredSounds();
+    clearDomElements();
+    nextScene();
+  }
   await postSceneUserPicks[getCurrentScene()]();
-  resetRegisteredSounds();
-  clearDomElements();
-  !preventSwitchingScenes.includes(getCurrentScene()) && nextScene();
 };
 
 export const isNextBtnDisabled = () => {
@@ -81,7 +95,7 @@ const postSceneUserPicks = {
   [FEEDBACK]: postFeedbackSticker,
   [BIG_THING]: postBigThingPick,
   [TOILET]: postToiletPick,
-  [THE_ANSWER]: postTheAnswerPick,
+  [THE_ANSWER]: advanceTheAnswerScene,
   [BINGO]: postBingoPicks,
 };
 
@@ -98,7 +112,7 @@ const hasNoAnswer = {
   [FEEDBACK]: () => !getUserFeedbackSticker(),
   [BIG_THING]: () => getSelectedBigThingPickIndex() === undefined,
   [TOILET]: () => !getUserToiletPaperSelection(),
-  [THE_ANSWER]: () => !didUserSubmitTheAnswer(),
+  [THE_ANSWER]: () => false,
   [BINGO]: () => !getBingoUserPicks().length,
 };
 

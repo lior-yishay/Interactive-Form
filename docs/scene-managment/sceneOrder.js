@@ -21,22 +21,10 @@ import {
 import { resetDrawingState } from "../utils/resetDrawingState.js";
 import { p5Functions } from "./p5-scene-functions.js";
 
-let currentScene = POLITICS;
+let currentScene = THE_ANSWER;
 export const getCurrentScene = () => currentScene;
 
-let lastSceneChangeTime = 0;
-const cooldownDuration = 2000; // 2 seconds in milliseconds
-
 export const nextScene = () => {
-  const now = Date.now();
-
-  if (now - lastSceneChangeTime < cooldownDuration) {
-    // Cooldown active, ignore this call
-    return;
-  }
-
-  lastSceneChangeTime = now;
-
   const currentIndex = sceneList.indexOf(currentScene);
   const nextSceneName = sceneList[currentIndex + 1];
   if (!nextSceneName) return;

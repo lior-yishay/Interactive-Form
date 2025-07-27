@@ -67,56 +67,6 @@ export function drawTheAnswerScene() {
   }
 
   pop();
-
-  // ---------- SUBMIT ----------
-  if (!showAll) drawSubmitButton();
-}
-
-/* ---------- submit-button ---------- */
-function drawSubmitButton() {
-  push(); // isolate style changes
-  const label = "Submit";
-
-  // slightly smaller (§ 0.028)
-  const fs = max(14, artW * 0.028);
-
-  textFont(grotta);
-  textSize(fs);
-  textStyle(NORMAL);
-  textAlign(CENTER, TOP);
-
-  const btnCol = "#F9F6F1";
-  const w = textWidth(label);
-  const x = width / 2;
-  const y = artH + marginY + fs * 0.1; //lior changed from 0.6 to 0.1
-
-  btnBox = { x: x - w / 2, y: y, w: w, h: fs };
-
-  const hovering =
-    mouseX >= btnBox.x &&
-    mouseX <= btnBox.x + btnBox.w &&
-    mouseY >= btnBox.y &&
-    mouseY <= btnBox.y + btnBox.h;
-
-  if (hovering) {
-    stroke(btnCol);
-    strokeWeight(2);
-    line(
-      btnBox.x,
-      btnBox.y + fs + 3, // underline just below text
-      btnBox.x + w,
-      btnBox.y + fs + 3
-    );
-    cursor(HAND);
-  } else {
-    noStroke();
-    cursor(ARROW);
-  }
-
-  fill(btnCol);
-  noStroke();
-  text(label, x, y);
-  pop(); // restore previous styles
 }
 
 /* ---------- layout ---------- */
@@ -165,9 +115,12 @@ function makeSticker(i) {
 }
 
 /* ---------- second screen ---------- */
-function enterShowAll() {
+export function enterShowAll() {
   showAll = true;
   allStickers = [];
+
+  userPick = answerCounts[idx].name;
+  cursor(ARROW);
 
   for (let i = 0; i < answerCounts.length; i++) {
     const s = makeSticker(i);
@@ -215,21 +168,6 @@ function rectsOverlap(x1, y1, w1, h1, x2, y2, w2, h2, pad = 10) {
 
 /* ---------- mouse ---------- */
 export function mousePressedTheAnswerScene() {
-  // submit button?
-  if (!showAll && btnBox) {
-    if (
-      mouseX >= btnBox.x &&
-      mouseX <= btnBox.x + btnBox.w &&
-      mouseY >= btnBox.y &&
-      mouseY <= btnBox.y + btnBox.h
-    ) {
-      enterShowAll();
-      userPick = answerCounts[idx].name;
-      cursor(ARROW);
-      return;
-    }
-  }
-
   const mx = mouseX - marginX;
   const my = mouseY - marginY;
 
@@ -406,7 +344,6 @@ class Sticker {
 
 //lior's code
 export const getTheAnswerUserPick = () => userPick;
-export const didUserSubmitTheAnswer = () => !!userPick;
 
 // unused code
 function drawVotes(sticker, i) {

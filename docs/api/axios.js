@@ -1,4 +1,4 @@
-const isLocal = window.location.hostname === "127.0.0.1";
+import { isLocal } from "./utils.js";
 
 export const URL_PREFIX = isLocal
   ? "http://localhost:3000/api/"
