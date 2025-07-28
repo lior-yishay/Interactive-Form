@@ -18,6 +18,8 @@ export const get = async (sceneName, sendingData) => {
 
 export const post = async (sceneName, sendingData) => {
   try {
+    if (sendingData == null)
+      throw new Error("attempted to post undefined or null to server");
     const res = await axios.post(`${URL_PREFIX}${sceneName}`, sendingData);
     console.log("Response:", res);
     return res.data;
