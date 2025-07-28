@@ -27,3 +27,13 @@ export const post = async (sceneName, sendingData) => {
     console.error(`POST Error:`, error);
   }
 };
+
+export const emptyPost = async (sceneName) => {
+  try {
+    const res = await axios.post(`${URL_PREFIX}${sceneName}`);
+    console.log("Response:", res);
+    return res.data;
+  } catch (error) {
+    console.error(`POST Error:`, error);
+  }
+};
