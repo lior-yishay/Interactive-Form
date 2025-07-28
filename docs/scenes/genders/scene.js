@@ -59,7 +59,6 @@ const additionalVotes = (gender) => {
 
 export async function setupGendersScene() {
   genderCounts = await getNormalizedGenderCounts(maxCount);
-  console.log(genderCounts);
   createCanvas(windowWidth, windowHeight);
   textFont(grottaFont);
   textSize(14);
