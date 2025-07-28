@@ -116,7 +116,6 @@ function makeSticker(i) {
 
 /* ---------- second screen ---------- */
 export function enterShowAll() {
-  console.log("bruh");
   showAll = true;
   allStickers = [];
 
