@@ -97,8 +97,6 @@ export async function setupCountryScene() {
         serverScanCounts ? (serverScanCounts[label] ?? 0) : 0
       )
   );
-
-  createDoneButton();
 }
 
 export function windowResizedCountryScene() {
